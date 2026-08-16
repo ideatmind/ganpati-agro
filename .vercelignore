@@ -1,0 +1,4 @@
+# Do not publish internal planning/reference files
+.agents/
+docs/
+references/
