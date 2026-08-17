@@ -1,20 +1,22 @@
 <!DOCTYPE html>
-<html lang="mr">
+<html lang="mr" class="notranslate" translate="no">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>श्री गणपती ॲग्रो प्रोड्युसर कंपनी लि. | Shri Ganpati Agro Producer Co. Ltd.</title>
-  <meta name="description" content="श्री गणपती ॲग्रो प्रोड्युसर कंपनी — २०१६ पासून बळीराजाच्या सेवेत. शेतकरी समूह शेती, मूल्यवर्धन व बाजार जोडणी. Farmer-centric cluster agriculture in Dharashiv, Maharashtra.">
+  <meta name="google" content="notranslate">
+  <title>गणपती ॲग्रो प्रोड्युसर कंपनी लि. | Ganpati Agro Producer Co. Ltd.</title>
+  <meta name="description" content="गणपती ॲग्रो प्रोड्युसर कंपनी — २०१६ पासून बळीराजाच्या सेवेत. शेतकरी समूह शेती, मूल्यवर्धन व बाजार जोडणी. Farmer-centric cluster agriculture in Dharashiv, Maharashtra.">
 
-  <meta property="og:title" content="श्री गणपती ॲग्रो प्रोड्युसर कंपनी | Shri Ganpati Agro">
+  <meta property="og:title" content="गणपती ॲग्रो प्रोड्युसर कंपनी | Ganpati Agro">
   <meta property="og:description" content="२०१६ पासून बळीराजाच्या सेवेत. शेतकरी समूह शेती, मूल्यवर्धन, बाजार जोडणी.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/logo.png">
+  <meta property="og:image" content="assets/logo-icon.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+  <link rel="icon" type="image/png" href="assets/logo-icon.png">
   <link rel="stylesheet" href="styles.css">
   <noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
 </head>
@@ -24,8 +26,7 @@
   <header class="navbar" id="navbar">
     <div class="container nav-inner">
       <a href="#home" class="brand">
-        <img src="assets/logo.png" alt="श्री गणपती ॲग्रो लोगो" class="brand-logo">
-        <span class="brand-name">श्री गणपती ॲग्रो</span>
+        <img src="assets/logo-icon.png" alt="श्री गणपती ॲग्रो लोगो" class="brand-logo">
       </a>
 
       <nav class="nav-links" id="navLinks" aria-label="मुख्य मेनू">
@@ -36,10 +37,7 @@
         <a href="#membership">सभासदत्व</a>
         <a href="#register">नोंदणी</a>
         <a href="#contact" class="nav-contact">संपर्क</a>
-        <a href="tel:+917030039005" class="nav-call-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          <span>कॉल करा</span>
-        </a>
+
       </nav>
 
       <button class="hamburger" id="hamburger" aria-label="मेनू उघडा" aria-expanded="false">
@@ -50,16 +48,21 @@
 
   <!-- Hero -->
   <section class="hero" id="home">
+    <video class="hero-video" autoplay muted loop playsinline preload="none"
+           poster="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1920&q=60">
+      <source src="assets/hero-bg.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
     <div class="container hero-inner">
-      <img src="assets/logo.png" alt="श्री गणपती ॲग्रो प्रोड्युसर कंपनी लोगो" class="hero-logo">
-      <h1>श्री गणपती ॲग्रो प्रोड्युसर कंपनी लि.</h1>
-      <p class="hero-en">Shri Ganpati Agro Producer Co. Ltd.</p>
+      <img src="assets/logo-icon.png" alt="गणपती ॲग्रो प्रोड्युसर कंपनी लोगो" class="hero-logo">
+      <h1>गणपती ॲग्रो प्रोड्युसर कंपनी लि.</h1>
+
       <p class="hero-tagline">२०१६ पासून बळीराजाच्या सेवेत....</p>
-      <p class="hero-tagline-en">Serving Farmers Since 2016</p>
+
 
       <div class="hero-actions">
-        <a href="#register" class="btn btn-primary">नोंदणी करा <span>Register Now</span></a>
-        <a href="#contact" class="btn btn-outline">संपर्क करा <span>Contact Us</span></a>
+        <a href="#register" class="btn btn-primary">नोंदणी करा</a>
+        <a href="#contact" class="btn btn-outline">संपर्क करा</a>
       </div>
 
       <a href="#about" class="scroll-down" aria-label="खाली स्क्रोल करा">
@@ -80,11 +83,11 @@
       </div>
 
       <div class="about-body reveal">
-        <p class="eyebrow">आमच्याबद्दल · About Us</p>
+        <p class="eyebrow">आमच्याबद्दल</p>
         <h2>शेतकऱ्यांसाठी, शेतकऱ्यांच्या सोबत</h2>
-        <p class="about-en">For farmers, with farmers</p>
-        <p class="lead">श्री गणपती ॲग्रो प्रोड्युसर कंपनी लि. ही २०१६ पासून बळीराजाच्या सेवेत असलेली शेतकरी केंद्रित कंपनी आहे. आम्ही धाराशिव जिल्ह्यातील शेतकऱ्यांना समूहांमध्ये जोडून उत्पादन खर्च कमी करणे, बाजारपेठेशी जोडणे आणि मूल्यवर्धन करणे यासाठी कार्यरत आहोत.</p>
-        <p class="about-en-paragraph">A farmer-centric producer company working since 2016 to organize farmers into clusters, lower production costs, and connect them to profitable markets.</p>
+
+        <p class="lead">गणपती ॲग्रो प्रोड्युसर कंपनी लि. ही २०१६ पासून बळीराजाच्या सेवेत असलेली शेतकरी केंद्रित कंपनी आहे. आम्ही धाराशिव जिल्ह्यातील शेतकऱ्यांना समूहांमध्ये जोडून उत्पादन खर्च कमी करणे, बाजारपेठेशी जोडणे आणि मूल्यवर्धन करणे यासाठी कार्यरत आहोत.</p>
+
 
         <ul class="about-points">
           <li>
@@ -113,7 +116,7 @@
   <section class="section purpose" id="purpose">
     <div class="container">
       <div class="section-head reveal">
-        <p class="eyebrow">आमचा उद्देश · Our Purpose</p>
+        <p class="eyebrow">आमचा उद्देश</p>
         <h2>उद्देश, दृष्टी आणि मूल्ये</h2>
       </div>
 
@@ -122,7 +125,7 @@
           <span class="purpose-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
           </span>
-          <h3>व्हिजन <em>Vision</em></h3>
+          <h3>व्हिजन</h3>
           <p>देशातील शेतकऱ्यांचे एकात्मिक साखळी समूह एकमेकांना जोडून शेतीचा विकास व मूल्यवर्धन करणे.</p>
         </article>
 
@@ -130,7 +133,7 @@
           <span class="purpose-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
           </span>
-          <h3>मिशन <em>Mission</em></h3>
+          <h3>मिशन</h3>
           <p>शेतकऱ्यांचा उत्पादन खर्च कमी करणे, फायदेशीर बाजारपेठ उपलब्ध करून देणे आणि मूल्यवर्धन साखळीचा विकास व व्यवस्थापन करणे.</p>
         </article>
 
@@ -138,7 +141,7 @@
           <span class="purpose-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
           </span>
-          <h3>मूल्ये <em>Values</em></h3>
+          <h3>मूल्ये</h3>
           <p>शेतकरी केंद्रित विचार, अखंडता, उत्कृष्टता, संघटित कार्य, उत्तरदायित्व आणि प्रामाणिक हेतू या सहा मूल्यांवर आमचा पाया आहे.</p>
         </article>
       </div>
@@ -154,7 +157,7 @@
 
       <blockquote class="quote reveal">
         <p>"शेतकऱ्यांसोबत योग्य व प्रामाणिक हेतूने काम करा, यश हमखास मिळेल!"</p>
-        <footer>"Work with farmers with the right and honest intent, and you will surely succeed!"</footer>
+
       </blockquote>
     </div>
   </section>
@@ -163,7 +166,7 @@
   <section class="section clusters" id="clusters">
     <div class="container">
       <div class="section-head reveal">
-        <p class="eyebrow">समूह प्रकार · Cluster Categories</p>
+        <p class="eyebrow">समूह प्रकार</p>
         <h2>पीक आणि शेतीपूरक व्यवसाय</h2>
       </div>
 
@@ -201,9 +204,9 @@
   <section class="section coverage" id="coverage">
     <div class="container coverage-grid">
       <div class="coverage-text reveal">
-        <p class="eyebrow">कार्यक्षेत्र · Coverage Area</p>
+        <p class="eyebrow">कार्यक्षेत्र</p>
         <h2>धाराशिव जिल्हा आणि १०० किमी परिसर</h2>
-        <p class="coverage-en">Dharashiv District &amp; 100 km surrounding region</p>
+
         <p class="lead">धाराशिव जिल्ह्यातील ८ तालुक्यांतील ७४१ गावांमध्ये तसेच १०० किमी परिसरातील ८ शेजारील तालुक्यांमध्ये आमचे कार्यक्षेत्र विस्तारले आहे.</p>
 
         <div class="taluka-list">
@@ -221,19 +224,19 @@
       <div class="coverage-stats reveal">
         <div class="stat">
           <span class="stat-number" data-target="8">0</span>
-          <span class="stat-label">तालुके <em>Talukas</em></span>
+          <span class="stat-label">तालुके</span>
         </div>
         <div class="stat">
           <span class="stat-number" data-target="741">0</span>
-          <span class="stat-label">गावे <em>Villages</em></span>
+          <span class="stat-label">गावे</span>
         </div>
         <div class="stat">
           <span class="stat-number" data-target="100">0</span>
-          <span class="stat-label">किमी परिसर <em>km Radius</em></span>
+          <span class="stat-label">किमी परिसर</span>
         </div>
         <div class="stat">
           <span class="stat-number" data-target="8">0</span>
-          <span class="stat-label">शेजारील तालुके <em>Neighbouring Talukas</em></span>
+          <span class="stat-label">शेजारील तालुके</span>
         </div>
       </div>
     </div>
@@ -243,7 +246,7 @@
   <section class="section membership" id="membership">
     <div class="container">
       <div class="section-head reveal">
-        <p class="eyebrow">सभासदत्व · Membership</p>
+        <p class="eyebrow">सभासदत्व</p>
         <h2>सभासद होण्याचे फायदे</h2>
       </div>
 
@@ -252,7 +255,7 @@
           <span class="benefit-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
           </span>
-          <h3>शेअर प्रमाणपत्र <em>Share Certificate</em></h3>
+          <h3>शेअर प्रमाणपत्र</h3>
           <ul>
             <li>कंपनीत शेअर मालकी हक्क</li>
             <li>नॉमिनी नोंदणी सुविधा</li>
@@ -265,7 +268,7 @@
           <span class="benefit-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01"/><path d="M9 12v.01"/><path d="M9 15v.01"/><path d="M9 18v.01"/></svg>
           </span>
-          <h3>कंपनी सभासदत्व <em>Company Membership</em></h3>
+          <h3>कंपनी सभासदत्व</h3>
           <ul>
             <li>सर्वसाधारण सभेत मतदान अधिकार</li>
             <li>मूल्यवर्धनातून लाभांश हक्क</li>
@@ -278,7 +281,7 @@
           <span class="benefit-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </span>
-          <h3>समूह सहभाग <em>Cluster Participation</em></h3>
+          <h3>समूह सहभाग</h3>
           <ul>
             <li>तज्ञ मार्गदर्शन व तंत्रज्ञान सहाय्य</li>
             <li>बाजार जोडणी व मूल्यवर्धन</li>
@@ -289,8 +292,8 @@
       </div>
 
       <div class="membership-cta reveal">
-        <p class="fee">नोंदणी फी फक्त <strong>₹१००/-</strong> <em>Registration Fee: Only ₹100</em></p>
-        <a href="#register" class="btn btn-gold">आत्ताच सभासद व्हा! <span>Become a Member</span></a>
+        <p class="fee">नोंदणी फी फक्त <strong>₹१००/-</strong></p>
+        <a href="#register" class="btn btn-gold">आत्ताच सभासद व्हा!</a>
       </div>
     </div>
   </section>
@@ -299,31 +302,31 @@
   <section class="section register" id="register">
     <div class="container">
       <div class="section-head reveal">
-        <p class="eyebrow">नोंदणी · Registration</p>
+        <p class="eyebrow">नोंदणी</p>
         <h2>शेतकरी नोंदणी फॉर्म</h2>
       </div>
 
       <div class="form-wrap reveal">
         <form id="registrationForm" novalidate>
           <div class="field">
-            <label for="farmerName">शेतकऱ्याचे पूर्ण नाव <em>Full Name</em></label>
+            <label for="farmerName">शेतकऱ्याचे पूर्ण नाव</label>
             <input type="text" id="farmerName" name="name" required placeholder="पूर्ण नाव टाका" autocomplete="name">
           </div>
 
           <div class="field-row">
             <div class="field">
-              <label for="mobile">मोबाईल नंबर <em>Mobile</em></label>
+              <label for="mobile">मोबाईल नंबर</label>
               <input type="tel" id="mobile" name="mobile" required pattern="[0-9]{10}" maxlength="10" placeholder="१० अंकी नंबर" inputmode="numeric" autocomplete="tel">
             </div>
             <div class="field">
-              <label for="village">गाव <em>Village</em></label>
+              <label for="village">गाव</label>
               <input type="text" id="village" name="village" required placeholder="गावाचे नाव">
             </div>
           </div>
 
           <div class="field-row">
             <div class="field">
-              <label for="taluka">तालुका <em>Taluka</em></label>
+              <label for="taluka">तालुका</label>
               <select id="taluka" name="taluka" required>
                 <option value="">तालुका निवडा</option>
                 <option value="dharashiv">धाराशिव</option>
@@ -338,7 +341,7 @@
               </select>
             </div>
             <div class="field">
-              <label for="clusterType">समूह प्रकार <em>Cluster Type</em></label>
+              <label for="clusterType">समूह प्रकार</label>
               <select id="clusterType" name="clusterType" required>
                 <option value="">पीक / व्यवसाय निवडा</option>
                 <option value="pulses">कडधान्ये</option>
@@ -352,7 +355,7 @@
           </div>
 
           <div class="field">
-            <label>उत्पन्नाचे साधन <em>Income Source</em></label>
+            <label>उत्पन्नाचे साधन</label>
             <div class="radio-group">
               <label><input type="radio" name="income" value="agriculture" required> शेती</label>
               <label><input type="radio" name="income" value="business"> व्यवसाय</label>
@@ -362,11 +365,11 @@
           </div>
 
           <div class="field">
-            <label for="message">संदेश <em>Message (ऐच्छिक)</em></label>
+            <label for="message">संदेश (ऐच्छिक)</label>
             <textarea id="message" name="message" rows="3" placeholder="तुमचा संदेश लिहा"></textarea>
           </div>
 
-          <button type="submit" class="btn btn-submit">नोंदणी सबमिट करा <span>Submit Registration</span></button>
+          <button type="submit" class="btn btn-submit">नोंदणी सबमिट करा</button>
         </form>
 
         <div class="form-success" id="formSuccess" role="status" aria-live="polite" hidden>
@@ -375,7 +378,7 @@
           </span>
           <h3>तुमची नोंदणी यशस्वी झाली!</h3>
           <p>आम्ही लवकरच तुमच्याशी संपर्क साधू.</p>
-          <p class="success-en">Registration successful! We will contact you soon.</p>
+
         </div>
       </div>
     </div>
@@ -386,25 +389,25 @@
     <div class="container">
       <div class="footer-top">
         <div class="footer-brand">
-          <img src="assets/logo.png" alt="श्री गणपती ॲग्रो लोगो" class="footer-logo">
-          <h3>श्री गणपती ॲग्रो प्रोड्युसर कंपनी लि.</h3>
-          <p>Shri Ganpati Agro Producer Co. Ltd.</p>
+          <img src="assets/logo-icon.png" alt="गणपती ॲग्रो लोगो" class="footer-logo">
+          <h3>गणपती ॲग्रो प्रोड्युसर कंपनी लि.</h3>
+
         </div>
 
         <div class="footer-col">
-          <h4>पत्ता <em>Address</em></h4>
+          <h4>पत्ता</h4>
           <p>बार्शी नाका, बार्शी रोड,<br>धाराशिव (MH) — ४१३५०१</p>
         </div>
 
         <div class="footer-col">
-          <h4>संपर्क <em>Contact</em></h4>
+          <h4>संपर्क</h4>
           <a href="tel:+917030039005">+91 70300 39005</a>
           <a href="tel:+918390335722">+91 83903 35722</a>
           <a href="tel:+918830051358">+91 88300 51358</a>
         </div>
 
         <div class="footer-col">
-          <h4>ईमेल <em>Email</em></h4>
+          <h4>ईमेल</h4>
           <a href="mailto:sganpatiagropcl@gmail.com">sganpatiagropcl@gmail.com</a>
           <a href="https://wa.me/917030039005" target="_blank" rel="noopener" class="whatsapp-btn">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -414,7 +417,7 @@
       </div>
 
       <div class="footer-bottom">
-        <p>© २०१६–२०२६ श्री गणपती ॲग्रो प्रोड्युसर कंपनी लि. &nbsp;|&nbsp; CIN: U01403MH2016PTC272505</p>
+        <p>© २०१६–२०२६ गणपती ॲग्रो प्रोड्युसर कंपनी लि. &nbsp;|&nbsp; CIN: U01403MH2016PTC272505</p>
         <p>कंपनी अधिनियम २०१३ अंतर्गत नोंदणीकृत &nbsp;·&nbsp; Prof. Sachin R. Khandagale — Knowledge-Driven Farming Excellence Expert</p>
       </div>
     </div>

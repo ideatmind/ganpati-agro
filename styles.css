@@ -88,17 +88,15 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 /* Buttons */
 .btn {
   display: inline-flex;
-  flex-direction: column;
   align-items: center;
-  line-height: 1.25;
-  gap: 2px;
-  padding: 15px 36px;
+  justify-content: center;
+  line-height: 1.4;
+  padding: 16px 40px;
   border-radius: 50px;
   font-size: 1.05rem;
   font-weight: 700;
   transition: transform var(--ease), box-shadow var(--ease), background var(--ease);
 }
-.btn span { font-family: 'Poppins', sans-serif; font-size: 0.72rem; font-weight: 500; opacity: 0.85; }
 .btn:hover { transform: translateY(-3px); }
 .btn:focus-visible, .cluster-tab:focus-visible, a:focus-visible, button:focus-visible {
   outline: 3px solid var(--gold);
@@ -113,27 +111,29 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   position: fixed;
   inset: 0 0 auto;
   z-index: 100;
-  padding: 14px 0;
-  background: rgba(14, 58, 18, 0.55);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  padding: 16px 0;
+  background: transparent;
   transition: background var(--ease), box-shadow var(--ease), padding var(--ease);
 }
-.navbar.scrolled { background: rgba(14, 58, 18, 0.95); box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25); padding: 10px 0; }
-.nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.navbar.scrolled {
+  background: rgba(14, 58, 18, 0.95);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  padding: 8px 0;
+}
+.nav-inner { display: flex; align-items: center; justify-content: center; gap: 24px; }
 
-.brand { display: flex; align-items: center; gap: 10px; }
-.brand-logo { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255, 255, 255, 0.5); }
-.brand-name { color: var(--white); font-weight: 700; font-size: 1.05rem; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3); }
+.brand { display: none; }
 
-.nav-links { display: flex; align-items: center; gap: 22px; }
+.nav-links { display: flex; align-items: center; gap: 28px; }
 .nav-links a {
   color: var(--white);
-  font-size: 0.92rem;
-  font-weight: 500;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
   position: relative;
-  padding: 4px 0;
+  padding: 6px 0;
   transition: opacity var(--ease);
 }
 .nav-links a::after {
@@ -150,21 +150,26 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .nav-links a:hover::after { width: 100%; }
 
 .nav-call-btn {
-  display: inline-flex;
+  display: inline-flex !important;
   align-items: center;
-  gap: 7px;
-  background: var(--white);
-  color: var(--green-700);
-  padding: 9px 18px;
+  justify-content: center;
+  gap: 8px;
+  background: var(--white) !important;
+  color: var(--green-700) !important;
+  padding: 14px 32px;
   border-radius: 50px;
-  font-weight: 600;
+  font-weight: 700;
   font-family: 'Poppins', sans-serif;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   text-shadow: none !important;
-  transition: transform var(--ease), box-shadow var(--ease);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  transition: transform var(--ease), box-shadow var(--ease), background var(--ease);
+  box-shadow: 0 2px 12px rgba(27, 94, 32, 0.2);
 }
-.nav-call-btn svg { width: 16px; height: 16px; }
-.nav-call-btn:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(255, 255, 255, 0.3); }
+.nav-call-btn svg { width: 17px; height: 17px; flex-shrink: 0; stroke: var(--green-700) !important; }
+.nav-call-btn span { color: var(--green-700) !important; font-size: inherit; opacity: 1 !important; }
+.nav-call-btn:hover { transform: scale(1.06); box-shadow: 0 4px 20px rgba(255, 255, 255, 0.35); background: var(--green-50) !important; }
 .nav-call-btn::after { display: none !important; }
 
 .hamburger {
@@ -192,21 +197,39 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   justify-content: center;
   text-align: center;
   color: var(--white);
-  background:
-    linear-gradient(160deg, rgba(14, 58, 18, 0.82) 0%, rgba(20, 66, 26, 0.6) 50%, rgba(27, 94, 32, 0.78) 100%),
-    url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1920&q=80') center / cover no-repeat;
-  padding: 120px 20px 80px;
+  background: var(--green-900);
+  padding: 80px 20px 80px;
+  overflow: hidden;
 }
+
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(14, 58, 18, 0.75) 0%, rgba(20, 66, 26, 0.45) 50%, rgba(27, 94, 32, 0.7) 100%);
+  z-index: 1;
+}
+
 .hero-inner { position: relative; z-index: 2; max-width: 760px; }
 
 .hero-logo {
-  width: 132px;
-  height: 132px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin: 0 auto 22px;
-  border: 4px solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.12), 0 12px 40px rgba(0, 0, 0, 0.35);
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  margin: 0 auto 28px;
+  filter:
+    drop-shadow(0 0 16px rgba(255, 255, 255, 0.9))
+    drop-shadow(0 0 40px rgba(255, 255, 255, 0.6))
+    drop-shadow(0 0 70px rgba(255, 255, 255, 0.35))
+    drop-shadow(0 0 100px rgba(255, 255, 255, 0.15));
   animation: pop 0.8s ease both;
 }
 @keyframes pop { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
@@ -516,7 +539,15 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .footer { background: var(--green-900); color: var(--white); padding: 64px 0 28px; }
 .footer-top { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.2fr; gap: 40px; margin-bottom: 44px; }
 
-.footer-brand .footer-logo { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255, 255, 255, 0.35); margin-bottom: 14px; }
+.footer-brand .footer-logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  margin-bottom: 14px;
+  filter:
+    drop-shadow(0 0 12px rgba(255, 255, 255, 0.7))
+    drop-shadow(0 0 30px rgba(255, 255, 255, 0.35));
+}
 .footer-brand h3 { font-size: 1.1rem; line-height: 1.4; }
 .footer-brand p { font-family: 'Poppins', sans-serif; font-size: 0.85rem; opacity: 0.7; margin-top: 4px; }
 
@@ -605,10 +636,20 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
      for fixed children, trapping the drawer — disable it on mobile */
   .navbar, .navbar.scrolled { backdrop-filter: none; -webkit-backdrop-filter: none; }
 
-  /* Keep the brand visible above the slide-in menu overlay */
-  .brand { position: relative; z-index: 103; }
-  .brand-logo { width: 38px; height: 38px; }
-  .brand-name { font-size: 0.95rem; }
+  /* Hide brand logo on mobile — hero logo is the star */
+  .brand { display: none !important; }
+  .nav-inner { justify-content: flex-end; }
+
+  /* Bigger hero logo on mobile */
+  .hero-logo {
+    width: 280px;
+    height: 280px;
+    filter:
+      drop-shadow(0 0 20px rgba(255, 255, 255, 1))
+      drop-shadow(0 0 50px rgba(255, 255, 255, 0.8))
+      drop-shadow(0 0 90px rgba(255, 255, 255, 0.5))
+      drop-shadow(0 0 130px rgba(255, 255, 255, 0.25));
+  }
 
   .nav-links {
     position: fixed;
@@ -628,7 +669,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   }
   .nav-links.open { transform: translateX(0); }
   .nav-links > a:not(.nav-call-btn) { font-size: 1.3rem; }
-  .nav-call-btn { font-size: 1rem; padding: 12px 28px; }
+  .nav-call-btn {
+    font-size: 1.05rem;
+    padding: 14px 32px;
+    margin-top: 8px;
+    align-self: center;
+  }
+  .nav-call-btn svg { width: 20px; height: 20px; }
   .hamburger { display: flex; }
 
   .hero { padding: 96px 16px 64px; min-height: 100svh; }
