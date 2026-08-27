@@ -19,6 +19,8 @@
 </head>
 <body>
 
+  <a class="skip-link" href="#main">मुख्य सामग्रीकडे जा / Skip to content</a>
+
   <header class="navbar" id="navbar">
     <div class="container nav-inner">
       <nav class="nav-links" id="navLinks" aria-label="मुख्य मेनू">
@@ -35,6 +37,8 @@
       </button>
     </div>
   </header>
+
+  <main id="main">
 
   <section class="hero" id="home">
     <video class="hero-video" autoplay muted loop playsinline preload="none"
@@ -59,7 +63,7 @@
   <section class="section about" id="about">
     <div class="container about-grid">
       <div class="about-media reveal">
-        <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1200&q=80" alt="शेतातील शेतकरी" loading="lazy" onerror="this.style.display='none'">
+        <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1200&q=80" alt="शेतातील शेतकरी" loading="lazy" class="about-img">
         <div class="about-badge">
           <strong>२०१६</strong>
           <span>पासून सेवेत</span>
@@ -186,29 +190,29 @@
         <h2>पीक आणि शेतीपूरक व्यवसाय</h2>
       </div>
       <div class="cluster-tabs reveal" role="tablist" aria-label="समूह प्रकार">
-        <button class="cluster-tab active" data-tab="pulses" role="tab" aria-selected="true">कडधान्ये</button>
-        <button class="cluster-tab" data-tab="cereals" role="tab" aria-selected="false">तृणधान्ये</button>
-        <button class="cluster-tab" data-tab="cash" role="tab" aria-selected="false">नगदी पिके</button>
-        <button class="cluster-tab" data-tab="fruits" role="tab" aria-selected="false">फळबाग</button>
-        <button class="cluster-tab" data-tab="vegs" role="tab" aria-selected="false">भाजीपाला</button>
-        <button class="cluster-tab" data-tab="allied" role="tab" aria-selected="false">शेतीपूरक व्यवसाय</button>
+        <button class="cluster-tab active" id="tab-pulses" data-tab="pulses" role="tab" aria-selected="true" aria-controls="panel-pulses">कडधान्ये</button>
+        <button class="cluster-tab" id="tab-cereals" data-tab="cereals" role="tab" aria-selected="false" aria-controls="panel-cereals">तृणधान्ये</button>
+        <button class="cluster-tab" id="tab-cash" data-tab="cash" role="tab" aria-selected="false" aria-controls="panel-cash">नगदी पिके</button>
+        <button class="cluster-tab" id="tab-fruits" data-tab="fruits" role="tab" aria-selected="false" aria-controls="panel-fruits">फळबाग</button>
+        <button class="cluster-tab" id="tab-vegs" data-tab="vegs" role="tab" aria-selected="false" aria-controls="panel-vegs">भाजीपाला</button>
+        <button class="cluster-tab" id="tab-allied" data-tab="allied" role="tab" aria-selected="false" aria-controls="panel-allied">शेतीपूरक व्यवसाय</button>
       </div>
-      <div class="cluster-panel active" id="panel-pulses" role="tabpanel">
+      <div class="cluster-panel active" id="panel-pulses" role="tabpanel" aria-labelledby="tab-pulses" tabindex="0">
         <span class="chip">सोयाबीन</span><span class="chip">तूर</span><span class="chip">हरभरा</span><span class="chip">मूग</span><span class="chip">मटकी</span><span class="chip">चवळी</span><span class="chip">कुळीथ</span><span class="chip">मसूर</span><span class="chip">उडीद</span><span class="chip">वाटाणा</span>
       </div>
-      <div class="cluster-panel" id="panel-cereals" role="tabpanel">
+      <div class="cluster-panel" id="panel-cereals" role="tabpanel" aria-labelledby="tab-cereals" tabindex="0" hidden>
         <span class="chip">गहू</span><span class="chip">ज्वारी</span><span class="chip">बाजरी</span><span class="chip">मका</span><span class="chip">भात</span><span class="chip">नाचणी</span><span class="chip">सवा</span>
       </div>
-      <div class="cluster-panel" id="panel-cash" role="tabpanel">
+      <div class="cluster-panel" id="panel-cash" role="tabpanel" aria-labelledby="tab-cash" tabindex="0" hidden>
         <span class="chip">ऊस</span><span class="chip">कापूस</span><span class="chip">तंबाखू</span><span class="chip">काजू</span><span class="chip">बांबू</span>
       </div>
-      <div class="cluster-panel" id="panel-fruits" role="tabpanel">
+      <div class="cluster-panel" id="panel-fruits" role="tabpanel" aria-labelledby="tab-fruits" tabindex="0" hidden>
         <span class="chip">डाळिंब</span><span class="chip">द्राक्षे</span><span class="chip">आंबा</span><span class="chip">पेरू</span><span class="chip">लिंबू</span><span class="chip">सीताफळ</span><span class="chip">ड्रॅगन फ्रूट</span><span class="chip">बोर</span><span class="chip">खरबूज</span><span class="chip">कलिंगड</span>
       </div>
-      <div class="cluster-panel" id="panel-vegs" role="tabpanel">
+      <div class="cluster-panel" id="panel-vegs" role="tabpanel" aria-labelledby="tab-vegs" tabindex="0" hidden>
         <span class="chip">मिरची</span><span class="chip">वांगी</span><span class="chip">कोबी</span><span class="chip">शिमला मिरची</span><span class="chip">भेंडी</span><span class="chip">काकडी</span><span class="chip">भोपळा</span><span class="chip">पालक</span><span class="chip">मेथी</span><span class="chip">कोथिंबीर</span><span class="chip">टोमॅटो</span><span class="chip">दोडका</span>
       </div>
-      <div class="cluster-panel" id="panel-allied" role="tabpanel">
+      <div class="cluster-panel" id="panel-allied" role="tabpanel" aria-labelledby="tab-allied" tabindex="0" hidden>
         <span class="chip">पशुपालन</span><span class="chip">शेळीपालन</span><span class="chip">कुक्कुटपालन</span><span class="chip">कम्पोस्ट निर्मिती</span><span class="chip">रेशीम उद्योग</span><span class="chip">गोमूत्र</span><span class="chip">मधमक्षिका पालन</span><span class="chip">खत निर्मिती</span><span class="chip">महिला बचत गट</span>
       </div>
     </div>
@@ -304,79 +308,186 @@
   <section class="section register" id="register">
     <div class="container">
       <div class="section-head reveal">
-        <p class="eyebrow">नोंदणी</p>
-        <h2>शेतकरी नोंदणी फॉर्म</h2>
+        <p class="eyebrow">नोंदणी / Registration</p>
+        <h2>शेतकरी नोंदणी फॉर्म <span class="label-en">Farmer Registration Form</span></h2>
       </div>
       <div class="form-wrap reveal">
         <form id="registrationForm" novalidate>
-          <div class="field">
-            <label for="farmerName">शेतकऱ्याचे पूर्ण नाव</label>
-            <input type="text" id="farmerName" name="name" required placeholder="पूर्ण नाव टाका" autocomplete="name">
-          </div>
-          <div class="field-row">
+
+          <!-- वैयक्तिक माहिती / Personal Details -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              वैयक्तिक माहिती <span class="label-en">Personal Details</span>
+            </legend>
+
             <div class="field">
-              <label for="mobile">मोबाईल नंबर</label>
-              <input type="tel" id="mobile" name="mobile" required pattern="[0-9]{10}" maxlength="10" placeholder="१० अंकी नंबर" inputmode="numeric" autocomplete="tel">
+              <label for="farmerName">पूर्ण नाव <span class="label-en">Full Name</span> <span class="required">*</span></label>
+              <input type="text" id="farmerName" name="name" required placeholder="Enter full name" autocomplete="name">
             </div>
-            <div class="field">
-              <label for="village">गाव</label>
-              <input type="text" id="village" name="village" required placeholder="गावाचे नाव">
+
+            <div class="field-row">
+              <div class="field">
+                <label for="mobile">मोबाईल नंबर <span class="label-en">Mobile Number</span> <span class="required">*</span></label>
+                <input type="tel" id="mobile" name="mobile" required pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile number" inputmode="numeric" autocomplete="tel">
+              </div>
+              <div class="field">
+                <label for="dob">जन्मतारीख <span class="label-en">Date of Birth</span> <span class="required">*</span></label>
+                <input type="date" id="dob" name="dob" required>
+              </div>
             </div>
-          </div>
-          <div class="field-row">
+
             <div class="field">
-              <label for="taluka">तालुका</label>
-              <select id="taluka" name="taluka" required>
-                <option value="">तालुका निवडा</option>
-                <option value="dharashiv">धाराशिव</option>
-                <option value="tuljapur">तुळजापूर</option>
-                <option value="umarga">उमरगा</option>
-                <option value="lohara">लोहारा</option>
-                <option value="kalamb">कळंब</option>
-                <option value="washi">वाशी</option>
-                <option value="bhum">भूम</option>
-                <option value="paranda">परांडा</option>
-                <option value="other">इतर</option>
-              </select>
+              <label for="aadhar">आधार क्रमांक <span class="label-en">Aadhar Number</span> <span class="required">*</span></label>
+              <input type="text" id="aadhar" name="aadhar" required pattern="[0-9]{12}" maxlength="12" placeholder="12-digit Aadhar number" inputmode="numeric" autocomplete="off">
             </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="village">गाव <span class="label-en">Village</span> <span class="required">*</span></label>
+                <input type="text" id="village" name="village" required placeholder="Enter village name">
+              </div>
+              <div class="field">
+                <label for="taluka">तालुका <span class="label-en">Taluka</span> <span class="required">*</span></label>
+                <select id="taluka" name="taluka" required>
+                  <option value="">Select Taluka</option>
+                  <option value="dharashiv">Dharashiv</option>
+                  <option value="tuljapur">Tuljapur</option>
+                  <option value="umarga">Umarga</option>
+                  <option value="lohara">Lohara</option>
+                  <option value="kalamb">Kalamb</option>
+                  <option value="washi">Washi</option>
+                  <option value="bhum">Bhum</option>
+                  <option value="paranda">Paranda</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+
             <div class="field">
-              <label for="clusterType">समूह प्रकार</label>
+              <label for="district">जिल्हा <span class="label-en">District</span> <span class="required">*</span></label>
+              <input type="text" id="district" name="district" required placeholder="Enter district name" value="Dharashiv">
+            </div>
+
+            <div class="field">
+              <label>उत्पन्नाचे साधन <span class="label-en">Income Source</span> <span class="required">*</span></label>
+              <div class="radio-group">
+                <label><input type="radio" name="income" value="agriculture" required> Agriculture</label>
+                <label><input type="radio" name="income" value="business"> Business</label>
+                <label><input type="radio" name="income" value="job"> Job</label>
+                <label><input type="radio" name="income" value="other"> Other</label>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="clusterType">समूह प्रकार <span class="label-en">Cluster Type</span> <span class="required">*</span></label>
               <select id="clusterType" name="clusterType" required>
-                <option value="">पीक / व्यवसाय निवडा</option>
-                <option value="pulses">कडधान्ये</option>
-                <option value="cereals">तृणधान्ये</option>
-                <option value="cash">नगदी पिके</option>
-                <option value="fruits">फळबाग</option>
-                <option value="vegs">भाजीपाला</option>
-                <option value="allied">शेतीपूरक व्यवसाय</option>
+                <option value="">Select Cluster Type</option>
+                <option value="pulses">Pulses</option>
+                <option value="cereals">Cereals</option>
+                <option value="cash">Cash Crops</option>
+                <option value="fruits">Fruits</option>
+                <option value="vegs">Vegetables</option>
+                <option value="allied">Allied Business</option>
               </select>
             </div>
-          </div>
-          <div class="field">
-            <label>उत्पन्नाचे साधन</label>
-            <div class="radio-group">
-              <label><input type="radio" name="income" value="agriculture" required> शेती</label>
-              <label><input type="radio" name="income" value="business"> व्यवसाय</label>
-              <label><input type="radio" name="income" value="job"> नोकरी</label>
-              <label><input type="radio" name="income" value="other"> इतर</label>
+          </fieldset>
+
+          <!-- शेत माहिती / Farm Details -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              शेत माहिती <span class="label-en">Farm Details</span>
+            </legend>
+
+            <div id="farmEntries">
+              <div class="farm-entry" data-index="0">
+                <div class="farm-entry-header">
+                  <span class="farm-entry-label">प्लॉट १ / Plot 1</span>
+                </div>
+                <div class="field-row">
+                  <div class="field">
+                    <label for="plotNo_0">गट / सर्वे नंबर <span class="label-en">Plot / Survey No.</span> <span class="required">*</span></label>
+                    <input type="text" id="plotNo_0" name="plotNo_0" required placeholder="e.g. 123/A">
+                  </div>
+                  <div class="field">
+                    <label for="area_0">क्षेत्रफळ (एकर) <span class="label-en">Area (Acres)</span> <span class="required">*</span></label>
+                    <input type="number" id="area_0" name="area_0" required placeholder="e.g. 2.5" step="0.01" min="0.01">
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div class="field">
+                    <label for="cropName_0">पिकाचे नाव <span class="label-en">Crop Name</span> <span class="required">*</span></label>
+                    <input type="text" id="cropName_0" name="cropName_0" required placeholder="e.g. Soybean">
+                  </div>
+                  <div class="field">
+                    <label for="irrigationSource_0">सिंचन स्रोत <span class="label-en">Irrigation Source</span> <span class="required">*</span></label>
+                    <select id="irrigationSource_0" name="irrigationSource_0" required>
+                      <option value="">Select Source</option>
+                      <option value="well">Well</option>
+                      <option value="borewell">Borewell</option>
+                      <option value="canal">Canal</option>
+                      <option value="drip">Drip Irrigation</option>
+                      <option value="sprinkler">Sprinkler</option>
+                      <option value="rainfed">Rainfed</option>
+                      <option value="river">River / Stream</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <button type="button" class="btn btn-add-plot" id="addPlotBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              आणखी प्लॉट जोडा / Add Another Plot
+            </button>
+            <p class="form-hint form-hint-error" id="plotWarning" hidden>किमान एक प्लॉट आवश्यक आहे. / At least one plot is required.</p>
+          </fieldset>
+
+          <!-- संमती / Consent -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              संमती व गोपनीयता <span class="label-en">Consent &amp; Privacy</span>
+            </legend>
+            <p class="consent-note">तुमची माहिती केवळ सभासदत्वाच्या अर्जाच्या पडताळणीसाठी वापरली जाईल आणि ती तिसऱ्यांशी सामायिक केली जाणार नाही. / Your information will be used only to review your membership application and will not be shared with third parties.</p>
+            <div class="field consent-field">
+              <label class="checkbox-label">
+                <input type="checkbox" id="consent" name="consent" required>
+                <span>मी वरील माहिती खरी असून तिच्या वापरास माझी संमती आहे. <span class="label-en">I consent to the use of the information above.</span></span>
+              </label>
+            </div>
+          </fieldset>
+
+          <!-- Honeypot (bots fill this; real users never see it) -->
+          <div class="hp-field" aria-hidden="true">
+            <label for="website">Website</label>
+            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
           </div>
-          <div class="field">
-            <label for="message">संदेश (ऐच्छिक)</label>
-            <textarea id="message" name="message" rows="3" placeholder="तुमचा संदेश लिहा"></textarea>
-          </div>
-          <button type="submit" class="btn btn-submit">नोंदणी सबमिट करा</button>
+
+          <div class="form-error" id="formError" role="alert" aria-live="assertive" hidden></div>
+
+          <button type="submit" class="btn btn-submit" id="submitBtn">
+            <span class="btn-text">नोंदणी सबमिट करा / Submit Registration</span>
+            <span class="btn-loading" hidden>
+              <svg class="spinner" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="31.4" stroke-linecap="round"/></svg>
+              सबमिट होत आहे... / Submitting...
+            </span>
+          </button>
         </form>
         <div class="form-success" id="formSuccess" role="status" aria-live="polite" hidden>
           <span class="success-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </span>
-          <h3>तुमची नोंदणी यशस्वी झाली!</h3>
-          <p>आम्ही लवकरच तुमच्याशी संपर्क साधू.</p>
+          <h3>तुमचा अर्ज प्राप्त झाला! <span class="label-en">Application Received!</span></h3>
+          <p>तुमच्या अर्जाची पडताळणी करून आम्ही लवकरच तुमच्याशी संपर्क साधू. / We will review your application and contact you soon.</p>
         </div>
       </div>
     </div>
   </section>
+
+  </main>
 
   <footer class="footer" id="contact">
     <div class="container">
