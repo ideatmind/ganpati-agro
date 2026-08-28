@@ -16,7 +16,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ganpati-agro.vercel.app"),
+  metadataBase: new URL("https://www.ganpatiagro.in"),
   title: "गणपती ॲग्रो प्रोड्युसर कंपनी लि. | Ganpati Agro Producer Co. Ltd.",
   description:
     "गणपती ॲग्रो प्रोड्युसर कंपनी — २०१६ पासून बळीराजाच्या सेवेत. शेतकरी समूह शेती, मूल्यवर्धन व बाजार जोडणी. Farmer-centric cluster agriculture in Dharashiv, Maharashtra.",
