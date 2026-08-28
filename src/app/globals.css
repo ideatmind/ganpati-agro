@@ -27,7 +27,7 @@
 html { scroll-behavior: smooth; scroll-padding-top: 84px; -webkit-text-size-adjust: 100%; }
 
 body {
-  font-family: 'Noto Sans Devanagari','Poppins',system-ui,sans-serif;
+  font-family: var(--font-noto-sans), var(--font-poppins), 'Noto Sans Devanagari', 'Poppins', system-ui, sans-serif;
   color: var(--ink);
   background: var(--white);
   line-height: 1.7;
@@ -201,7 +201,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .purpose-card::before {
   content: ''; position: absolute; inset: 0;
-  background: url('assets/card%20layout.svg') no-repeat center/contain;
+  background: url('/card-layout.svg') no-repeat center/contain;
   opacity: .35; z-index: 0;
   transition: opacity .5s ease, transform .5s ease;
 }
@@ -279,7 +279,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .stat::before {
   content: ''; position: absolute; inset: 0;
-  background: url('assets/card%20layout.svg') no-repeat center/contain;
+  background: url('/card-layout.svg') no-repeat center/contain;
   opacity: .30; z-index: 0;
   transition: opacity .5s ease, transform .5s ease;
 }
@@ -318,7 +318,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .benefit h3 { font-size: 1.2rem; margin-bottom: 16px; }
 .benefit ul { display: flex; flex-direction: column; gap: 10px; }
 .benefit li { font-size: .95rem; padding-left: 22px; position: relative; opacity: .94; }
-.benefit li::before { content: '✓'; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
+.benefit li::before { content: 'Γ£ô'; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
 .membership-cta { text-align: center; }
 .fee { font-size: 1.2rem; margin-bottom: 22px; }
 .fee strong { color: var(--gold); font-size: 1.5rem; }
