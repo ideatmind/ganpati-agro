@@ -44,7 +44,7 @@ export default function Navbar() {
           className={`nav-links${isOpen ? " open" : ""}`}
           id="navLinks"
           aria-label="मुख्य मेनू"
-          {...(isMobile && !isOpen ? { inert: "" as unknown as string } : {})}
+          {...(isMobile && !isOpen ? { inert: true } : {})}
         >
           {LINKS.map((link) => (
             <a key={link.href} href={link.href} onClick={() => setIsOpen(false)}>
