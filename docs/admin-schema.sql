@@ -150,9 +150,9 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
-  v_reg   RECORD;
+  v_reg       RECORD;
   v_farmer_id UUID;
-  v_plot  RECORD;
+  v_plot      RECORD;
 BEGIN
   -- Enable bypass for the append-only trigger
   PERFORM set_config('app.admin_bypass', 'true', true);
@@ -165,20 +165,29 @@ BEGIN
     RAISE EXCEPTION 'Registration is already %', v_reg.status;
   END IF;
 
-  -- Copy to farmers table (ON CONFLICT to handle duplicates)
-  INSERT INTO farmers (name, mobile, date_of_birth, aadhar_no, village, taluka, district, income_source, cluster_type)
-  VALUES (v_reg.name, v_reg.mobile, v_reg.date_of_birth, v_reg.aadhar_no,
-          v_reg.village, v_reg.taluka, v_reg.district,
-          v_reg.income_source, v_reg.cluster_type)
-  ON CONFLICT (mobile) DO UPDATE SET
-    name = EXCLUDED.name,
-    date_of_birth = EXCLUDED.date_of_birth,
-    village = EXCLUDED.village,
-    taluka = EXCLUDED.taluka,
-    district = EXCLUDED.district,
-    income_source = EXCLUDED.income_source,
-    cluster_type = EXCLUDED.cluster_type
-  RETURNING id INTO v_farmer_id;
+  -- Check if farmer already exists (by mobile)
+  SELECT id INTO v_farmer_id FROM farmers WHERE mobile = v_reg.mobile;
+
+  IF v_farmer_id IS NOT NULL THEN
+    -- Update existing farmer
+    UPDATE farmers SET
+      name = v_reg.name,
+      date_of_birth = v_reg.date_of_birth,
+      aadhar_no = v_reg.aadhar_no,
+      village = v_reg.village,
+      taluka = v_reg.taluka,
+      district = v_reg.district,
+      income_source = v_reg.income_source,
+      cluster_type = v_reg.cluster_type
+    WHERE id = v_farmer_id;
+  ELSE
+    -- Insert new farmer
+    INSERT INTO farmers (name, mobile, date_of_birth, aadhar_no, village, taluka, district, income_source, cluster_type)
+    VALUES (v_reg.name, v_reg.mobile, v_reg.date_of_birth, v_reg.aadhar_no,
+            v_reg.village, v_reg.taluka, v_reg.district,
+            v_reg.income_source, v_reg.cluster_type)
+    RETURNING id INTO v_farmer_id;
+  END IF;
 
   -- Copy plots
   FOR v_plot IN
@@ -276,19 +285,24 @@ BEGIN
    WHERE (p_search IS NULL OR f.name ILIKE '%' || p_search || '%'
                            OR f.mobile ILIKE '%' || p_search || '%');
 
-  SELECT COALESCE(jsonb_agg(jsonb_build_object(
-    'id', f.id, 'name', f.name, 'mobile', f.mobile,
-    'date_of_birth', f.date_of_birth,
-    'village', f.village, 'taluka', f.taluka,
-    'district', f.district, 'income_source', f.income_source,
-    'cluster_type', f.cluster_type,
-    'created_at', f.created_at
-  ) ORDER BY f.created_at DESC), '[]'::jsonb) INTO v_rows
-  FROM farmers f
-  WHERE (p_search IS NULL OR f.name ILIKE '%' || p_search || '%'
-                          OR f.mobile ILIKE '%' || p_search || '%')
-  ORDER BY f.created_at DESC
-  LIMIT p_limit OFFSET p_offset;
+  SELECT COALESCE(jsonb_agg(row_data ORDER BY created DESC), '[]'::jsonb)
+    INTO v_rows
+    FROM (
+      SELECT f.created_at AS created,
+             jsonb_build_object(
+               'id', f.id, 'name', f.name, 'mobile', f.mobile,
+               'date_of_birth', f.date_of_birth,
+               'village', f.village, 'taluka', f.taluka,
+               'district', f.district, 'income_source', f.income_source,
+               'cluster_type', f.cluster_type,
+               'created_at', f.created_at
+             ) AS row_data
+        FROM farmers f
+       WHERE (p_search IS NULL OR f.name ILIKE '%' || p_search || '%'
+                               OR f.mobile ILIKE '%' || p_search || '%')
+       ORDER BY f.created_at DESC
+       LIMIT p_limit OFFSET p_offset
+    ) sub;
 
   RETURN jsonb_build_object('rows', v_rows, 'total', v_total);
 END;

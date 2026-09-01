@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 export default function AdminLogin() {
   const router = useRouter();
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,10 +19,10 @@ export default function AdminLogin() {
       const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ username, password }),
       });
       if (!res.ok) {
-        setError("Invalid password");
+        setError("Invalid username or password");
         return;
       }
       router.push("/admin");
@@ -46,15 +47,18 @@ export default function AdminLogin() {
 
         <form onSubmit={handleSubmit}>
           <div className="admin-field">
+            <label htmlFor="adminUsername">Username</label>
+            <input type="text" id="adminUsername" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Enter username" required autoFocus autoComplete="username" />
+          </div>
+          <div className="admin-field">
             <label htmlFor="adminPassword">Password</label>
             <input
               type="password"
               id="adminPassword"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter admin password"
+              placeholder="Enter password"
               required
-              autoFocus
               autoComplete="current-password"
             />
           </div>

@@ -1,40 +1,19 @@
 "use client";
 
-import { useEffect, useState, useCallback, Suspense } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import AdminShell from "@/components/admin/AdminShell";
+import { useDebounce } from "@/hooks/useDebounce";
+import {
+  PAGE_SIZE,
+  STATUS_OPTIONS,
+  type Registration,
+} from "@/types/admin";
+import { ADMIN_TALUKA_OPTIONS } from "@/lib/constants";
 
-interface Registration {
-  id: string;
-  name: string;
-  mobile: string;
-  village: string;
-  taluka: string;
-  cluster_type: string;
-  status: string;
-  created_at: string;
-}
-
-const STATUS_OPTIONS = [
-  { value: "", label: "All Status" },
-  { value: "pending", label: "Pending" },
-  { value: "approved", label: "Approved" },
-  { value: "rejected", label: "Rejected" },
-];
-
-const TALUKA_OPTIONS = [
-  { value: "", label: "All Talukas" },
-  { value: "dharashiv", label: "Dharashiv" },
-  { value: "tuljapur", label: "Tuljapur" },
-  { value: "umarga", label: "Umarga" },
-  { value: "lohara", label: "Lohara" },
-  { value: "kalamb", label: "Kalamb" },
-  { value: "washi", label: "Washi" },
-  { value: "bhum", label: "Bhum" },
-  { value: "paranda", label: "Paranda" },
-];
-
-const PAGE_SIZE = 20;
+const dateFormatter = new Intl.DateTimeFormat("en-IN", {
+  day: "2-digit", month: "short", year: "numeric",
+});
 
 export default function RegistrationsPage() {
   return (
@@ -55,37 +34,42 @@ function RegistrationsList() {
   const [status, setStatus] = useState(searchParams.get("status") || "");
   const [taluka, setTaluka] = useState("");
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search);
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    const params = new URLSearchParams();
-    params.set("limit", String(PAGE_SIZE));
-    params.set("offset", String(page * PAGE_SIZE));
+  useEffect(() => {
+    const controller = new AbortController();
+    const params = new URLSearchParams({
+      limit: String(PAGE_SIZE),
+      offset: String(page * PAGE_SIZE),
+    });
     if (status) params.set("status", status);
     if (taluka) params.set("taluka", taluka);
-    if (search) params.set("search", search);
+    if (debouncedSearch) params.set("search", debouncedSearch);
 
-    try {
-      const res = await fetch(`/api/admin/registrations?${params}`);
-      const data = await res.json();
-      setRows(data.rows || []);
-      setTotal(data.total || 0);
-    } catch (err) {
-      console.error("Failed to fetch registrations", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, status, taluka, search]);
+    fetch(`/api/admin/registrations?${params}`, {
+      signal: controller.signal,
+      cache: "no-store",
+    })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Failed to fetch registrations");
+        return response.json();
+      })
+      .then((data: { rows?: Registration[]; total?: number }) => {
+        setRows(data.rows ?? []);
+        setTotal(data.total ?? 0);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        console.error("Failed to fetch registrations", error);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+    return () => controller.abort();
+  }, [page, status, taluka, debouncedSearch]);
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
-
-  function formatDate(iso: string) {
-    return new Date(iso).toLocaleDateString("en-IN", {
-      day: "2-digit", month: "short", year: "numeric",
-    });
-  }
 
   return (
     <AdminShell>
@@ -96,14 +80,14 @@ function RegistrationsList() {
             type="text"
             placeholder="Search by name or mobile..."
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+            onChange={(e) => { setLoading(true); setSearch(e.target.value); setPage(0); }}
             className="admin-search-input"
           />
-          <select value={status} onChange={(e) => { setStatus(e.target.value); setPage(0); }} className="admin-select">
+          <select value={status} onChange={(e) => { setLoading(true); setStatus(e.target.value); setPage(0); }} className="admin-select">
             {STATUS_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
-          <select value={taluka} onChange={(e) => { setTaluka(e.target.value); setPage(0); }} className="admin-select">
-            {TALUKA_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+          <select value={taluka} onChange={(e) => { setLoading(true); setTaluka(e.target.value); setPage(0); }} className="admin-select">
+            {ADMIN_TALUKA_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
         </div>
 
@@ -138,7 +122,7 @@ function RegistrationsList() {
                     <td className="admin-td-capitalize">{r.taluka}</td>
                     <td className="admin-td-capitalize">{r.cluster_type}</td>
                     <td><span className={`admin-badge admin-badge-${r.status}`}>{r.status}</span></td>
-                    <td className="admin-td-date">{formatDate(r.created_at)}</td>
+                    <td className="admin-td-date">{dateFormatter.format(new Date(r.created_at))}</td>
                   </tr>
                 ))
               )}
@@ -151,7 +135,7 @@ function RegistrationsList() {
           <div className="admin-pagination">
             <button
               disabled={page === 0}
-              onClick={() => setPage((p) => p - 1)}
+              onClick={() => { setLoading(true); setPage((p) => p - 1); }}
               className="admin-btn admin-btn-sm"
             >
               ← Previous
@@ -161,7 +145,7 @@ function RegistrationsList() {
             </span>
             <button
               disabled={page >= totalPages - 1}
-              onClick={() => setPage((p) => p + 1)}
+              onClick={() => { setLoading(true); setPage((p) => p + 1); }}
               className="admin-btn admin-btn-sm"
             >
               Next →

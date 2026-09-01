@@ -1,39 +1,35 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { use } from "react";
+import { use, useEffect, useState } from "react";
 import AdminShell from "@/components/admin/AdminShell";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { type RegistrationDetail } from "@/types/admin";
+import { TALUKA_OPTIONS } from "@/lib/constants";
 
-interface Plot {
-  id: string;
-  plot_no: string;
-  area_acres: number;
-  crop_name: string;
-  irrigation_source: string;
-}
+const INCOME_OPTIONS = ["agriculture", "business", "job", "other"];
+const CLUSTER_OPTIONS = ["pulses", "cereals", "cash", "fruits", "vegs", "allied"];
 
-interface RegistrationDetail {
-  id: string;
-  request_id: string;
+interface EditForm {
   name: string;
   mobile: string;
   date_of_birth: string;
-  aadhar_no: string;
   village: string;
   taluka: string;
   district: string;
   income_source: string;
   cluster_type: string;
-  consent_given: boolean;
-  status: string;
-  source: string;
-  created_at: string;
-  reviewed_at: string | null;
-  reviewer_notes: string | null;
-  plots: Plot[];
 }
+
+interface ReviewResult {
+  status: RegistrationDetail["status"];
+  reviewed_at: string;
+  reviewer_notes: string | null;
+}
+
+const dateFormatter = new Intl.DateTimeFormat("en-IN", {
+  day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
+});
 
 export default function RegistrationDetailPage({
   params,
@@ -47,13 +43,31 @@ export default function RegistrationDetailPage({
   const [actionLoading, setActionLoading] = useState(false);
   const [notes, setNotes] = useState("");
   const [showConfirm, setShowConfirm] = useState<"approve" | "reject" | null>(null);
+  const [editForm, setEditForm] = useState<EditForm | null>(null);
+  const [editError, setEditError] = useState("");
 
   useEffect(() => {
-    fetch(`/api/admin/registrations/${id}`)
-      .then((r) => r.json())
-      .then((d) => setData(d))
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    const controller = new AbortController();
+    fetch(`/api/admin/registrations/${id}`, {
+      signal: controller.signal,
+      cache: "no-store",
+    })
+      .then(async (response) => {
+        if (response.status === 404) return null;
+        if (!response.ok) throw new Error("Failed to fetch registration");
+        return response.json() as Promise<RegistrationDetail>;
+      })
+      .then(setData)
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        console.error("Failed to fetch registration", error);
+        setData(null);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+
+    return () => controller.abort();
   }, [id]);
 
   async function handleAction(action: "approve" | "reject") {
@@ -65,9 +79,15 @@ export default function RegistrationDetailPage({
         body: JSON.stringify({ action, notes: notes || undefined }),
       });
       if (res.ok) {
-        // Refetch to show updated status
-        const updated = await fetch(`/api/admin/registrations/${id}`).then((r) => r.json());
-        setData(updated);
+        const result = await res.json() as ReviewResult;
+        // The RPC returns the only fields changed by a review, so updating the
+        // local record avoids a second round trip and duplicate payload.
+        setData((current) => current && {
+          ...current,
+          status: result.status,
+          reviewed_at: result.reviewed_at,
+          reviewer_notes: result.reviewer_notes,
+        });
         setShowConfirm(null);
         setNotes("");
       } else {
@@ -81,15 +101,67 @@ export default function RegistrationDetailPage({
     }
   }
 
-  function formatDate(iso: string) {
-    return new Date(iso).toLocaleDateString("en-IN", {
-      day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
-    });
-  }
-
   function maskAadhar(aadhar: string) {
     if (aadhar.length !== 12) return aadhar;
     return "••••-••••-" + aadhar.slice(8);
+  }
+
+  function openEdit() {
+    if (!data) return;
+    setEditError("");
+    setEditForm({
+      name: data.name,
+      mobile: data.mobile,
+      date_of_birth: data.date_of_birth,
+      village: data.village,
+      taluka: data.taluka,
+      district: data.district,
+      income_source: data.income_source,
+      cluster_type: data.cluster_type,
+    });
+  }
+
+  async function handleEditSave() {
+    if (!editForm) return;
+    setActionLoading(true);
+    setEditError("");
+    try {
+      const res = await fetch(`/api/admin/registrations/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "edit", ...editForm }),
+      });
+      if (res.ok) {
+        const refreshed = await fetch(`/api/admin/registrations/${id}`, { cache: "no-store" });
+        if (refreshed.ok) setData(await refreshed.json());
+        setEditForm(null);
+      } else {
+        const err = await res.json();
+        setEditError(err.error || "Failed to update registration");
+      }
+    } catch {
+      setEditError("Connection error");
+    } finally {
+      setActionLoading(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (!confirm(`Delete this registration? This cannot be undone.`)) return;
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/admin/registrations/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        router.push("/admin/registrations");
+      } else {
+        const err = await res.json();
+        alert(err.error || "Failed to delete registration");
+      }
+    } catch {
+      alert("Connection error");
+    } finally {
+      setActionLoading(false);
+    }
   }
 
   return (
@@ -110,7 +182,7 @@ export default function RegistrationDetailPage({
               <div>
                 <h2 className="admin-detail-name">{data.name}</h2>
                 <p className="admin-detail-meta">
-                  Submitted {formatDate(data.created_at)} · via {data.source}
+                  Submitted {dateFormatter.format(new Date(data.created_at))} · via {data.source}
                 </p>
               </div>
               <span className={`admin-badge admin-badge-lg admin-badge-${data.status}`}>
@@ -194,7 +266,7 @@ export default function RegistrationDetailPage({
             {data.reviewed_at && (
               <div className="admin-card">
                 <h3 className="admin-card-title">Review Info</h3>
-                <p>Reviewed on {formatDate(data.reviewed_at)}</p>
+                <p>Reviewed on {dateFormatter.format(new Date(data.reviewed_at))}</p>
                 {data.reviewer_notes && <p className="admin-notes">{data.reviewer_notes}</p>}
               </div>
             )}
@@ -250,13 +322,82 @@ export default function RegistrationDetailPage({
                       </svg>
                       Reject
                     </button>
+                    <button className="admin-btn admin-btn-outline" onClick={openEdit}>Edit</button>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Delete (non-approved registrations only) */}
+            {data.status !== "approved" && (
+              <div className="admin-card admin-actions-card">
+                <div className="admin-action-buttons">
+                  <button className="admin-btn admin-btn-danger" onClick={handleDelete} disabled={actionLoading}>
+                    Delete Registration
+                  </button>
+                </div>
               </div>
             )}
           </>
         )}
       </div>
+
+      {/* Edit modal */}
+      {editForm && (
+        <div className="admin-modal-overlay" onClick={() => setEditForm(null)}>
+          <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+            <h2>Edit Registration</h2>
+
+            <div className="admin-field">
+              <label htmlFor="rg-name">Full Name</label>
+              <input type="text" id="rg-name" value={editForm.name} onChange={(e) => setEditForm((s) => ({ ...s!, name: e.target.value }))} />
+            </div>
+            <div className="admin-field">
+              <label htmlFor="rg-mobile">Mobile</label>
+              <input type="text" id="rg-mobile" value={editForm.mobile} onChange={(e) => setEditForm((s) => ({ ...s!, mobile: e.target.value }))} />
+            </div>
+            <div className="admin-field">
+              <label htmlFor="rg-dob">Date of Birth</label>
+              <input type="date" id="rg-dob" value={editForm.date_of_birth} onChange={(e) => setEditForm((s) => ({ ...s!, date_of_birth: e.target.value }))} />
+            </div>
+            <div className="admin-field">
+              <label htmlFor="rg-village">Village</label>
+              <input type="text" id="rg-village" value={editForm.village} onChange={(e) => setEditForm((s) => ({ ...s!, village: e.target.value }))} />
+            </div>
+            <div className="admin-field">
+              <label htmlFor="rg-taluka">Taluka</label>
+              <select id="rg-taluka" className="admin-select" style={{ width: "100%" }} value={editForm.taluka} onChange={(e) => setEditForm((s) => ({ ...s!, taluka: e.target.value }))}>
+                {TALUKA_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+            </div>
+            <div className="admin-field">
+              <label htmlFor="rg-district">District</label>
+              <input type="text" id="rg-district" value={editForm.district} onChange={(e) => setEditForm((s) => ({ ...s!, district: e.target.value }))} />
+            </div>
+            <div className="admin-field">
+              <label htmlFor="rg-income">Income Source</label>
+              <select id="rg-income" className="admin-select" style={{ width: "100%" }} value={editForm.income_source} onChange={(e) => setEditForm((s) => ({ ...s!, income_source: e.target.value }))}>
+                {INCOME_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+              </select>
+            </div>
+            <div className="admin-field">
+              <label htmlFor="rg-cluster">Cluster Type</label>
+              <select id="rg-cluster" className="admin-select" style={{ width: "100%" }} value={editForm.cluster_type} onChange={(e) => setEditForm((s) => ({ ...s!, cluster_type: e.target.value }))}>
+                {CLUSTER_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+              </select>
+            </div>
+
+            {editError && <p className="admin-error">{editError}</p>}
+
+            <div className="admin-modal-actions">
+              <button className="admin-btn admin-btn-outline" onClick={() => setEditForm(null)} disabled={actionLoading}>Cancel</button>
+              <button className="admin-btn admin-btn-primary" onClick={handleEditSave} disabled={actionLoading}>
+                {actionLoading ? "Saving..." : "Save Changes"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminShell>
   );
 }

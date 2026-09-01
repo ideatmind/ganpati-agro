@@ -3,29 +3,73 @@
 import { useEffect, useState } from "react";
 import AdminShell from "@/components/admin/AdminShell";
 import Link from "next/link";
+import { type DashboardStats, type AuditLogEntry } from "@/types/admin";
+import { TALUKA_LABELS } from "@/lib/constants";
 
-interface Stats {
-  registrations: Record<string, number>;
-  by_taluka: Record<string, number>;
-  total_farmers: number;
+type Stats = DashboardStats;
+
+interface SessionIdentity {
+  id: string;
+  username: string;
+  displayName: string;
+  role: "admin" | "super_admin";
 }
 
-const TALUKA_LABELS: Record<string, string> = {
-  dharashiv: "Dharashiv", tuljapur: "Tuljapur", umarga: "Umarga",
-  lohara: "Lohara", kalamb: "Kalamb", washi: "Washi",
-  bhum: "Bhum", paranda: "Paranda", other: "Other",
-};
+const activityDateFormatter = new Intl.DateTimeFormat("en-IN", {
+  day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit",
+});
+
+function humanizeAction(action: string): string {
+  return action.replace(/_/g, " ");
+}
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activity, setActivity] = useState<AuditLogEntry[] | null>(null);
 
   useEffect(() => {
-    fetch("/api/admin/stats")
-      .then((r) => r.json())
-      .then((d) => setStats(d))
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    const controller = new AbortController();
+    fetch("/api/admin/stats", { signal: controller.signal, cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Failed to fetch dashboard stats");
+        return response.json() as Promise<Stats>;
+      })
+      .then(setStats)
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        console.error("Failed to fetch dashboard stats", error);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/admin/session", { signal: controller.signal, cache: "no-store" })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("session unavailable");
+        return res.json() as Promise<SessionIdentity>;
+      })
+      .then((identity) => {
+        if (identity.role !== "super_admin") return null;
+        return fetch("/api/admin/activity?limit=5", { signal: controller.signal, cache: "no-store" });
+      })
+      .then((res) => {
+        if (!res) return null;
+        if (!res.ok) throw new Error("Failed to fetch activity");
+        return res.json() as Promise<{ rows?: AuditLogEntry[] }>;
+      })
+      .then((data) => {
+        if (data?.rows) setActivity(data.rows);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+      });
+    return () => controller.abort();
   }, []);
 
   const total = stats
@@ -124,6 +168,34 @@ export default function AdminDashboard() {
                         <span className="admin-taluka-count">{count}</span>
                       </div>
                     ))}
+                </div>
+              </div>
+            )}
+
+            {/* Recent activity (super_admin only) */}
+            {activity && activity.length > 0 && (
+              <div className="admin-card">
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <h2 className="admin-card-title">Recent Activity</h2>
+                  <Link href="/admin/activity" className="admin-back-link" style={{ marginBottom: 0 }}>
+                    View all →
+                  </Link>
+                </div>
+                <div className="admin-activity-feed">
+                  {activity.map((entry) => (
+                    <div key={entry.id} className="admin-activity-row">
+                      <span className={`admin-badge admin-badge-${entry.action.includes("fail") ? "rejected" : entry.action === "login" ? "pending" : "approved"}`}>
+                        {humanizeAction(entry.action)}
+                      </span>
+                      <span className="admin-activity-text">
+                        <strong>{entry.admin_username}</strong>
+                        {entry.target_table ? ` · ${entry.target_table.replace(/_/g, " ")}` : ""}
+                      </span>
+                      <span className="admin-td-date">
+                        {activityDateFormatter.format(new Date(entry.created_at))}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}

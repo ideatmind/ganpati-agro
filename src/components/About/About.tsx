@@ -9,9 +9,9 @@ export default function About() {
           <Image
             src="/about-farm.jpg"
             alt="शेतातील शेतकरी"
-            width={1200}
-            height={420}
-            style={{ width: "100%", height: "420px", objectFit: "cover" }}
+            fill
+            sizes="(max-width: 1023px) 100vw, 50vw"
+            style={{ objectFit: "cover" }}
           />
           <div className="about-badge">
             <strong>२०१६</strong>

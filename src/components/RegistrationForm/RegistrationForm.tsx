@@ -2,9 +2,17 @@
 
 import { useState, useEffect, useRef, type FormEvent } from "react";
 import ScrollReveal from "../shared/ScrollReveal";
+import { TALUKA_OPTIONS } from "@/lib/constants";
 
 const MAX_PLOTS = 10;
 const REQUEST_TIMEOUT_MS = 15000;
+
+function todayIso(): string {
+  const d = new Date();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
 
 interface FarmPlot {
   plotNo: string;
@@ -13,38 +21,31 @@ interface FarmPlot {
   irrigationSource: string;
 }
 
-const TALUKA_OPTIONS = [
-  { value: "dharashiv", label: "Dharashiv" },
-  { value: "tuljapur", label: "Tuljapur" },
-  { value: "umarga", label: "Umarga" },
-  { value: "lohara", label: "Lohara" },
-  { value: "kalamb", label: "Kalamb" },
-  { value: "washi", label: "Washi" },
-  { value: "bhum", label: "Bhum" },
-  { value: "paranda", label: "Paranda" },
-  { value: "other", label: "Other" },
+const INCOME_OPTIONS = [
+  { value: "agriculture", label: "Agriculture", labelMr: "शेती" },
+  { value: "business", label: "Business", labelMr: "व्यवसाय" },
+  { value: "job", label: "Job", labelMr: "नोकरी" },
+  { value: "other", label: "Other", labelMr: "इतर" },
 ];
 
-const INCOME_OPTIONS = ["agriculture", "business", "job", "other"];
-
 const CLUSTER_OPTIONS = [
-  { value: "pulses", label: "Pulses" },
-  { value: "cereals", label: "Cereals" },
-  { value: "cash", label: "Cash Crops" },
-  { value: "fruits", label: "Fruits" },
-  { value: "vegs", label: "Vegetables" },
-  { value: "allied", label: "Allied Business" },
+  { value: "pulses", label: "Pulses", labelMr: "कडधान्ये" },
+  { value: "cereals", label: "Cereals", labelMr: "तृणधान्ये" },
+  { value: "cash", label: "Cash Crops", labelMr: "नगदी पिके" },
+  { value: "fruits", label: "Fruits", labelMr: "फळे" },
+  { value: "vegs", label: "Vegetables", labelMr: "भाजीपाला" },
+  { value: "allied", label: "Allied Business", labelMr: "संलग्न व्यवसाय" },
 ];
 
 const IRRIGATION_OPTIONS = [
-  { value: "well", label: "Well" },
-  { value: "borewell", label: "Borewell" },
-  { value: "canal", label: "Canal" },
-  { value: "drip", label: "Drip Irrigation" },
-  { value: "sprinkler", label: "Sprinkler" },
-  { value: "rainfed", label: "Rainfed" },
-  { value: "river", label: "River / Stream" },
-  { value: "other", label: "Other" },
+  { value: "well", label: "Well", labelMr: "विहीर" },
+  { value: "borewell", label: "Borewell", labelMr: "कूपनलिका (बोअरवेल)" },
+  { value: "canal", label: "Canal", labelMr: "कालवा" },
+  { value: "drip", label: "Drip Irrigation", labelMr: "ठिबक सिंचन" },
+  { value: "sprinkler", label: "Sprinkler", labelMr: "तुषार सिंचन" },
+  { value: "rainfed", label: "Rainfed", labelMr: "कोरडवाहू" },
+  { value: "river", label: "River / Stream", labelMr: "नदी / ओढा" },
+  { value: "other", label: "Other", labelMr: "इतर" },
 ];
 
 const EMPTY_PLOT: FarmPlot = { plotNo: "", area: "", cropName: "", irrigationSource: "" };
@@ -73,7 +74,16 @@ async function submitRegistration(payload: unknown) {
       body: JSON.stringify(payload),
       signal: controller.signal,
     });
-    if (!res.ok) throw new Error("Request failed");
+    if (!res.ok) {
+      let message = "Request failed";
+      try {
+        const data = (await res.json()) as { error?: unknown };
+        if (data && typeof data.error === "string" && data.error) message = data.error;
+      } catch {
+        // Non-JSON error body; keep the generic message.
+      }
+      throw new Error(message);
+    }
     return res.json();
   } finally {
     clearTimeout(timer);
@@ -149,10 +159,14 @@ export default function RegistrationForm() {
       await submitRegistration(payload);
       setIsSuccess(true);
     } catch (err) {
+      const isTimeout = err instanceof Error && err.name === "AbortError";
+      const serverMessage = err instanceof Error && err.message && err.message !== "Request failed" ? err.message : "";
       setError(
-        err instanceof Error && err.name === "AbortError"
+        isTimeout
           ? "वेळ संपली. कृपया पुन्हा प्रयत्न करा. / Request timed out. Please try again."
-          : "नोंदणी अयशस्वी. कृपया पुन्हा प्रयत्न करा. / Registration failed. Please try again."
+          : serverMessage
+            ? `${serverMessage} / कृपया माहिती तपासून पुन्हा प्रयत्न करा.`
+            : "नोंदणी अयशस्वी. कृपया पुन्हा प्रयत्न करा. / Registration failed. Please try again."
       );
       console.error("Registration error:", err);
     } finally {
@@ -196,7 +210,7 @@ export default function RegistrationForm() {
                   </div>
                   <div className="field">
                     <label htmlFor="dob">जन्मतारीख <span className="label-en">Date of Birth</span> <span className="required">*</span></label>
-                    <input type="date" id="dob" name="dob" required />
+                    <input type="date" id="dob" name="dob" required max={todayIso()} />
                   </div>
                 </div>
 
@@ -213,8 +227,8 @@ export default function RegistrationForm() {
                   <div className="field">
                     <label htmlFor="taluka">तालुका <span className="label-en">Taluka</span> <span className="required">*</span></label>
                     <select id="taluka" name="taluka" required defaultValue="">
-                      <option value="">Select Taluka</option>
-                      {TALUKA_OPTIONS.map((o) => (<option key={o.value} value={o.value}>{o.label}</option>))}
+                      <option value="">तालुका निवडा / Select Taluka</option>
+                      {TALUKA_OPTIONS.map((o) => (<option key={o.value} value={o.value}>{o.labelMr} / {o.label}</option>))}
                     </select>
                   </div>
                 </div>
@@ -227,8 +241,8 @@ export default function RegistrationForm() {
                 <div className="field">
                   <label>उत्पन्नाचे साधन <span className="label-en">Income Source</span> <span className="required">*</span></label>
                   <div className="radio-group">
-                    {INCOME_OPTIONS.map((value) => (
-                      <label key={value}><input type="radio" name="income" value={value} required /> {value.charAt(0).toUpperCase() + value.slice(1)}</label>
+                    {INCOME_OPTIONS.map((o) => (
+                      <label key={o.value}><input type="radio" name="income" value={o.value} required /> {o.labelMr} / {o.label}</label>
                     ))}
                   </div>
                 </div>
@@ -236,8 +250,8 @@ export default function RegistrationForm() {
                 <div className="field">
                   <label htmlFor="clusterType">समूह प्रकार <span className="label-en">Cluster Type</span> <span className="required">*</span></label>
                   <select id="clusterType" name="clusterType" required defaultValue="">
-                    <option value="">Select Cluster Type</option>
-                    {CLUSTER_OPTIONS.map((o) => (<option key={o.value} value={o.value}>{o.label}</option>))}
+                    <option value="">समूह प्रकार निवडा / Select Cluster Type</option>
+                    {CLUSTER_OPTIONS.map((o) => (<option key={o.value} value={o.value}>{o.labelMr} / {o.label}</option>))}
                   </select>
                 </div>
               </fieldset>
@@ -277,8 +291,8 @@ export default function RegistrationForm() {
                       <div className="field">
                         <label htmlFor={`irrigationSource_${i}`}>सिंचन स्रोत <span className="label-en">Irrigation Source</span> <span className="required">*</span></label>
                         <select id={`irrigationSource_${i}`} required value={plot.irrigationSource} onChange={(e) => updatePlot(i, "irrigationSource", e.target.value)}>
-                          <option value="">Select Source</option>
-                          {IRRIGATION_OPTIONS.map((o) => (<option key={o.value} value={o.value}>{o.label}</option>))}
+                          <option value="">स्रोत निवडा / Select Source</option>
+                          {IRRIGATION_OPTIONS.map((o) => (<option key={o.value} value={o.value}>{o.labelMr} / {o.label}</option>))}
                         </select>
                       </div>
                     </div>
