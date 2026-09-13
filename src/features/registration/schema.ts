@@ -1,0 +1,36 @@
+import { z } from "zod";
+import { CLUSTER_OPTIONS, DISTRICTS, INCOME_OPTIONS, IRRIGATION_OPTIONS, TALUKAS } from "@/shared/constants";
+
+const districtValues = DISTRICTS.map((item) => item.value) as [string, ...string[]];
+const talukaValues = TALUKAS.map((item) => item[0]) as [string, ...string[]];
+
+export const registrationSchema = z.object({
+  name: z.string().trim().min(2).max(200),
+  mobile: z.string().trim().regex(/^\d{10}$/),
+  password: z.string().min(8).max(128),
+  date_of_birth: z.iso.date(),
+  aadhar_no: z.string().trim().regex(/^\d{12}$/),
+  village: z.string().trim().min(1).max(200),
+  district: z.enum(districtValues),
+  taluka: z.enum(talukaValues),
+  income_source: z.enum(INCOME_OPTIONS),
+  cluster_type: z.enum(CLUSTER_OPTIONS),
+  referral_code: z.string().trim().max(16).optional().default(""),
+  cash_received: z.boolean().optional().default(false),
+  cash_note: z.string().trim().max(200).optional().default(""),
+  consent: z.literal(true),
+  website: z.string().max(0).optional().default(""),
+  plots: z.array(z.object({
+    plot_no: z.string().trim().min(1).max(100),
+    area_acres: z.coerce.number().positive().max(100_000),
+    crop_name: z.string().trim().min(1).max(100),
+    irrigation_source: z.enum(IRRIGATION_OPTIONS),
+  })).min(1).max(10),
+}).superRefine((data, ctx) => {
+  const match = TALUKAS.some(([taluka, district]) => taluka === data.taluka && district === data.district);
+  if (!match) ctx.addIssue({ code: "custom", path: ["taluka"], message: "Taluka does not belong to the selected district" });
+  const birth = new Date(`${data.date_of_birth}T00:00:00Z`);
+  if (Number.isNaN(birth.getTime()) || birth > new Date()) ctx.addIssue({ code: "custom", path: ["date_of_birth"], message: "Date of birth must be in the past" });
+});
+
+export type RegistrationInput = z.infer<typeof registrationSchema>;

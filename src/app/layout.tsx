@@ -1,48 +1,25 @@
 import type { Metadata } from "next";
-import { Noto_Sans_Devanagari, Poppins } from "next/font/google";
+import type { ReactNode } from "react";
+import "@fontsource/noto-sans-devanagari/400.css";
+import "@fontsource/noto-sans-devanagari/600.css";
+import "@fontsource/noto-sans-devanagari/700.css";
+import "@fontsource/noto-sans-devanagari/800.css";
+import "@fontsource/poppins/400.css";
+import "@fontsource/poppins/600.css";
+import "@fontsource/poppins/700.css";
 import "./globals.css";
-
-const notoSans = Noto_Sans_Devanagari({
-  variable: "--font-noto-sans",
-  subsets: ["devanagari", "latin"],
-  display: "swap",
-});
-
-const poppins = Poppins({
-  variable: "--font-poppins",
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  display: "swap",
-});
+import "./marketing.css";
+import "./legacy-form.css";
+import "./operations.css";
+import "./typography.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.ganpatiagro.in"),
-  title: "गणपती ॲग्रो प्रोड्युसर कंपनी लि. | Ganpati Agro Producer Co. Ltd.",
-  description:
-    "गणपती ॲग्रो प्रोड्युसर कंपनी — २०१६ पासून बळीराजाच्या सेवेत. शेतकरी समूह शेती, मूल्यवर्धन व बाजार जोडणी. Farmer-centric cluster agriculture in Dharashiv, Maharashtra.",
-  openGraph: {
-    title: "गणपती ॲग्रो प्रोड्युसर कंपनी | Ganpati Agro",
-    description: "२०१६ पासून बळीराजाच्या सेवेत. शेतकरी समूह शेती, मूल्यवर्धन, बाजार जोडणी.",
-    type: "website",
-    images: [{ url: "/logo-icon.png" }],
-  },
-  icons: { icon: "/logo-icon.png" },
-  other: { google: "notranslate" },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+  title: { default: "Shri Ganpati Agro", template: "%s | Shri Ganpati Agro" },
+  description: "Growing Farmers. Building Futures. Farmer registration, membership, and trusted agricultural networks.",
+  icons: { icon: "/brand/logo-icon.png" },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
-  return (
-    <html
-      lang="mr"
-      className={`${notoSans.variable} ${poppins.variable} notranslate`}
-      translate="no"
-    >
-      <body>
-        <a className="skip-link" href="#main">
-          मुख्य सामग्रीकडे जा / Skip to content
-        </a>
-        {children}
-      </body>
-    </html>
-  );
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return <html lang="mr" translate="no"><body>{children}</body></html>;
 }

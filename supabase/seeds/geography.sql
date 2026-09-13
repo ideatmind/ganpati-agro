@@ -1,0 +1,10 @@
+insert into public.districts(code,name_en,name_mr) values
+('dharashiv','Dharashiv','धाराशिव'),('solapur','Solapur','सोलापूर'),('beed','Beed','बीड'),('sangli','Sangli','सांगली')
+on conflict(code) do update set name_en=excluded.name_en,name_mr=excluded.name_mr;
+
+insert into public.talukas(code,district_code,name_en,name_mr) values
+('dharashiv','dharashiv','Dharashiv','धाराशिव'),('tuljapur','dharashiv','Tuljapur','तुळजापूर'),('umarga','dharashiv','Umarga','उमरगा'),('lohara','dharashiv','Lohara','लोहारा'),('kalamb','dharashiv','Kalamb','कळंब'),('washi','dharashiv','Washi','वाशी'),('bhum','dharashiv','Bhum','भूम'),('paranda','dharashiv','Paranda','परांडा'),
+('akkalkot','solapur','Akkalkot','अक्कलकोट'),('barshi','solapur','Barshi','बार्शी'),('karmala','solapur','Karmala','करमाळा'),('madha','solapur','Madha','माढा'),('malshiras','solapur','Malshiras','माळशिरस'),('mangalwedha','solapur','Mangalwedha','मंगळवेढा'),('mohol','solapur','Mohol','मोहोळ'),('pandharpur','solapur','Pandharpur','पंढरपूर'),('sangola','solapur','Sangola','सांगोला'),('solapur_north','solapur','North Solapur','सोलापूर उत्तर'),('solapur_south','solapur','South Solapur','सोलापूर दक्षिण'),
+('beed','beed','Beed','बीड'),('ashti','beed','Ashti','आष्टी'),('patoda','beed','Patoda','पाटोदा'),('shirur_kasar','beed','Shirur Kasar','शिरूर कासार'),('georai','beed','Georai','गेवराई'),('ambajogai','beed','Ambajogai','अंबाजोगाई'),('wadwani','beed','Wadwani','वडवणी'),('kaij','beed','Kaij','केज'),('dharur','beed','Dharur','धारूर'),('parli_vaijnath','beed','Parli Vaijnath','परळी वैजनाथ'),('majalgaon','beed','Majalgaon','माजलगाव'),
+('shirala','sangli','Shirala','शिराळा'),('walwa','sangli','Walwa','वाळवा'),('palus','sangli','Palus','पळूस'),('kadegaon','sangli','Kadegaon','कडेगाव'),('khanapur','sangli','Khanapur (Vita)','खानापूर'),('atpadi','sangli','Atpadi','आटपाडी'),('tasgaon','sangli','Tasgaon','तासगाव'),('miraj','sangli','Miraj','मिरज'),('kavathemahankal','sangli','Kavathe-Mahankal','कवठे महांकाळ'),('jat','sangli','Jat','जत')
+on conflict(code) do update set district_code=excluded.district_code,name_en=excluded.name_en,name_mr=excluded.name_mr;
