@@ -1,0 +1,28 @@
+{
+  "recordedAt": "2026-09-14T12:18:08.657Z",
+  "method": "HTML-referenced JS and CSS fetched once; decoded response bytes compressed with Node gzip. Not browser execution, LCP or mobile score.",
+  "live": {
+    "js": {
+      "files": 9,
+      "raw": 595906,
+      "gzip": 184892
+    },
+    "css": {
+      "files": 1,
+      "raw": 38655,
+      "gzip": 8137
+    }
+  },
+  "candidate": {
+    "js": {
+      "files": 9,
+      "raw": 597264,
+      "gzip": 185256
+    },
+    "css": {
+      "files": 1,
+      "raw": 42485,
+      "gzip": 8894
+    }
+  }
+}

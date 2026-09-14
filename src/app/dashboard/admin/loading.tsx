@@ -1,0 +1,1 @@
+export default function Loading(){return <div className="admin-page-heading" role="status"><div><span className="admin-kicker">Admin workspace</span><h1>Loading records…</h1><p>Your workspace is being updated.</p></div></div>;}

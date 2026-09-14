@@ -3,13 +3,17 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "engines": { "node": "22.x" },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "node --test --experimental-strip-types tests/*.test.ts"
+    "test": "node --import ./tests/register-loader.mjs --test --experimental-strip-types tests/*.test.ts",
+    "test:db": "node tests/run-database-tests.mjs",
+    "test:concurrency": "node tests/database-concurrency.mjs",
+    "test:http": "node tests/run-http-e2e.mjs"
   },
   "dependencies": {
     "@fontsource/noto-sans-devanagari": "^5.3.0",

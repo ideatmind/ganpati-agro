@@ -1,0 +1,114 @@
+{
+  "environment": "Local production build, isolated 10k-fixture Postgres with per-RPC psql bridge, synthetic Razorpay; excludes real gateway and WAN latency",
+  "recordedAt": "2026-09-14T11:50:07.121Z",
+  "routes": {
+    "home": {
+      "samples": 20,
+      "p50": 4,
+      "p95": 9,
+      "p99": 353,
+      "ttfbP95": 7,
+      "bytes": 36980,
+      "serverTiming": null
+    },
+    "registrationPage": {
+      "samples": 20,
+      "p50": 10,
+      "p95": 13,
+      "p99": 98,
+      "ttfbP95": 12,
+      "bytes": 17561,
+      "serverTiming": null
+    },
+    "loginPage": {
+      "samples": 20,
+      "p50": 6,
+      "p95": 8,
+      "p99": 13,
+      "ttfbP95": 8,
+      "bytes": 9137,
+      "serverTiming": null
+    },
+    "registrationSave": {
+      "samples": 20,
+      "p50": 435,
+      "p95": 560,
+      "p99": 592,
+      "ttfbP95": 559,
+      "bytes": 131,
+      "serverTiming": "step0;desc=\"db.consume_rate_limit\";dur=77, step1;desc=\"db.create_registration\";dur=348, total;dur=427"
+    },
+    "order": {
+      "samples": 20,
+      "p50": 172,
+      "p95": 280,
+      "p99": 305,
+      "ttfbP95": 280,
+      "bytes": 156,
+      "serverTiming": "step0;desc=\"db.prepare_checkout\";dur=91, step1;desc=\"provider.order\";dur=1, step2;desc=\"db.record_payment_order\";dur=84, total;dur=179"
+    },
+    "verification": {
+      "samples": 20,
+      "p50": 180,
+      "p95": 226,
+      "p99": 281,
+      "ttfbP95": 225,
+      "bytes": 211,
+      "serverTiming": "step0;desc=\"db.get_limited_checkout\";dur=89, step1;desc=\"provider.payment\";dur=0, step2;desc=\"db.finalize_registration_payment\";dur=87, total;dur=178"
+    },
+    "status": {
+      "samples": 20,
+      "p50": 82,
+      "p95": 114,
+      "p99": 237,
+      "ttfbP95": 113,
+      "bytes": 247,
+      "serverTiming": "step0;desc=\"db.get_limited_checkout\";dur=80, total;dur=80"
+    },
+    "receipt": {
+      "samples": 20,
+      "p50": 95,
+      "p95": 147,
+      "p99": 162,
+      "ttfbP95": 140,
+      "bytes": 11265,
+      "serverTiming": null
+    },
+    "login": {
+      "samples": 20,
+      "p50": 340,
+      "p95": 391,
+      "p99": 423,
+      "ttfbP95": 391,
+      "bytes": 137,
+      "serverTiming": "step0;desc=\"db.authenticate_limited_session\";dur=351, total;dur=352"
+    },
+    "dashboard": {
+      "samples": 20,
+      "p50": 169,
+      "p95": 261,
+      "p99": 279,
+      "ttfbP95": 25,
+      "bytes": 13288,
+      "serverTiming": null
+    },
+    "adminLogin": {
+      "samples": 1,
+      "p50": 325,
+      "p95": 325,
+      "p99": 325,
+      "ttfbP95": 325,
+      "bytes": 134,
+      "serverTiming": "step0;desc=\"db.authenticate_limited_session\";dur=313, total;dur=315"
+    },
+    "admin": {
+      "samples": 20,
+      "p50": 200,
+      "p95": 306,
+      "p99": 320,
+      "ttfbP95": 26,
+      "bytes": 53964,
+      "serverTiming": null
+    }
+  }
+}

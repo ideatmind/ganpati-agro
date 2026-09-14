@@ -21,5 +21,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  return <html lang="mr" translate="no"><body>{children}</body></html>;
+  return <html lang="mr" translate="no"><body><noscript><style>{`.reveal{opacity:1!important;transform:none!important}`}</style><p>Interactive forms require JavaScript. Please enable it to register or sign in.</p></noscript>{children}</body></html>;
 }

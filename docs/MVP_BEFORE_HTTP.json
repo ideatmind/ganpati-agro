@@ -1,0 +1,114 @@
+{
+  "environment": "Local production build, isolated 10k-fixture Postgres with per-RPC psql bridge, synthetic Razorpay; excludes real gateway and WAN latency",
+  "recordedAt": "2026-09-14T11:32:24.453Z",
+  "routes": {
+    "home": {
+      "samples": 20,
+      "p50": 6,
+      "p95": 13,
+      "p99": 622,
+      "ttfbP95": 11,
+      "bytes": 37032,
+      "serverTiming": null
+    },
+    "registrationPage": {
+      "samples": 20,
+      "p50": 12,
+      "p95": 16,
+      "p99": 137,
+      "ttfbP95": 15,
+      "bytes": 17649,
+      "serverTiming": null
+    },
+    "loginPage": {
+      "samples": 20,
+      "p50": 7,
+      "p95": 10,
+      "p99": 33,
+      "ttfbP95": 9,
+      "bytes": 9137,
+      "serverTiming": null
+    },
+    "registrationSave": {
+      "samples": 20,
+      "p50": 449,
+      "p95": 638,
+      "p99": 737,
+      "ttfbP95": 637,
+      "bytes": 131,
+      "serverTiming": null
+    },
+    "order": {
+      "samples": 20,
+      "p50": 249,
+      "p95": 374,
+      "p99": 375,
+      "ttfbP95": 374,
+      "bytes": 156,
+      "serverTiming": null
+    },
+    "verification": {
+      "samples": 20,
+      "p50": 260,
+      "p95": 398,
+      "p99": 403,
+      "ttfbP95": 398,
+      "bytes": 211,
+      "serverTiming": null
+    },
+    "status": {
+      "samples": 20,
+      "p50": 154,
+      "p95": 213,
+      "p99": 308,
+      "ttfbP95": 213,
+      "bytes": 247,
+      "serverTiming": null
+    },
+    "receipt": {
+      "samples": 20,
+      "p50": 95,
+      "p95": 140,
+      "p99": 169,
+      "ttfbP95": 137,
+      "bytes": 11265,
+      "serverTiming": null
+    },
+    "login": {
+      "samples": 20,
+      "p50": 509,
+      "p95": 610,
+      "p99": 727,
+      "ttfbP95": 609,
+      "bytes": 137,
+      "serverTiming": null
+    },
+    "dashboard": {
+      "samples": 20,
+      "p50": 176,
+      "p95": 190,
+      "p99": 230,
+      "ttfbP95": 23,
+      "bytes": 13288,
+      "serverTiming": null
+    },
+    "adminLogin": {
+      "samples": 1,
+      "p50": 501,
+      "p95": 501,
+      "p99": 501,
+      "ttfbP95": 500,
+      "bytes": 134,
+      "serverTiming": null
+    },
+    "admin": {
+      "samples": 20,
+      "p50": 2086,
+      "p95": 2271,
+      "p99": 2306,
+      "ttfbP95": 27,
+      "bytes": 3446619,
+      "serverTiming": null
+    }
+  }
+}

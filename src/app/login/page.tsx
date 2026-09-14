@@ -5,7 +5,8 @@ import { getIdentity } from "@/server/session";
 
 export const metadata = { title: "Login" };
 
-export default async function LoginPage() {
+export default async function LoginPage({searchParams}:{searchParams:Promise<{passwordChanged?:string}>}) {
   if (await getIdentity()) redirect("/dashboard");
-  return <><SiteHeader /><main className="auth-page"><LoginForm /></main></>;
+  const changed=(await searchParams).passwordChanged==='1';
+  return <><SiteHeader /><main className="auth-page"><div className="auth-content">{changed&&<p className="auth-notice" role="status">Password changed successfully. Sign in with your new password.</p>}<LoginForm /></div></main></>;
 }

@@ -1,0 +1,6 @@
+.audit
+.env*
+!.env.example
+tests
+docs
+supabase/.temp
