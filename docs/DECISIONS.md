@@ -83,3 +83,7 @@ Keep responsive form styling in legacy-form.css. Fieldsets must not add a second
 ## Dependent crop selection and public form wording — 15 September 2026
 
 Move the existing registration-level cluster into Farm Details before its plots. All plot crops must belong to that cluster; keep shared crops when valid in the new cluster, clear incompatible crops, and enforce the relationship at API validation. Keep consent's data-use purpose visible, but omit infrastructure and administrator access details from the public form. Password visibility is opt-in, independent for each field, and available on login too.
+
+## INR 1 live checkout — 15 September 2026
+
+The owner requested removal of the temporary payment-mode switch and a live trial fee of INR 1. New fee versions use 100 paise while previous registration snapshots stay unchanged. Production must reject test credentials and old test checkout capabilities, and require a distinct live webhook secret. The 10% commission remains unchanged (10 paise at the new fee). No test-data cleanup is included.

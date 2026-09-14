@@ -164,3 +164,9 @@
 - Cluster Type now starts Farm Details. Every plot's crop selector is disabled until a cluster is chosen and lists only that cluster's crops. Switching cluster clears incompatible selections across all plots; registration validation enforces this relationship. The existing single registration cluster is retained without a database migration.
 - Added accessible independent eye buttons to registration password/confirmation and login, using a shared component with 44px targets. Simplified consent and password guidance, removing encryption/admin-access and byte-count implementation details from the public form.
 - Lint, typecheck, all 27 tests and production build pass. Browser verification covered cluster filtering/reset across two plots, show/hide and keyboard operation, and no horizontal overflow at 320, 390 and 1280px.
+
+## INR 1 live-payment release prepared — 15 September 2026
+
+- Removed the public payment-mode switch and demo auto-fill; production rejects test checkout, old test cookies and old test webhook signatures. Added a 100-paise fee migration preserving previous quote snapshots.
+- Live credentials validated and stored in Vercel configuration. Security review and release gates are in docs/LIVE_PAYMENT_SECURITY_REVIEW.md. No live charge was executed.
+- Hosted fee migration and deployment remain pending live webhook setup and replacement of the predictable administrator password.

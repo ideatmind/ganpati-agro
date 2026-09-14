@@ -137,3 +137,7 @@ The checkout mode lives only in its signed HttpOnly browser cookie. No database 
 Razorpay test and live webhooks can both use https://ganpatiagro.in/api/payments/webhook. Configure their matching RAZORPAY_TEST_WEBHOOK_SECRET and RAZORPAY_LIVE_WEBHOOK_SECRET; the original RAZORPAY_WEBHOOK_SECRET remains supported. Verify payment.captured/order.paid delivery for each configured mode. The switch does not enable simulated payment signatures or bypass captured-payment verification.
 
 The owner explicitly approved test membership/receipt/referral records in this current private-test database. No records were deleted. Before public launch, separately reconcile/clear the test dataset as instructed by the owner, remove demo controls, configure live credentials/webhooks, set ENABLE_PAYMENT_MODE_SWITCH=false, and redeploy. Do not treat test entries as real collections.
+
+## Live INR 1 trial (supersedes temporary switch instructions)
+
+Production accepts live credentials only. Configure RAZORPAY_LIVE_KEY_ID, RAZORPAY_LIVE_KEY_SECRET and the separate RAZORPAY_LIVE_WEBHOOK_SECRET as server-only Vercel production variables. The webhook must subscribe to payment.captured and order.paid at /api/payments/webhook. The removed ENABLE_PAYMENT_MODE_SWITCH flag cannot re-enable test mode. Apply the live_trial_fee migration once before promoting the release; do not replay earlier hosted migrations. New registrations quote 100 paise while existing quote snapshots are retained. Complete the release gates in LIVE_PAYMENT_SECURITY_REVIEW.md.
