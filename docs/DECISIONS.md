@@ -87,3 +87,8 @@ Move the existing registration-level cluster into Farm Details before its plots.
 ## INR 1 live checkout — 15 September 2026
 
 The owner requested removal of the temporary payment-mode switch and a live trial fee of INR 1. New fee versions use 100 paise while previous registration snapshots stay unchanged. Production must reject test credentials and old test checkout capabilities, and require a distinct live webhook secret. The 10% commission remains unchanged (10 paise at the new fee). No test-data cleanup is included.
+
+
+## Existing protected live webhook variable
+
+The owner saved the new live signing secret under RAZORPAY_WEBHOOK_SECRET. Vercel sensitive variables cannot be renamed or read back. Allow that standard name in production only when the server configuration explicitly sets RAZORPAY_WEBHOOK_MODE=live; prefer RAZORPAY_LIVE_WEBHOOK_SECRET if present. Checkout readiness and signature verification use the same selection. Test checkout and unsigned/tampered webhooks remain rejected.

@@ -4,7 +4,7 @@ import { isPaymentDemo } from "@/server/env";
 import { orderSchema, paymentSchema } from "@/features/payments/schema";
 import { z } from "zod";
 import { timed } from "@/server/timing";
-import {defaultPaymentMode,productionPayments,paymentKeyId,paymentSecret,type PaymentMode} from '@/server/payment-mode';
+import {defaultPaymentMode,productionPayments,paymentKeyId,paymentSecret,webhookSecret,type PaymentMode} from '@/server/payment-mode';
 
 export interface RazorpayOrder { id: string; amount: number; currency: "INR" }
 
@@ -31,7 +31,7 @@ export function verifyCheckoutSignature(orderId: string, paymentId: string, rece
 
 export function verifyWebhookSignature(raw: string, received: string) {
   const actual = Buffer.from(received);
-  const secrets=[process.env[`RAZORPAY_${defaultPaymentMode().toUpperCase()}_WEBHOOK_SECRET`] || (!productionPayments()?process.env.RAZORPAY_WEBHOOK_SECRET:undefined)].filter((value):value is string=>Boolean(value));
+  const secrets=[webhookSecret()].filter((value):value is string=>Boolean(value));
   return secrets.some(secret=>{const expected=Buffer.from(createHmac('sha256',secret).update(raw).digest('hex'));return expected.length===actual.length&&timingSafeEqual(expected,actual);});
 }
 

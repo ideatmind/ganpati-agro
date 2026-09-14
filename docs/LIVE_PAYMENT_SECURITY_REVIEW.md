@@ -5,7 +5,7 @@ Scope: application source and dependencies, checkout/signature/webhook boundarie
 ## Changes
 
 - Public test-mode switch and demo auto-fill removed. Production accepts live checkout only regardless of the removed switch flag. Test/legacy checkout cookies are not promoted to live checkout. Submitted test_mode=true is rejected.
-- Production webhook verification requires the explicit live signing secret; old test/fallback signatures are rejected. Live checkout fails closed if live webhook configuration is absent. An explicit key cannot silently borrow another key pair's secret.
+- Production webhook verification requires a live signing secret: the explicit live variable, or the standard variable deliberately designated with RAZORPAY_WEBHOOK_MODE=live. Unconfigured fallback and old test signatures are rejected. Live checkout fails closed if live webhook configuration is absent. An explicit key cannot silently borrow another key pair's secret.
 - New fee version is 100 paise (INR 1); earlier versions and registration snapshots remain unchanged. Initial referral rate remains 1000 basis points, yielding 10 paise for a new INR 1 membership.
 
 ## Checks and evidence
@@ -22,10 +22,10 @@ Scope: application source and dependencies, checkout/signature/webhook boundarie
 ## Release gates and limitations
 
 - OPEN: owner must replace the predictable administrator password before enabling live payments.
-- OPEN: configure LIVE Razorpay webhook for https://ganpatiagro.in/api/payments/webhook with payment.captured and order.paid; store its distinct signing secret as RAZORPAY_LIVE_WEBHOOK_SECRET and verify delivery. Dashboard login is pending.
+- Owner reports LIVE webhook setup and has updated the protected RAZORPAY_WEBHOOK_SECRET in Vercel. The compatibility setting RAZORPAY_WEBHOOK_MODE=live deliberately selects that secret; actual delivery still requires verification after a captured payment.
 - The live API secret was supplied in conversation; rotate it in Razorpay before public launch and update Vercel.
 - Existing owner-approved test data remains in the current database. Cleanup is a separate operation; these records must not be treated as real collections.
-- The fee migration has been tested locally but is not yet applied to the hosted database. The live release has not yet been deployed while the gates above remain open.
+- The hosted live_trial_fee migration was applied once; effective fee is 100 paise from 2026-09-14 20:53:49 UTC. The owner deployed the live release. This follow-up repairs the environment-variable name mismatch without reading or copying the protected secret.
 - Real captured-payment acceptance is an owner-performed test after deployment. Automated provider fixtures do not certify actual capture or webhook delivery.
 
-Local validation completed: npm run lint, npm run typecheck, npm test (27 passing), production build, transactional database regressions, 12-way concurrency regression and synthetic HTTP journeys passed. An initial concurrent run hit host memory exhaustion; sequential bounded-memory reruns passed.
+Local validation completed: npm run lint, npm run typecheck, npm test (28 passing), production build, transactional database regressions, 12-way concurrency regression and synthetic HTTP journeys passed. An initial concurrent run hit host memory exhaustion; sequential bounded-memory reruns passed.

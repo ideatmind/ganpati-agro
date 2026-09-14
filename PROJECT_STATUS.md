@@ -170,3 +170,8 @@
 - Removed the public payment-mode switch and demo auto-fill; production rejects test checkout, old test cookies and old test webhook signatures. Added a 100-paise fee migration preserving previous quote snapshots.
 - Live credentials validated and stored in Vercel configuration. Security review and release gates are in docs/LIVE_PAYMENT_SECURITY_REVIEW.md. No live charge was executed.
 - Hosted fee migration and deployment remain pending live webhook setup and replacement of the predictable administrator password.
+
+
+## Live webhook configuration repair — 15 September 2026
+
+The hosted fee migration is complete (100 paise); the owner deployed the live release and saved the live webhook secret under RAZORPAY_WEBHOOK_SECRET. Added explicit RAZORPAY_WEBHOOK_MODE=live support for that protected variable, shared by checkout readiness and signature verification. The mode is server configuration only; production test checkout remains disabled. Focused tests cover required opt-in, signature integrity, stale test-secret rejection and explicit live-secret precedence. Actual captured payment/webhook delivery and administrator password replacement remain unverified.
