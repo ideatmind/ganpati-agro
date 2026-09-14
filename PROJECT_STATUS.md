@@ -149,3 +149,6 @@
 - No database mode columns or migrations. The selection is bound to a signed HttpOnly checkout cookie, locked after registration, and reused for order creation, verification and status retries. Existing saved orders are checked against the selected provider account before reuse. Operator reconciliation can look up orders with either configured key pair.
 - The owner explicitly approved creating test memberships, receipts and referral records in the current prelaunch database. No cleanup was performed; removing test/demo data remains a separately scoped prelaunch operation.
 - Lint, typecheck, all 26 unit tests, isolated production build and the full synthetic HTTP payment journey passed. Tests verify distinct test/live keys, mode-bound signatures/cookies, default test blocking, and rejection of body-supplied mode overrides after checkout starts.
+
+- Deployment verification: the switch is live on https://ganpatiagro.in/register. GitHub CI passed on 2b0f575. Browser checks verified ON/OFF labels and missing-live-key feedback. A synthetic hosted registration created one actual Razorpay TEST order for 50000 paise; retrying reused its order and signed-cookie mode. No payment was captured. No database mode migration was applied.
+
