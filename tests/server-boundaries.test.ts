@@ -8,11 +8,13 @@ import {registrationSchema} from "../src/features/registration/schema.ts";
 import {profileChangesSchema} from "../src/features/registration/profile-schema.ts";
 import {protectAadhaar} from "../src/server/pii.ts";
 import {startOrder} from "../src/features/payments/server/payments.ts";
+import {checkoutKey} from '../src/server/payment-mode.ts';
 
 process.env.SESSION_SECRET='test-only-secret-32-bytes-or-more-never-production';
 process.env.RAZORPAY_KEY_SECRET='synthetic-payment-secret';
 process.env.RAZORPAY_WEBHOOK_SECRET='synthetic-webhook-secret';
 process.env.PAYMENT_DEMO_MODE='false';
+process.env.ENABLE_PAYMENT_MODE_SWITCH='false';
 process.env.PII_ENCRYPTION_KEY='1'.repeat(64);
 
 test('production rejects test checkout before reserving an order',async()=>{
@@ -24,6 +26,20 @@ test('production rejects test checkout before reserving an order',async()=>{
     if(previousEnvironment===undefined)delete process.env.VERCEL_ENV;else process.env.VERCEL_ENV=previousEnvironment;
     if(previousKey===undefined)delete process.env.RAZORPAY_KEY_ID;else process.env.RAZORPAY_KEY_ID=previousKey;
   }
+});
+
+test('temporary switch selects independent keys and signatures and cannot disguise live mode as test',()=>{
+  const values={VERCEL_ENV:'production',ENABLE_PAYMENT_MODE_SWITCH:'true',RAZORPAY_TEST_KEY_ID:'rzp_test_fixture',RAZORPAY_TEST_KEY_SECRET:'test-mode-secret',RAZORPAY_LIVE_KEY_ID:'rzp_live_fixture',RAZORPAY_LIVE_KEY_SECRET:'live-mode-secret'};
+  const old=Object.fromEntries(Object.keys(values).map(key=>[key,process.env[key]]));Object.assign(process.env,values);
+  try{
+    assert.equal(checkoutKey('test'),'rzp_test_fixture');assert.equal(checkoutKey('live'),'rzp_live_fixture');
+    const signature=createHmac('sha256','test-mode-secret').update('order_test|pay_test').digest('hex');
+    assert.equal(verifyCheckoutSignature('order_test','pay_test',signature,'test'),true);assert.equal(verifyCheckoutSignature('order_test','pay_test',signature,'live'),false);
+    const id='12345678-1234-4234-8234-123456789012';const token=createToken(id,'checkout:test',60);
+    assert.equal(readToken(token,'checkout:test'),id);assert.equal(readToken(token,'checkout:live'),null);
+    process.env.ENABLE_PAYMENT_MODE_SWITCH='false';assert.throws(()=>checkoutKey('test'),{code:'PAYMENTS_UNAVAILABLE'});assert.equal(checkoutKey('live'),'rzp_live_fixture');
+    process.env.RAZORPAY_LIVE_KEY_ID='rzp_test_wrong';assert.throws(()=>checkoutKey('live'),{code:'PAYMENTS_UNAVAILABLE'});
+  }finally{for(const key of Object.keys(values)){if(old[key]===undefined)delete process.env[key];else process.env[key]=old[key];}}
 });
 
 test('PII protection uses randomized authenticated encryption and stable keyed uniqueness',()=>{

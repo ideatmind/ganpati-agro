@@ -1,5 +1,5 @@
 import { api } from "@/server/http";
-import { getCheckoutId, requireCheckout } from "@/features/registration/server/checkout";
+import { getCheckoutId, requireCheckout,getCheckoutMode } from "@/features/registration/server/checkout";
 import { checkoutStatus, reconcileCheckout } from "@/features/payments/server/payments";
 import { cookies } from "next/headers";
 import { AppError } from "@/shared/errors";
@@ -13,7 +13,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   return api(request, async () => {
     const id = await requireCheckout();
-    return Response.json({ data: await reconcileCheckout(id) });
+    return Response.json({ data: await reconcileCheckout(id,false,await getCheckoutMode()) });
   });
 }
 export async function DELETE(request: Request) {

@@ -69,3 +69,9 @@
 ## Temporary registration test helper
 
 - A local testing button may populate synthetic, schema-valid registration values, including unique-looking mobile and Aadhaar numbers and the consent checkbox. It fills only; submission and payment remain explicit user actions. Remove the helper before production release.
+
+## Decision: temporary form switch without database modes
+
+Per the owner's updated instruction, registration exposes a temporary Test mode switch controlled by ENABLE_PAYMENT_MODE_SWITCH. Mode is held only in the signed HttpOnly checkout cookie, never in database columns. ON selects test credentials; OFF selects live credentials. Missing credentials fail explicitly; switching never substitutes test keys for live. Mode locks after registration; the provider verifies existing-order ownership before reuse, so retrying a registration under another mode cannot reuse that gateway order successfully.
+
+The owner approved test memberships, receipts and referral records in the same database during the private test phase. Retain normal payment signature, capture and idempotency checks. A later database cleanup/removal of test tooling is a separate task and was not executed here.

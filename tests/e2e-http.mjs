@@ -13,14 +13,14 @@ const seed=String(Date.now()).slice(-8);const body={name:'Isolated Test Farmer',
 for(const invalid of [{mobile:body.mobile+'0'},{mobile:body.mobile+'\n'},{aadhar_no:body.aadhar_no.slice(1)},{aadhar_no:body.aadhar_no+'\n'},{password:'1234567'}])assert.equal((await request('/api/registrations',{...body,...invalid},{headers:{'x-test-client-ip':testIp+'-validation'}})).status,400);
 assert.equal((await request('/api/payments/orders',{registrationId:crypto.randomUUID()})).status,403);
 assert.equal((await request('/api/registrations',body,{headers:{origin:'https://evil.example'}})).status,403);
-const registration=await request('/api/registrations',body);assert.equal(registration.status,201,JSON.stringify(registration));
+const registration=await request('/api/registrations',{...body,test_mode:true});assert.equal(registration.status,201,JSON.stringify(registration));
 const checkoutCookie=cookie;
 assert.ok(cookie.includes('ga_checkout='));
 const retry=await request('/api/registrations',body);assert.equal(retry.data.data.id,registration.data.data.id);
 const [first,second]=await Promise.all([request('/api/payments/orders',{registrationId:registration.data.data.id}),request('/api/payments/orders',{registrationId:registration.data.data.id})]);
 const success=[first,second].find(result=>result.status===200);assert.ok(success,JSON.stringify([first,second]));
 const order=success.data.data.providerOrderId;
-const repeated=await request('/api/payments/orders',{registrationId:registration.data.data.id});assert.equal(repeated.data.data.providerOrderId,order);
+const repeated=await request('/api/payments/orders',{registrationId:registration.data.data.id,test_mode:false});assert.equal(repeated.data.data.providerOrderId,order);assert.equal(repeated.data.data.keyId,'rzp_test_isolated','Request body cannot override signed checkout mode');
 const payment=order.replace('order_isolated_','pay_isolated_');
 const signature=createHmac('sha256','isolated-payment-secret').update(order+'|'+payment).digest('hex');
 assert.equal((await request('/api/payments/verify',{orderId:order,paymentId:payment,signature:'invalid'})).status,400);
