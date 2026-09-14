@@ -47,6 +47,29 @@ test('production rejects test keys even if the removed switch flag remains enabl
   }finally{for(const key of Object.keys(values)){if(old[key]===undefined)delete process.env[key];else process.env[key]=old[key];}}
 });
 
+test('standard production webhook secret requires explicit live designation',()=>{
+  const values={VERCEL_ENV:'production',RAZORPAY_LIVE_KEY_ID:'rzp_live_fixture',RAZORPAY_LIVE_KEY_SECRET:'live-mode-secret',RAZORPAY_LIVE_WEBHOOK_SECRET:'',RAZORPAY_WEBHOOK_SECRET:'owner-live-hook',RAZORPAY_WEBHOOK_MODE:''};
+  const old=Object.fromEntries(Object.keys(values).map(key=>[key,process.env[key]]));Object.assign(process.env,values);
+  const raw='{"event":"payment.captured"}';
+  const signature=createHmac('sha256','owner-live-hook').update(raw).digest('hex');
+  try{
+    for(const mode of ['', 'test']){
+      process.env.RAZORPAY_WEBHOOK_MODE=mode;
+      assert.equal(verifyWebhookSignature(raw,signature),false);
+      assert.throws(()=>checkoutKey('live'),{code:'PAYMENTS_UNAVAILABLE'});
+    }
+    process.env.RAZORPAY_WEBHOOK_MODE='live';
+    assert.equal(checkoutKey('live'),'rzp_live_fixture');
+    assert.equal(verifyWebhookSignature(raw,signature),true);
+    assert.equal(verifyWebhookSignature(raw+' ',signature),false);
+    assert.equal(verifyWebhookSignature(raw,createHmac('sha256','old-test-hook').update(raw).digest('hex')),false);
+    assert.throws(()=>checkoutKey('test'),{code:'PAYMENTS_UNAVAILABLE'});
+    process.env.RAZORPAY_LIVE_WEBHOOK_SECRET='preferred-live-hook';
+    assert.equal(verifyWebhookSignature(raw,signature),false);
+    assert.equal(verifyWebhookSignature(raw,createHmac('sha256','preferred-live-hook').update(raw).digest('hex')),true);
+  }finally{for(const key of Object.keys(values)){if(old[key]===undefined)delete process.env[key];else process.env[key]=old[key];}}
+});
+
 test('PII protection uses randomized authenticated encryption and stable keyed uniqueness',()=>{
   const first=protectAadhaar('000000000000');const second=protectAadhaar('000000000000');
   assert.equal(first.fingerprint,second.fingerprint);assert.notEqual(first.ciphertext,second.ciphertext);

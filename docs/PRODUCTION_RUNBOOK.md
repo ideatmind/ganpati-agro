@@ -141,3 +141,8 @@ The owner explicitly approved test membership/receipt/referral records in this c
 ## Live INR 1 trial (supersedes temporary switch instructions)
 
 Production accepts live credentials only. Configure RAZORPAY_LIVE_KEY_ID, RAZORPAY_LIVE_KEY_SECRET and the separate RAZORPAY_LIVE_WEBHOOK_SECRET as server-only Vercel production variables. The webhook must subscribe to payment.captured and order.paid at /api/payments/webhook. The removed ENABLE_PAYMENT_MODE_SWITCH flag cannot re-enable test mode. Apply the live_trial_fee migration once before promoting the release; do not replay earlier hosted migrations. New registrations quote 100 paise while existing quote snapshots are retained. Complete the release gates in LIVE_PAYMENT_SECURITY_REVIEW.md.
+
+
+### Protected standard webhook secret
+
+If the LIVE signing secret was saved as RAZORPAY_WEBHOOK_SECRET, set RAZORPAY_WEBHOOK_MODE=live in Vercel Production and redeploy. This is an explicit operator assertion that the standard secret belongs to the live webhook, never a browser mode switch. RAZORPAY_LIVE_WEBHOOK_SECRET takes precedence if present. The hosted live_trial_fee migration has already been applied; do not replay it. Verify a real captured payment and webhook delivery separately.
