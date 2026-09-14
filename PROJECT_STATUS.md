@@ -152,3 +152,9 @@
 
 - Deployment verification: the switch is live on https://ganpatiagro.in/register. GitHub CI passed on 2b0f575. Browser checks verified ON/OFF labels and missing-live-key feedback. A synthetic hosted registration created one actual Razorpay TEST order for 50000 paise; retrying reused its order and signed-cookie mode. No payment was captured. No database mode migration was applied.
 
+
+## Mobile registration layout — 15 September 2026
+
+- Removed competing mobile fieldset padding and reduced nested gutters. Single-column phone fields now retain usable width; farm fields have explicit vertical spacing. Bilingual section titles stack predictably, action buttons span the form, radios have full-width touch targets, checkboxes cannot shrink, and acreage requests a decimal keyboard. Village results use a viewport-bounded list.
+- Verified the production build at 320, 360, 390, 430, 768 and 1280px: no horizontal control overflow. At 320px, farm input width increased from 150px to 222px. Verified plot add/remove, Marathi village search and keyboard selection, payment toggle feedback and consent layout. Browser viewport testing does not replace an actual iOS/Android keyboard check.
+- Lint, typecheck, all 26 tests and production build passed. No database or payment behavior changes.
