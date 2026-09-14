@@ -1,4 +1,5 @@
 begin;
+set local timezone='UTC';
 do $$
 declare sa uuid:=gen_random_uuid(); mgr uuid:=gen_random_uuid(); emp uuid:=gen_random_uuid(); r1 uuid; r2 uuid; body jsonb; result jsonb; denied boolean; memberships_before bigint; audits_before bigint;
 begin
@@ -15,7 +16,10 @@ begin
  denied:=false;begin perform public.read_admin_aadhaar(mgr,r1);exception when others then denied:=true;end;assert denied,'Manager revealed Aadhaar';
  denied:=false;begin perform public.get_admin_workspace(emp);exception when others then denied:=true;end;assert denied,'Employee read workspace';
  result:=public.get_admin_workspace(sa,'registrations','Workspace',1,'completed');assert (result->>'total')::integer=1;
- result:=public.get_admin_workspace(sa,'registrations','Workspace',1,'','oldest',current_date+1,null,25);assert (result->>'total')::integer=0;
+ update public.registrations set created_at=case when id=r1 then timestamptz '2026-01-15 18:30:00+00' else timestamptz '2026-01-15 18:29:59+00' end where id in(r1,r2);
+ result:=public.get_admin_workspace(sa,'registrations','Workspace',1,'','oldest',date '2026-01-16',date '2026-01-16',25);assert (result->>'total')::integer=1 and result->'rows'->0->>'id'=r1::text,'Indian start-of-day boundary failed';
+ result:=public.get_admin_workspace(sa,'registrations','Workspace',1,'','oldest',date '2026-01-15',date '2026-01-15',25);assert (result->>'total')::integer=1 and result->'rows'->0->>'id'=r2::text,'Indian end-of-day boundary failed';
+ result:=public.get_admin_workspace(sa,'registrations','Workspace',1,'','oldest',date '2026-01-17',null,25);assert (result->>'total')::integer=0;
  denied:=false;begin perform public.admin_bulk_action(mgr,array[r1],'trash','Test deletion');exception when others then denied:=true;end;assert denied,'Manager moved record to Trash';
  result:=public.admin_bulk_action(sa,array[r1,r2,r1],'trash','Synthetic cleanup');assert (result->>'changed')::integer=2;
  audits_before:=(select count(*) from public.audit_events where action='registration_trashed' and actor_account_id=sa);
