@@ -123,3 +123,9 @@
 - Created an encrypted hosted-database backup and verified restoration of all 24 application tables into isolated local PostgreSQL. All nine pending migrations applied to that restored data, preserving account, registration and financial row counts. This verifies logical data restoration and schema upgrade, not managed-project disaster recovery or a production RPO/RTO.
 - Hosted Supabase remains on its six existing migrations. Live domains still serve the previous deployment. Preview public-page checks do not establish authenticated/payment compatibility until the coordinated migration release.
 - Production promotion remains pending the payment-mode decision: configured Razorpay keys are TEST keys, and production deliberately rejects them. Real hosted checkout, capture/webhook acceptance and payment-app return still need verification. No hosted customer records, passwords or financial rows were changed during this preparation.
+
+## Canonical-domain redirect repair — 15 September 2026
+
+- Reproduced the live loop: the Vercel project redirected ganpatiagro.in to www.ganpatiagro.in, while the application redirected www back to the apex. Removed only the conflicting project-domain redirect through the authenticated Vercel CLI; the apex now serves the existing deployment directly.
+- Verified live GET requests: homepage, registration (including query string) and login each take one www-to-apex 308 hop and then return 200. Added `node scripts/check-production-redirects.mjs` as a repeatable, read-only deployment check.
+- This repair changes domain routing only. It does not certify the pending Supabase/payment acceptance work recorded above.

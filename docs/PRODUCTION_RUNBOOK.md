@@ -97,3 +97,11 @@ The current release preview shares the existing hosted database configuration. L
 A Windows-user-encrypted pre-release logical backup was restored into isolated local PostgreSQL with all 24 application-table counts verified. The nine pending migrations then preserved account, registration and financial row counts. Keep the backup and its recovery access private; this drill does not replace a managed-project restoration/operational recovery exercise.
 
 Production currently has Razorpay TEST credentials. The application blocks test-key checkout in the production environment. A READY preview alone is not a release gate: resolve the payment-mode decision, finish hosted gateway acceptance, and coordinate the nine migrations with the application before promoting live domains.
+
+## Preventing canonical-domain redirect loops
+
+Keep `ganpatiagro.in` assigned directly to Production with its Vercel project-domain `redirect` set to null. The application's next.config.ts already sends www.ganpatiagro.in to https://ganpatiagro.in. Do not configure the opposite apex-to-www redirect in Vercel: both rules together loop indefinitely. APP_ORIGIN and NEXT_PUBLIC_APP_URL must continue to use the canonical apex.
+
+After deploying or changing domains, run `node scripts/check-production-redirects.mjs`. It makes public GET requests and verifies one www-to-apex hop followed by HTTP 200 for home, registration and login, preserving path and query string. This live smoke check is separate from offline CI.
+
+The conflicting Vercel redirect was removed and these checks passed on 15 September 2026. No application redeployment was required for the repair. If a browser retains the old permanent redirect, retry in a private window or clear the site's cached redirect.
