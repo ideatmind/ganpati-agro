@@ -79,3 +79,7 @@ The owner approved test memberships, receipts and referral records in the same d
 ## Mobile registration spacing — 15 September 2026
 
 Keep responsive form styling in legacy-form.css. Fieldsets must not add a second mobile gutter in operations.css. Use a single column below 768px, non-shrinking consent controls and at least 44px action targets. Preserve every bilingual field, validation, consent and payment state; no stepper or new UI dependency is needed for this layout repair.
+
+## Dependent crop selection and public form wording — 15 September 2026
+
+Move the existing registration-level cluster into Farm Details before its plots. All plot crops must belong to that cluster; keep shared crops when valid in the new cluster, clear incompatible crops, and enforce the relationship at API validation. Keep consent's data-use purpose visible, but omit infrastructure and administrator access details from the public form. Password visibility is opt-in, independent for each field, and available on login too.

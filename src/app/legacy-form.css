@@ -39,3 +39,12 @@
   .legacy-registration-form .village-list-footer{flex-wrap:wrap;font-size:12px}
   .legacy-registration-form .village-list-footer button{min-height:44px}
 }
+
+.password-control{position:relative}
+.password-control input{padding-right:54px}
+.password-toggle{position:absolute;right:4px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:8px;color:var(--green);background:transparent;cursor:pointer}
+.password-toggle:hover{background:#e8f5e9}
+.password-toggle:disabled{opacity:.5;cursor:default}
+.legacy-field select:disabled{background:#f0f3ef;color:var(--sub);cursor:not-allowed}
+
+.login-card .password-control{margin-top:7px}
