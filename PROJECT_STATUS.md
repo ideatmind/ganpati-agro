@@ -123,3 +123,22 @@
 - Created an encrypted hosted-database backup and verified restoration of all 24 application tables into isolated local PostgreSQL. All nine pending migrations applied to that restored data, preserving account, registration and financial row counts. This verifies logical data restoration and schema upgrade, not managed-project disaster recovery or a production RPO/RTO.
 - Hosted Supabase remains on its six existing migrations. Live domains still serve the previous deployment. Preview public-page checks do not establish authenticated/payment compatibility until the coordinated migration release.
 - Production promotion remains pending the payment-mode decision: configured Razorpay keys are TEST keys, and production deliberately rejects them. Real hosted checkout, capture/webhook acceptance and payment-app return still need verification. No hosted customer records, passwords or financial rows were changed during this preparation.
+
+## Canonical-domain redirect repair — 15 September 2026
+
+- Reproduced the live loop: the Vercel project redirected ganpatiagro.in to www.ganpatiagro.in, while the application redirected www back to the apex. Removed only the conflicting project-domain redirect through the authenticated Vercel CLI; the apex now serves the existing deployment directly.
+- Verified live GET requests: homepage, registration (including query string) and login each take one www-to-apex 308 hop and then return 200. Added `node scripts/check-production-redirects.mjs` as a repeatable, read-only deployment check.
+- This repair changes domain routing only. It does not certify the pending Supabase/payment acceptance work recorded above.
+
+## Temporary registration demo data — 15 September 2026
+
+- Added a removable testing button to the registration form that fills randomized, schema-valid synthetic personal, geography, farm, account and consent values. It never submits the form or starts payment.
+- Focused validation, lint and typecheck pass. This control is intended only for local testing and must be removed before production release.
+
+## Hosted Supabase migration completed — 15 September 2026
+
+- Applied all nine pending migrations to the existing hosted ganpati-agro-v2 project after taking a fresh Windows-user-encrypted backup. The hosted history now contains 15 migrations. This supersedes earlier notes saying the schema upgrade was pending.
+- Existing account/person checksums are identical before and after migration. Preserved all 5 accounts, 5 registrations and 5 payment orders; captured payments, memberships and receipts remain at their original zero counts. Geography now contains 5 districts and 50 talukas; 4,875 village entries remain in the deployed static directory packs.
+- Verified zero publicly executable privileged RPCs, zero application tables without RLS, and service-role access to the core application RPCs. Security/performance advisors report informational deny-by-default RLS/no-policy and unused-index notices; no warning/error findings. These tables intentionally use server-only service-role RPC access; do not add public policies to suppress the notices.
+- Hosted login now returns INVALID_CREDENTIALS for a nonexistent synthetic account after successfully executing authenticate_limited_session. A rolled-back hosted transaction verified an eight-character password login, wrong-password rejection, session lookup, password change and session revocation. No synthetic account or password change persisted. All nine admin workspace sections returned successfully through the hosted database.
+- Live homepage, registration and login redirect checks pass. Previously published CI passed lint, typecheck, 24 unit tests, database/concurrency regressions, build and synthetic HTTP journeys. Actual browser login with the owner's credentials and real Razorpay capture/webhook/app-return acceptance remain separate; production Razorpay credentials are still TEST keys and production checkout remains blocked by its existing guard.

@@ -97,3 +97,33 @@ The current release preview shares the existing hosted database configuration. L
 A Windows-user-encrypted pre-release logical backup was restored into isolated local PostgreSQL with all 24 application-table counts verified. The nine pending migrations then preserved account, registration and financial row counts. Keep the backup and its recovery access private; this drill does not replace a managed-project restoration/operational recovery exercise.
 
 Production currently has Razorpay TEST credentials. The application blocks test-key checkout in the production environment. A READY preview alone is not a release gate: resolve the payment-mode decision, finish hosted gateway acceptance, and coordinate the nine migrations with the application before promoting live domains.
+
+## Preventing canonical-domain redirect loops
+
+Keep `ganpatiagro.in` assigned directly to Production with its Vercel project-domain `redirect` set to null. The application's next.config.ts already sends www.ganpatiagro.in to https://ganpatiagro.in. Do not configure the opposite apex-to-www redirect in Vercel: both rules together loop indefinitely. APP_ORIGIN and NEXT_PUBLIC_APP_URL must continue to use the canonical apex.
+
+After deploying or changing domains, run `node scripts/check-production-redirects.mjs`. It makes public GET requests and verifies one www-to-apex hop followed by HTTP 200 for home, registration and login, preserving path and query string. This live smoke check is separate from offline CI.
+
+The conflicting Vercel redirect was removed and these checks passed on 15 September 2026. No application redeployment was required for the repair. If a browser retains the old permanent redirect, retry in a private window or clear the site's cached redirect.
+
+## Hosted migration ledger — applied 15 September 2026
+
+All nine release migrations are now applied. Earlier references to these as pending are historical. Do not replay their local files: the management API recorded the following remote versions. The existing initial four and two emergency privilege migrations remain unchanged.
+
+| Migration name | Hosted version |
+|---|---|
+| payment_reliability | 20260914191043 |
+| auth_and_operations_hardening | 20260914191125 |
+| mvp_payment_fast_paths | 20260914191132 |
+| mvp_admin_operations | 20260914191149 |
+| mvp_registration_order_index | 20260914191155 |
+| admin_workspace | 20260914191202 |
+| admin_delete_confirmation | 20260914191216 |
+| village_directory_geography | 20260914191222 |
+| crop_categories | 20260914191229 |
+
+A fresh encrypted backup was taken immediately before application. Account/person checksums and account, registration and financial counts were preserved. Hosted login-to-RPC connectivity, rolled-back successful authentication/password/session checks, all nine admin workspace sections, RLS and privileged-RPC grants passed. All synthetic database changes were rolled back; existing passwords were not reset.
+
+Supabase advisors returned informational [RLS enabled without policies](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy) notices for the intentionally service-only tables and [unused indexes](https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index) on the low-traffic database. No warning/error findings were returned. Keep deny-by-default access and the release's indexing until real workload measurements justify changes.
+
+The deployed application and hosted schema now share the required RPC contracts. Schema completion does not establish live payment acceptance: the existing production TEST-key guard remains, and real checkout/capture/webhook/app-return verification is still outstanding. Preserve the new schema during recovery; do not roll back to old authentication/order/payout callers.
