@@ -1,0 +1,30 @@
+.coverage-map-section{--map-neutral:#e0e7dc;background:linear-gradient(180deg,#f1f8e9 0%,#fafcf8 60%,#fff 100%);scroll-margin-top:64px}
+.coverage-map-heading{margin-bottom:12px}
+.coverage-map-heading p:last-child{color:var(--sub);margin:18px auto 0;font-size:1.05rem}
+.coverage-map-figure{margin:0 auto;max-width:820px}
+.coverage-map{display:block;width:100%;height:auto;overflow:visible}
+.coverage-map-districts{stroke:#fafcf8;stroke-width:1.2}
+.coverage-map-callout polyline{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.coverage-map-callout circle{fill:currentColor;stroke:#fff;stroke-width:2}
+.coverage-map-name{fill:var(--deep);font-size:25px;font-weight:700}
+.coverage-map-english{fill:var(--sub);font-family:"Poppins",sans-serif;font-size:16px}
+.coverage-map-caption{text-align:center;color:var(--sub);font-size:.8rem;margin:4px auto 26px}
+.coverage-map-totals{display:grid;grid-template-columns:repeat(3,1fr);max-width:780px;margin:auto;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:26px 0}
+.coverage-map-totals article{text-align:center;border-right:1px solid var(--border)}
+.coverage-map-totals article:last-child{border-right:0}
+.coverage-map-totals strong{display:block;color:var(--deep);font-family:"Poppins","Noto Sans Devanagari",sans-serif;font-size:clamp(2rem,4vw,3rem);line-height:1.35;font-weight:600}
+.coverage-map-totals article>span{display:block;font-weight:600;color:var(--green)}
+.coverage-map-totals small{display:block;color:var(--sub);font-family:"Poppins",sans-serif;font-size:.75rem;font-weight:400}
+.coverage-map-action{text-align:center;margin-top:30px}
+.coverage-map-action .legacy-btn{gap:18px}
+@media(max-width:600px){
+  .coverage-map-heading h2{font-size:1.55rem}
+  .coverage-map-heading p:last-child{font-size:.9rem;max-width:280px}
+  .coverage-map-name{font-size:36px}
+  .coverage-map-english{font-size:28px}
+  .coverage-map-callout polyline{stroke-width:2}
+  .coverage-map-caption{max-width:300px;font-size:.72rem;line-height:1.7;margin-top:12px}
+  .coverage-map-totals{padding:20px 0}
+  .coverage-map-totals article>span{font-size:.9rem}
+  .coverage-map-action .legacy-btn{padding:14px 22px;font-size:.9rem;gap:12px}
+}

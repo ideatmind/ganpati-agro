@@ -1,28 +1,23 @@
-"use client";
-
-import { useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
-import { formatRupees } from "@/shared/constants";
-
-interface Employee { id:string; displayName:string; mobile:string; status:string; onboardedFarmers:number; referralCode:string }
-interface Referrer { profileId:string; displayName:string; mobile:string; referralCode:string; earnedPaise:number; paidPaise:number }
-interface Farmer { id:string; name:string; reference:string; mobileMasked:string; employeeName?:string }
-
-export function AdminConsole({ employees,referrers,farmers,canCreateStaff }:{ employees:Employee[];referrers:Referrer[];farmers:Farmer[];canCreateStaff:boolean }) {
-  const router=useRouter(); const [message,setMessage]=useState(""); const [busy,setBusy]=useState(false);
-  async function submit(event:FormEvent<HTMLFormElement>,endpoint:string,transform?:(form:FormData)=>unknown) {
-    event.preventDefault(); setBusy(true); setMessage(""); const form=new FormData(event.currentTarget);
-    const body=transform?transform(form):Object.fromEntries(form);
-    const response=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-    const result=await response.json() as {error?:string}; setBusy(false);
-    if(!response.ok){setMessage(result.error||"Operation failed");return;} setMessage("Saved successfully"); event.currentTarget.reset(); router.refresh();
-  }
-  return <div className="admin-console">{message&&<p className="status-message" role="status">{message}</p>}
-    <div className="dashboard-columns">
-      {canCreateStaff&&<form className="panel operation-form" onSubmit={(event)=>void submit(event,"/api/admin/staff")}><div className="panel-head"><h2>Create staff account</h2></div><label>Name<input name="name" required /></label><label>Mobile<input name="mobile" pattern="[0-9]{10}" maxLength={10} required /></label><label>Temporary password<input name="password" type="password" minLength={8} required /></label><label>Role<select name="role"><option value="employee">Employee</option><option value="manager">Manager</option></select></label><button className="button" disabled={busy}>Create account</button></form>}
-      <form className="panel operation-form" onSubmit={(event)=>void submit(event,"/api/admin/payouts")}><div className="panel-head"><h2>Record offline payout</h2></div><label>Referrer<select name="profileId" required defaultValue=""><option value="">Select</option>{referrers.map((r)=><option key={r.profileId} value={r.profileId}>{r.displayName} · {r.referralCode} · {formatRupees(r.earnedPaise-r.paidPaise)}</option>)}</select></label><label>Amount (₹)<input name="amountRupees" type="number" min="1" step="0.01" required /></label><label>Method<select name="method"><option value="cash">Cash</option><option value="upi">UPI</option><option value="bank_transfer">Bank transfer</option><option value="other">Other</option></select></label><label>Reference<input name="reference" /></label><label>Note<input name="note" /></label><button className="button" disabled={busy}>Record payout</button></form>
-    </div>
-    <form className="panel operation-form" onSubmit={(event)=>void submit(event,"/api/admin/grants",(form)=>({employeeId:form.get("employeeId"),farmerId:form.get("farmerId"),reason:form.get("reason"),durationHours:form.get("durationHours"),fields:form.getAll("fields")}))}><div className="panel-head"><h2>Temporary farmer edit access</h2><span>Maximum 7 days</span></div><div className="field-grid"><label>Employee<select name="employeeId" required defaultValue=""><option value="">Select</option>{employees.map((e)=><option value={e.id} key={e.id}>{e.displayName} · {e.mobile}</option>)}</select></label><label>Farmer<select name="farmerId" required defaultValue=""><option value="">Select</option>{farmers.map((f)=><option value={f.id} key={f.id}>{f.name} · {f.reference}</option>)}</select></label><label>Duration (hours)<input name="durationHours" type="number" defaultValue="4" min="1" max="168" required /></label><label>Reason<input name="reason" minLength={3} required /></label><fieldset className="wide checkbox-grid"><legend>Editable fields</legend>{[["name","Name"],["date_of_birth","Date of birth"],["village","Village"],["district","District"],["taluka","Taluka"],["income_source","Income source"],["cluster_type","Cluster type"]].map(([value,label])=><label key={value}><input type="checkbox" name="fields" value={value} /> {label}</label>)}</fieldset></div><button className="button" disabled={busy}>Grant temporary access</button></form>
-    <section className="panel"><div className="panel-head"><h2>Employee performance</h2><span>{employees.length} employees</span></div><div className="table-wrap"><table><thead><tr><th>Name</th><th>Mobile</th><th>Referral code</th><th>Onboarded</th><th>Status</th></tr></thead><tbody>{employees.map((e)=><tr key={e.id}><td>{e.displayName}</td><td>{e.mobile}</td><td>{e.referralCode}</td><td>{e.onboardedFarmers}</td><td>{e.status}</td></tr>)}</tbody></table></div></section>
-  </div>;
+'use client';
+import {useRef,useState,type FormEvent} from 'react';
+import {useRouter} from 'next/navigation';
+import {AdminLookup} from './AdminLookup';
+import {requestJson} from '@/shared/request';
+export function AdminConsole({kind}:{kind:'staff'|'payout'|'grant'}){
+ const router=useRouter();const running=useRef(false);const [busy,setBusy]=useState(false);const [error,setError]=useState('');const [employeeId,setEmployeeId]=useState('');
+ async function submit(event:FormEvent<HTMLFormElement>){event.preventDefault();if(running.current)return;running.current=true;setBusy(true);setError('');const form=new FormData(event.currentTarget);
+  let body:Record<string,unknown>=Object.fromEntries(form);
+  if(kind==='grant')body={employeeId:form.get('employeeId'),farmerId:form.get('farmerId'),reason:form.get('reason'),durationHours:form.get('durationHours'),fields:form.getAll('fields')};
+  try{
+   if(kind==='payout'){const key=sessionStorage.getItem('ga_pending_payout')||crypto.randomUUID();sessionStorage.setItem('ga_pending_payout',key);body={...body,idempotencyKey:key};}
+   await requestJson('/api/admin/'+({staff:'staff',payout:'payouts',grant:'grants'}[kind]),body);
+   if(kind==='payout')sessionStorage.removeItem('ga_pending_payout');
+   router.push('/dashboard/admin?section='+({staff:'staff',payout:'payouts',grant:'grants'}[kind]));router.refresh();
+  }catch(e){setError(e instanceof Error?e.message:'Could not save this record.');}finally{running.current=false;setBusy(false);}
+ }
+ return <form className="admin-task-form" onSubmit={submit}>{error&&<p className="admin-alert error" role="alert">{error}</p>}
+ {kind==='staff'&&<section><h2>Account details</h2><p>Create access for an employee or manager.</p><div className="admin-form-grid"><label>Full name<input name="name" required minLength={2} maxLength={200} autoComplete="name"/></label><label>Mobile number<input name="mobile" inputMode="numeric" pattern="[0-9]{10}" minLength={10} maxLength={10} title="Enter exactly 10 digits; no spaces or country code." required autoComplete="tel-national"/></label><label>Temporary password<input name="password" type="password" minLength={8} maxLength={72} autoComplete="new-password" required/><small>At least 8 characters. The user can change it after signing in.</small></label><label>Role<select name="role"><option value="employee">Employee — own onboarded farmers</option><option value="manager">Manager — operations and edit access</option></select></label></div></section>}
+ {kind==='payout'&&<><section><h2>Recipient</h2><p>Find the referrer and check their available balance.</p><AdminLookup name="profileId" kind="referrer" label="Referrer"/></section><section><h2>Disbursement details</h2><div className="admin-form-grid"><label>Amount (₹)<input name="amountRupees" type="number" min="0.01" step="0.01" required/></label><label>Method<select name="method"><option value="cash">Cash</option><option value="upi">UPI</option><option value="bank_transfer">Bank transfer</option><option value="other">Other</option></select></label><label>Payment reference<input name="reference" maxLength={100}/></label><label>Note<input name="note" maxLength={300}/></label></div><label className="admin-check-label"><input type="checkbox" required/>I confirm this money has already been disbursed offline.</label><p className="admin-form-hint">This records the completed payout. It does not transfer money.</p></section></>}
+ {kind==='grant'&&<><section><h2>Employee & farmer</h2><p>Select an employee, then a farmer they onboarded.</p><div className="admin-form-grid"><AdminLookup name="employeeId" kind="employee" label="Employee" onSelect={setEmployeeId}/><AdminLookup key={employeeId} name="farmerId" kind="farmer" label="Farmer" employeeId={employeeId}/></div></section><section><h2>Scope & expiry</h2><div className="admin-form-grid"><label>Duration (hours)<input name="durationHours" type="number" defaultValue={4} min={1} max={168} required/><small>Expires automatically. Maximum seven days.</small></label><label>Reason<input name="reason" minLength={3} maxLength={500} required/></label></div><fieldset className="admin-checkboxes"><legend>Fields this employee may edit</legend>{[['name','Name'],['date_of_birth','Date of birth'],['village','Village'],['district','District'],['taluka','Taluka'],['income_source','Income source'],['cluster_type','Cluster type']].map(([value,label])=><label className="admin-check-label" key={value}><input type="checkbox" name="fields" value={value}/>{label}</label>)}</fieldset></section></>}
+ <div className="admin-form-footer"><button className="admin-button admin-button-secondary" type="button" disabled={busy} onClick={()=>router.back()}>Cancel</button><button className="admin-button" disabled={busy}>{busy?'Saving…':{staff:'Create team member',payout:'Record completed payout',grant:'Grant edit access'}[kind]}</button></div></form>;
 }

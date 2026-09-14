@@ -1,0 +1,18 @@
+{
+  "environment": "Local production build, isolated PostgreSQL with 50,045 synthetic registrations, per-RPC psql bridge; includes streamed response body, excludes browser rendering and WAN latency",
+  "recordedAt": "2026-09-14T16:54:26.207Z",
+  "routes": {
+    "overview": {
+      "samples": 10,
+      "p50Ms": 249,
+      "p95Ms": 406,
+      "bytes": 28072
+    },
+    "registrations": {
+      "samples": 10,
+      "p50Ms": 256,
+      "p95Ms": 407,
+      "bytes": 53009
+    }
+  }
+}

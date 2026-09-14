@@ -10,7 +10,7 @@ This is a Next.js 16 App Router application. Before changing framework code, rea
 - A registration has at most one commission recipient. The initial commission is 10% (`1000` basis points), snapshotted at checkout.
 - Farmer referral commission takes priority over employee onboarding credit. Employees still retain onboarding-count attribution.
 - Employees keep collected cash and personally complete the online payment; there is no later company cash settlement.
-- Mobile and Aadhaar fingerprint are unique per person. Aadhaar must never appear in logs, receipts, client payloads after submission, or audit details.
+- Mobile and Aadhaar fingerprint are unique per person. Aadhaar must never appear in logs, receipts, bulk exports or audit details. Per the owner's updated requirement, super-admins may reveal it on demand through a separately authorized, audited, no-store endpoint; ordinary reads and other roles must never receive it.
 - Employees only see farmers they onboarded. Post-payment edits require manager/super-admin status or an unexpired scoped permission grant.
 - Referral payouts are recorded after offline disbursement. Referrers can view balances and payouts but cannot request claims in the product.
 - Payment and financial history is immutable; use corrective records instead of deletion.
@@ -34,3 +34,13 @@ This is a Next.js 16 App Router application. Before changing framework code, rea
 ## Required checks
 
 Run `npm run lint`, `npm run typecheck`, `npm test`, and `npm run build`. Payment, authorization, or accounting changes require a focused test. Update `PROJECT_STATUS.md` and the relevant decision or business-rule document when behavior changes.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

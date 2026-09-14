@@ -1,15 +1,19 @@
 import { z } from "zod";
+import { isCatalogCrop } from "@/shared/crop-catalog";
 import { CLUSTER_OPTIONS, DISTRICTS, INCOME_OPTIONS, IRRIGATION_OPTIONS, TALUKAS } from "@/shared/constants";
+
+import {passwordSchema,mobileSchema,aadhaarSchema} from '@/shared/credential-schema';
+
 
 const districtValues = DISTRICTS.map((item) => item.value) as [string, ...string[]];
 const talukaValues = TALUKAS.map((item) => item[0]) as [string, ...string[]];
 
 export const registrationSchema = z.object({
   name: z.string().trim().min(2).max(200),
-  mobile: z.string().trim().regex(/^\d{10}$/),
-  password: z.string().min(8).max(128),
+  mobile: mobileSchema,
+  password: passwordSchema,
   date_of_birth: z.iso.date(),
-  aadhar_no: z.string().trim().regex(/^\d{12}$/),
+  aadhar_no: aadhaarSchema,
   village: z.string().trim().min(1).max(200),
   district: z.enum(districtValues),
   taluka: z.enum(talukaValues),
@@ -23,7 +27,7 @@ export const registrationSchema = z.object({
   plots: z.array(z.object({
     plot_no: z.string().trim().min(1).max(100),
     area_acres: z.coerce.number().positive().max(100_000),
-    crop_name: z.string().trim().min(1).max(100),
+    crop_name: z.string().trim().min(1).max(100).refine(isCatalogCrop, "यादीतील पीक निवडा / Select a crop from the list"),
     irrigation_source: z.enum(IRRIGATION_OPTIONS),
   })).min(1).max(10),
 }).superRefine((data, ctx) => {

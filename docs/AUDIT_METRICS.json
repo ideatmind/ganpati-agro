@@ -1,0 +1,46 @@
+{
+  "recordedAt": "2026-09-14T10:58:14.515Z",
+  "environment": "Windows localhost production build; synthetic services; warm requests; no CDN or network throttling",
+  "http": [
+    {
+      "path": "/",
+      "samples": 100,
+      "concurrency": 10,
+      "p50": 24,
+      "p95": 58,
+      "p99": 59,
+      "requestsPerSecond": 333,
+      "errors": 0
+    },
+    {
+      "path": "/register",
+      "samples": 100,
+      "concurrency": 10,
+      "p50": 62,
+      "p95": 132,
+      "p99": 133,
+      "requestsPerSecond": 128,
+      "errors": 0
+    },
+    {
+      "path": "/api/payments/status",
+      "samples": 100,
+      "concurrency": 10,
+      "p50": 21,
+      "p95": 39,
+      "p99": 44,
+      "requestsPerSecond": 260,
+      "errors": 0
+    }
+  ],
+  "homeScriptReferences": {
+    "files": 9,
+    "raw": 596406,
+    "gzip": 184963
+  },
+  "homeStylesheetReferences": {
+    "files": 1,
+    "raw": 38844,
+    "gzip": 8196
+  }
+}
