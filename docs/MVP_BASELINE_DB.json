@@ -1,0 +1,16 @@
+{
+  "admin": {
+    "samples": 10,
+    "p50": 193,
+    "p95": 299,
+    "bytes": 1074990,
+    "explain": "[\r\n  {\r\n    \"Plan\": {\r\n      \"Node Type\": \"Result\",\r\n      \"Parallel Aware\": false,\r\n      \"Async Capable\": false,\r\n      \"Startup Cost\": 0.00,\r\n      \"Total Cost\": 0.26,\r\n      \"Plan Rows\": 1,\r\n      \"Plan Width\": 32,\r\n      \"Actual Startup Time\": 111.340,\r\n      \"Actual Total Time\": 111.411,\r\n      \"Actual Rows\": 1,\r\n      \"Actual Loops\": 1,\r\n      \"Shared Hit Blocks\": 42495,\r\n      \"Shared Read Blocks\": 0,\r\n      \"Shared Dirtied Blocks\": 0,\r\n      \"Shared Written Blocks\": 0,\r\n      \"Local Hit Blocks\": 0,\r\n      \"Local Read Blocks\": 0,\r\n      \"Local Dirtied Blocks\": 0,\r\n      \"Local Written Blocks\": 0,\r\n      \"Temp Read Blocks\": 0,\r\n      \"Temp Written Blocks\": 0\r\n    },\r\n    \"Planning\": {\r\n      \"Shared Hit Blocks\": 0,\r\n      \"Shared Read Blocks\": 0,\r\n      \"Shared Dirtied Blocks\": 0,\r\n      \"Shared Written Blocks\": 0,\r\n      \"Local Hit Blocks\": 0,\r\n      \"Local Read Blocks\": 0,\r\n      \"Local Dirtied Blocks\": 0,\r\n      \"Local Written Blocks\": 0,\r\n      \"Temp Read Blocks\": 0,\r\n      \"Temp Written Blocks\": 0\r\n    },\r\n    \"Planning Time\": 0.060,\r\n    \"Triggers\": [\r\n    ],\r\n    \"Execution Time\": 111.436\r\n  }\r\n]"
+  },
+  "dashboard": {
+    "samples": 10,
+    "p50": 68,
+    "p95": 80,
+    "bytes": 261,
+    "explain": "[\r\n  {\r\n    \"Plan\": {\r\n      \"Node Type\": \"Result\",\r\n      \"Parallel Aware\": false,\r\n      \"Async Capable\": false,\r\n      \"Startup Cost\": 0.00,\r\n      \"Total Cost\": 0.26,\r\n      \"Plan Rows\": 1,\r\n      \"Plan Width\": 32,\r\n      \"Actual Startup Time\": 16.034,\r\n      \"Actual Total Time\": 16.034,\r\n      \"Actual Rows\": 1,\r\n      \"Actual Loops\": 1,\r\n      \"Shared Hit Blocks\": 1538,\r\n      \"Shared Read Blocks\": 0,\r\n      \"Shared Dirtied Blocks\": 0,\r\n      \"Shared Written Blocks\": 0,\r\n      \"Local Hit Blocks\": 0,\r\n      \"Local Read Blocks\": 0,\r\n      \"Local Dirtied Blocks\": 0,\r\n      \"Local Written Blocks\": 0,\r\n      \"Temp Read Blocks\": 0,\r\n      \"Temp Written Blocks\": 0\r\n    },\r\n    \"Planning\": {\r\n      \"Shared Hit Blocks\": 0,\r\n      \"Shared Read Blocks\": 0,\r\n      \"Shared Dirtied Blocks\": 0,\r\n      \"Shared Written Blocks\": 0,\r\n      \"Local Hit Blocks\": 0,\r\n      \"Local Read Blocks\": 0,\r\n      \"Local Dirtied Blocks\": 0,\r\n      \"Local Written Blocks\": 0,\r\n      \"Temp Read Blocks\": 0,\r\n      \"Temp Written Blocks\": 0\r\n    },\r\n    \"Planning Time\": 0.060,\r\n    \"Triggers\": [\r\n    ],\r\n    \"Execution Time\": 16.059\r\n  }\r\n]"
+  }
+}

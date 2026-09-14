@@ -1,0 +1,48 @@
+name: Application checks
+on:
+  pull_request:
+  push:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: isolated-ci-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:isolated-ci-password@127.0.0.1:5432/postgres
+      NEXT_PUBLIC_APP_URL: https://example.invalid
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npx next typegen
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm audit --audit-level=high
+      - name: Validate migrations in an isolated database
+        run: |
+          psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/database-bootstrap.sql
+          for migration in supabase/migrations/*.sql; do
+            psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -f "$migration"
+          done
+          psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/seeds/geography.sql
+          npm run test:db
+          npm run test:concurrency
+      - run: npm run build
+      - run: npm run test:http

@@ -1,0 +1,145 @@
+{
+  "volume": 50000,
+  "admin": {
+    "p50": 101,
+    "p95": 118,
+    "bytes": 7429,
+    "explain": [
+      {
+        "Plan": {
+          "Node Type": "Result",
+          "Parallel Aware": false,
+          "Async Capable": false,
+          "Startup Cost": 0,
+          "Total Cost": 0.26,
+          "Plan Rows": 1,
+          "Plan Width": 32,
+          "Actual Startup Time": 27.748,
+          "Actual Total Time": 27.748,
+          "Actual Rows": 1,
+          "Actual Loops": 1,
+          "Shared Hit Blocks": 2697,
+          "Shared Read Blocks": 0,
+          "Shared Dirtied Blocks": 0,
+          "Shared Written Blocks": 0,
+          "Local Hit Blocks": 0,
+          "Local Read Blocks": 0,
+          "Local Dirtied Blocks": 0,
+          "Local Written Blocks": 0,
+          "Temp Read Blocks": 0,
+          "Temp Written Blocks": 0
+        },
+        "Planning": {
+          "Shared Hit Blocks": 0,
+          "Shared Read Blocks": 0,
+          "Shared Dirtied Blocks": 0,
+          "Shared Written Blocks": 0,
+          "Local Hit Blocks": 0,
+          "Local Read Blocks": 0,
+          "Local Dirtied Blocks": 0,
+          "Local Written Blocks": 0,
+          "Temp Read Blocks": 0,
+          "Temp Written Blocks": 0
+        },
+        "Planning Time": 0.06,
+        "Triggers": [],
+        "Execution Time": 27.773
+      }
+    ]
+  },
+  "referrers": {
+    "p50": 146,
+    "p95": 160,
+    "bytes": 4074,
+    "explain": [
+      {
+        "Plan": {
+          "Node Type": "Result",
+          "Parallel Aware": false,
+          "Async Capable": false,
+          "Startup Cost": 0,
+          "Total Cost": 0.26,
+          "Plan Rows": 1,
+          "Plan Width": 32,
+          "Actual Startup Time": 86.793,
+          "Actual Total Time": 86.794,
+          "Actual Rows": 1,
+          "Actual Loops": 1,
+          "Shared Hit Blocks": 3857,
+          "Shared Read Blocks": 0,
+          "Shared Dirtied Blocks": 0,
+          "Shared Written Blocks": 0,
+          "Local Hit Blocks": 0,
+          "Local Read Blocks": 0,
+          "Local Dirtied Blocks": 0,
+          "Local Written Blocks": 0,
+          "Temp Read Blocks": 0,
+          "Temp Written Blocks": 0
+        },
+        "Planning": {
+          "Shared Hit Blocks": 0,
+          "Shared Read Blocks": 0,
+          "Shared Dirtied Blocks": 0,
+          "Shared Written Blocks": 0,
+          "Local Hit Blocks": 0,
+          "Local Read Blocks": 0,
+          "Local Dirtied Blocks": 0,
+          "Local Written Blocks": 0,
+          "Temp Read Blocks": 0,
+          "Temp Written Blocks": 0
+        },
+        "Planning Time": 0.08,
+        "Triggers": [],
+        "Execution Time": 86.828
+      }
+    ]
+  },
+  "search": {
+    "p50": 116,
+    "p95": 145,
+    "bytes": 7576,
+    "explain": [
+      {
+        "Plan": {
+          "Node Type": "Result",
+          "Parallel Aware": false,
+          "Async Capable": false,
+          "Startup Cost": 0,
+          "Total Cost": 0.26,
+          "Plan Rows": 1,
+          "Plan Width": 32,
+          "Actual Startup Time": 64.935,
+          "Actual Total Time": 64.936,
+          "Actual Rows": 1,
+          "Actual Loops": 1,
+          "Shared Hit Blocks": 42813,
+          "Shared Read Blocks": 0,
+          "Shared Dirtied Blocks": 0,
+          "Shared Written Blocks": 0,
+          "Local Hit Blocks": 0,
+          "Local Read Blocks": 0,
+          "Local Dirtied Blocks": 0,
+          "Local Written Blocks": 0,
+          "Temp Read Blocks": 0,
+          "Temp Written Blocks": 0
+        },
+        "Planning": {
+          "Shared Hit Blocks": 0,
+          "Shared Read Blocks": 0,
+          "Shared Dirtied Blocks": 0,
+          "Shared Written Blocks": 0,
+          "Local Hit Blocks": 0,
+          "Local Read Blocks": 0,
+          "Local Dirtied Blocks": 0,
+          "Local Written Blocks": 0,
+          "Temp Read Blocks": 0,
+          "Temp Written Blocks": 0
+        },
+        "Planning Time": 0.079,
+        "Triggers": [],
+        "Execution Time": 64.969
+      }
+    ]
+  },
+  "registrationPlan": "Limit  (cost=0.58..13.80 rows=26 width=61) (actual time=0.042..0.225 rows=26 loops=1)\r\n  Buffers: shared hit=82\r\n  ->  Nested Loop  (cost=0.58..25441.34 rows=50045 width=61) (actual time=0.042..0.221 rows=26 loops=1)\r\n        Buffers: shared hit=82\r\n        ->  Index Scan using registrations_created_id_idx on registrations g  (cost=0.29..4484.63 rows=50045 width=54) (actual time=0.018..0.027 rows=26 loops=1)\r\n              Buffers: shared hit=4\r\n        ->  Index Scan using persons_pkey on persons p  (cost=0.29..0.42 rows=1 width=39) (actual time=0.007..0.007 rows=1 loops=26)\r\n              Index Cond: (id = g.person_id)\r\n              Buffers: shared hit=78\r\nPlanning:\r\n  Buffers: shared hit=329\r\nPlanning Time: 10.692 ms\r\nExecution Time: 0.294 ms"
+}
