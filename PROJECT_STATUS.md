@@ -152,3 +152,15 @@
 
 - Deployment verification: the switch is live on https://ganpatiagro.in/register. GitHub CI passed on 2b0f575. Browser checks verified ON/OFF labels and missing-live-key feedback. A synthetic hosted registration created one actual Razorpay TEST order for 50000 paise; retrying reused its order and signed-cookie mode. No payment was captured. No database mode migration was applied.
 
+
+## Mobile registration layout — 15 September 2026
+
+- Removed competing mobile fieldset padding and reduced nested gutters. Single-column phone fields now retain usable width; farm fields have explicit vertical spacing. Bilingual section titles stack predictably, action buttons span the form, radios have full-width touch targets, checkboxes cannot shrink, and acreage requests a decimal keyboard. Village results use a viewport-bounded list.
+- Verified the production build at 320, 360, 390, 430, 768 and 1280px: no horizontal control overflow. At 320px, farm input width increased from 150px to 222px. Verified plot add/remove, Marathi village search and keyboard selection, payment toggle feedback and consent layout. Browser viewport testing does not replace an actual iOS/Android keyboard check.
+- Lint, typecheck, all 26 tests and production build passed. No database or payment behavior changes.
+
+## Registration crop flow and password visibility — 15 September 2026
+
+- Cluster Type now starts Farm Details. Every plot's crop selector is disabled until a cluster is chosen and lists only that cluster's crops. Switching cluster clears incompatible selections across all plots; registration validation enforces this relationship. The existing single registration cluster is retained without a database migration.
+- Added accessible independent eye buttons to registration password/confirmation and login, using a shared component with 44px targets. Simplified consent and password guidance, removing encryption/admin-access and byte-count implementation details from the public form.
+- Lint, typecheck, all 27 tests and production build pass. Browser verification covered cluster filtering/reset across two plots, show/hide and keyboard operation, and no horizontal overflow at 320, 390 and 1280px.

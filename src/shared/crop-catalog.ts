@@ -114,3 +114,7 @@ const cropNames = new Set<string>(CROP_CATEGORIES.flatMap(category => [...catego
 export function isCatalogCrop(value: string): boolean {
   return cropNames.has(value);
 }
+
+export function cropBelongsToCluster(cluster:string,crop:string):boolean {
+  return CROP_CATEGORIES.some(category=>category.id===cluster&&category.crops.some(value=>value===crop));
+}
