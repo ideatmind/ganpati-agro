@@ -142,3 +142,31 @@
 - Verified zero publicly executable privileged RPCs, zero application tables without RLS, and service-role access to the core application RPCs. Security/performance advisors report informational deny-by-default RLS/no-policy and unused-index notices; no warning/error findings. These tables intentionally use server-only service-role RPC access; do not add public policies to suppress the notices.
 - Hosted login now returns INVALID_CREDENTIALS for a nonexistent synthetic account after successfully executing authenticate_limited_session. A rolled-back hosted transaction verified an eight-character password login, wrong-password rejection, session lookup, password change and session revocation. No synthetic account or password change persisted. All nine admin workspace sections returned successfully through the hosted database.
 - Live homepage, registration and login redirect checks pass. Previously published CI passed lint, typecheck, 24 unit tests, database/concurrency regressions, build and synthetic HTTP journeys. Actual browser login with the owner's credentials and real Razorpay capture/webhook/app-return acceptance remain separate; production Razorpay credentials are still TEST keys and production checkout remains blocked by its existing guard.
+
+## Temporary form payment switch — 15 September 2026
+
+- Added the owner-requested Test mode ON/OFF switch. ON uses Razorpay test credentials; OFF uses live credentials and reports clearly when live keys are absent. ENABLE_PAYMENT_MODE_SWITCH controls whether the temporary switch is available.
+- No database mode columns or migrations. The selection is bound to a signed HttpOnly checkout cookie, locked after registration, and reused for order creation, verification and status retries. Existing saved orders are checked against the selected provider account before reuse. Operator reconciliation can look up orders with either configured key pair.
+- The owner explicitly approved creating test memberships, receipts and referral records in the current prelaunch database. No cleanup was performed; removing test/demo data remains a separately scoped prelaunch operation.
+- Lint, typecheck, all 26 unit tests, isolated production build and the full synthetic HTTP payment journey passed. Tests verify distinct test/live keys, mode-bound signatures/cookies, default test blocking, and rejection of body-supplied mode overrides after checkout starts.
+
+- Deployment verification: the switch is live on https://ganpatiagro.in/register. GitHub CI passed on 2b0f575. Browser checks verified ON/OFF labels and missing-live-key feedback. A synthetic hosted registration created one actual Razorpay TEST order for 50000 paise; retrying reused its order and signed-cookie mode. No payment was captured. No database mode migration was applied.
+
+
+## Mobile registration layout — 15 September 2026
+
+- Removed competing mobile fieldset padding and reduced nested gutters. Single-column phone fields now retain usable width; farm fields have explicit vertical spacing. Bilingual section titles stack predictably, action buttons span the form, radios have full-width touch targets, checkboxes cannot shrink, and acreage requests a decimal keyboard. Village results use a viewport-bounded list.
+- Verified the production build at 320, 360, 390, 430, 768 and 1280px: no horizontal control overflow. At 320px, farm input width increased from 150px to 222px. Verified plot add/remove, Marathi village search and keyboard selection, payment toggle feedback and consent layout. Browser viewport testing does not replace an actual iOS/Android keyboard check.
+- Lint, typecheck, all 26 tests and production build passed. No database or payment behavior changes.
+
+## Registration crop flow and password visibility — 15 September 2026
+
+- Cluster Type now starts Farm Details. Every plot's crop selector is disabled until a cluster is chosen and lists only that cluster's crops. Switching cluster clears incompatible selections across all plots; registration validation enforces this relationship. The existing single registration cluster is retained without a database migration.
+- Added accessible independent eye buttons to registration password/confirmation and login, using a shared component with 44px targets. Simplified consent and password guidance, removing encryption/admin-access and byte-count implementation details from the public form.
+- Lint, typecheck, all 27 tests and production build pass. Browser verification covered cluster filtering/reset across two plots, show/hide and keyboard operation, and no horizontal overflow at 320, 390 and 1280px.
+
+## INR 1 live-payment release prepared — 15 September 2026
+
+- Removed the public payment-mode switch and demo auto-fill; production rejects test checkout, old test cookies and old test webhook signatures. Added a 100-paise fee migration preserving previous quote snapshots.
+- Live credentials validated and stored in Vercel configuration. Security review and release gates are in docs/LIVE_PAYMENT_SECURITY_REVIEW.md. No live charge was executed.
+- Hosted fee migration and deployment remain pending live webhook setup and replacement of the predictable administrator password.

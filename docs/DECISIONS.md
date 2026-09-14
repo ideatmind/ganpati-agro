@@ -69,3 +69,21 @@
 ## Temporary registration test helper
 
 - A local testing button may populate synthetic, schema-valid registration values, including unique-looking mobile and Aadhaar numbers and the consent checkbox. It fills only; submission and payment remain explicit user actions. Remove the helper before production release.
+
+## Decision: temporary form switch without database modes
+
+Per the owner's updated instruction, registration exposes a temporary Test mode switch controlled by ENABLE_PAYMENT_MODE_SWITCH. Mode is held only in the signed HttpOnly checkout cookie, never in database columns. ON selects test credentials; OFF selects live credentials. Missing credentials fail explicitly; switching never substitutes test keys for live. Mode locks after registration; the provider verifies existing-order ownership before reuse, so retrying a registration under another mode cannot reuse that gateway order successfully.
+
+The owner approved test memberships, receipts and referral records in the same database during the private test phase. Retain normal payment signature, capture and idempotency checks. A later database cleanup/removal of test tooling is a separate task and was not executed here.
+
+## Mobile registration spacing — 15 September 2026
+
+Keep responsive form styling in legacy-form.css. Fieldsets must not add a second mobile gutter in operations.css. Use a single column below 768px, non-shrinking consent controls and at least 44px action targets. Preserve every bilingual field, validation, consent and payment state; no stepper or new UI dependency is needed for this layout repair.
+
+## Dependent crop selection and public form wording — 15 September 2026
+
+Move the existing registration-level cluster into Farm Details before its plots. All plot crops must belong to that cluster; keep shared crops when valid in the new cluster, clear incompatible crops, and enforce the relationship at API validation. Keep consent's data-use purpose visible, but omit infrastructure and administrator access details from the public form. Password visibility is opt-in, independent for each field, and available on login too.
+
+## INR 1 live checkout — 15 September 2026
+
+The owner requested removal of the temporary payment-mode switch and a live trial fee of INR 1. New fee versions use 100 paise while previous registration snapshots stay unchanged. Production must reject test credentials and old test checkout capabilities, and require a distinct live webhook secret. The 10% commission remains unchanged (10 paise at the new fee). No test-data cleanup is included.

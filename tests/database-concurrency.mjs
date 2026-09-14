@@ -18,8 +18,8 @@ const key=reservations.find(result=>result.requestKey).requestKey;
 const order='order_concurrency_'+suffix;const payment='pay_concurrency_'+suffix;
 await sql(`select public.record_payment_order(${id},${sqlLiteral(order)},${sqlLiteral(key)});`);
 const completed=await Promise.all(Array.from({length:12},(_,index)=>sql(index%2===0?
-  `select public.finalize_registration_payment(${sqlLiteral(order)},${sqlLiteral(payment)},50000,'INR','farmer',true);`:
-  `select public.record_payment_event('event_concurrent_${suffix}_${index}','payment.captured',${sqlLiteral(order)},${sqlLiteral(payment)},50000,'INR','{}');`).then(JSON.parse)));
+  `select public.finalize_registration_payment(${sqlLiteral(order)},${sqlLiteral(payment)},100,'INR','farmer',true);`:
+  `select public.record_payment_event('event_concurrent_${suffix}_${index}','payment.captured',${sqlLiteral(order)},${sqlLiteral(payment)},100,'INR','{}');`).then(JSON.parse)));
 assert.equal(new Set(completed.map(result=>result.receiptToken)).size,1,'Capture race returned inconsistent receipts');
 const count=JSON.parse(await sql(`select jsonb_build_object('farmers',(select count(*) from public.farmers where registration_id=${id}),'memberships',(select count(*) from public.memberships where registration_id=${id}),'receipts',(select count(*) from public.receipts where registration_id=${id}),'attempts',(select count(*) from public.payment_attempts where provider_payment_id=${sqlLiteral(payment)}));`));
 assert.deepEqual(count,{farmers:1,memberships:1,receipts:1,attempts:1});

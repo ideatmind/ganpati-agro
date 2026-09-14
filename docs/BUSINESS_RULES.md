@@ -2,7 +2,7 @@
 
 1. A normalized mobile number identifies one person and must be unique.
 2. An Aadhaar lookup fingerprint identifies one person and must be unique. The number is encrypted; only an active super administrator may explicitly reveal it on a registration detail page. Every reveal is audited without the number. It is excluded from ordinary page payloads, logs, receipts and CSV exports; the revealed value clears when the page is hidden or after 60 seconds. Passwords are hashed and cannot be displayed.
-3. A registration snapshots its ₹500 fee and applicable referral rate before checkout.
+3. A registration snapshots its current fee and applicable referral rate before checkout. New live-trial registrations use ₹1 (100 paise); previous ₹500 snapshots remain unchanged.
 4. One registration can have multiple payment attempts but only one successful completion.
 5. Only a verified, captured payment for the expected order, amount, and currency activates membership.
 6. Payment completion creates exactly one farmer, membership, receipt, and optional referral earning.

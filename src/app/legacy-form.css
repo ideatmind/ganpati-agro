@@ -1,1 +1,50 @@
 .legacy-form-page{max-width:800px}.legacy-registration-form{background:white;border:1px solid #eef2ee;border-radius:16px;padding:40px 36px;box-shadow:0 20px 50px rgba(18,59,36,.14)}.legacy-form-section{border:0;padding:0;margin:0 0 34px;min-width:0}.legacy-form-section legend{width:100%;display:flex;align-items:center;gap:10px;color:var(--deep);font-family:"Poppins","Noto Sans Devanagari",sans-serif;font-size:1.06rem;font-weight:700;padding:0 0 14px;margin-bottom:24px;border-bottom:2px solid #e8f5e9}.legacy-form-section legend em,.legacy-field label em,.field-label em{font-family:"Poppins",sans-serif;color:var(--sub);font-size:.78em;font-weight:500;margin-left:2px}.legend-icon{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#e8f5e9;color:var(--green);font-size:1rem}.legacy-field{margin-bottom:20px}.legacy-field label,.field-label{display:block;color:var(--deep);font-size:.94rem;font-weight:650;margin-bottom:7px}.legacy-field label b,.field-label b,.legacy-consent b{color:#d13838}.legacy-field input,.legacy-field select{width:100%;padding:13px 16px;border:2px solid #e3e8e3;border-radius:10px;background:#fbfcfb;min-height:50px;transition:border-color .3s,box-shadow .3s,background .3s}.legacy-field input:focus,.legacy-field select:focus{outline:0;border-color:var(--leaf);box-shadow:0 0 0 4px rgba(111,175,69,.16);background:white}.legacy-field input[readonly]{background:#f0f3ef;color:#59645b}.legacy-field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}.radio-group{display:flex;flex-wrap:wrap;gap:10px}.radio-group label{display:inline-flex;align-items:center;gap:8px;padding:10px 17px;border:2px solid #e3e8e3;border-radius:50px;cursor:pointer;font-weight:500;transition:border-color .3s,background .3s,transform .3s}.radio-group label:hover{transform:translateY(-1px);border-color:#b9d9ba}.radio-group label:has(input:checked){border-color:var(--green);background:#f1f8e9;color:var(--deep)}.radio-group input{width:auto;min-height:auto;accent-color:var(--green)}.farm-entry{background:#f1f8e9;border:1px solid #d7ebd8;border-radius:10px;padding:20px;margin-bottom:16px;animation:farm-in .32s ease}.farm-entry:hover{box-shadow:0 4px 16px rgba(18,59,36,.08)}.farm-entry-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}.farm-entry-head>span{font-family:"Poppins","Noto Sans Devanagari",sans-serif;color:var(--green);background:white;border:1px solid #cfe6d0;border-radius:50px;padding:4px 14px;font-size:.88rem;font-weight:700}.farm-entry-head button{border:1px solid #ffcdd2;background:#fff5f5;color:#b52e2e;border-radius:50px;padding:5px 13px;font-size:.8rem;font-weight:700}.farm-entry .legacy-field{margin-bottom:0}.add-plot{display:inline-flex;align-items:center;border:2px dashed var(--leaf);background:white;color:var(--green);border-radius:50px;padding:11px 22px;font-weight:700;transition:.3s}.add-plot:hover{background:#f1f8e9;border-style:solid;transform:translateY(-1px)}.plot-warning{color:#a52a2a;font-weight:650;font-size:.86rem}.cash-choice{background:#fff8e1;border:1px solid #ead9b7;border-radius:10px;padding:18px}.cash-choice>label{display:flex;align-items:flex-start;gap:10px;cursor:pointer}.cash-choice input,.legacy-consent input{width:20px;min-height:20px;accent-color:var(--green);margin-top:3px}.cash-choice span{display:grid}.cash-choice small{color:var(--sub)}.cash-choice .legacy-field{margin:16px 0 0}.privacy-note{background:#fff3cd;border:1px solid #ffe08a;color:#5d4037;padding:14px 18px;border-radius:10px;font-size:.88rem;margin-bottom:18px}.legacy-payment-summary{display:grid;grid-template-columns:1fr auto;gap:2px 20px;align-items:center;background:var(--deep);color:white;border-radius:10px;padding:20px 22px;margin-bottom:18px}.legacy-payment-summary strong{font-family:"Poppins",sans-serif;font-size:1.65rem;color:var(--gold)}.legacy-payment-summary small{grid-column:1/-1;color:#cfe0d3}.legacy-consent{display:flex;align-items:flex-start;gap:10px;font-size:.9rem;cursor:pointer}.legacy-submit{width:100%;min-height:54px;display:flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:50px;background:#e65100;color:white;font-weight:750;font-size:1.02rem;box-shadow:0 10px 26px rgba(230,81,0,.3);transition:transform .3s,background .3s,box-shadow .3s}.legacy-submit:hover:not(:disabled){transform:translateY(-3px);background:#d34a00;box-shadow:0 14px 32px rgba(230,81,0,.34)}.legacy-submit:disabled{opacity:.72;cursor:wait}.spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.45);border-top-color:white;border-radius:50%;animation:spin .8s linear infinite}.retry-payment{display:block;margin:14px auto 0;border:0;background:transparent;color:var(--green);font-weight:700;text-decoration:underline}.legacy-registration-form .form-error{margin:0 0 20px}.legacy-registration-form :focus-visible{outline:3px solid var(--gold);outline-offset:3px}@keyframes farm-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}@keyframes spin{to{transform:rotate(360deg)}}@media(max-width:767px){.legacy-registration-form{padding:26px 18px}.legacy-field-row{grid-template-columns:1fr;gap:0}.legacy-field input,.legacy-field select{font-size:16px}.radio-group label{padding:9px 13px}.legacy-payment-summary{grid-template-columns:1fr}.legacy-payment-summary strong{margin-top:4px}}@media(prefers-reduced-motion:reduce){.farm-entry{animation:none}.legacy-submit,.add-plot,.radio-group label{transition:none}}
+
+/* Keep nested fieldsets from consuming the usable width on phones. */
+.legacy-field{min-width:0}
+.legacy-field input,.legacy-field select{min-width:0;max-width:100%}
+.legacy-field-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+.demo-data-button{display:flex;margin:16px 0 24px auto}
+.legacy-consent input,.cash-choice input{flex-shrink:0}
+.legacy-registration-form .payment-status,.legacy-registration-form .checkout-summary{overflow-wrap:anywhere}
+.legacy-registration-form .payment-status p:last-child{margin-bottom:0}
+@media(max-width:767px){
+  .form-page.legacy-form-page{padding:28px 12px 48px}
+  .legacy-form-page .form-heading{margin-bottom:24px}
+  .legacy-form-page .form-heading h1{font-size:clamp(1.65rem,6.5vw,2.4rem);line-height:1.4}
+  .legacy-form-page .form-heading .eyebrow{font-size:.72rem;letter-spacing:.08em}
+  .legacy-registration-form{padding:20px 16px;border-radius:12px;box-shadow:0 8px 24px rgba(18,59,36,.08)}
+  .legacy-form-section{padding:0;margin-bottom:28px}
+  .legacy-form-section legend{display:block;line-height:1.6;margin-bottom:18px;padding-bottom:10px}
+  .legacy-form-section legend em{display:block;margin-left:0;font-style:normal}
+  .legacy-field-row{grid-template-columns:minmax(0,1fr);gap:0}
+  .legacy-field input,.legacy-field select{padding:12px;font-size:16px;min-height:50px}
+  .legacy-field label,.field-label{line-height:1.65}
+  .farm-entry{padding:14px 12px}
+  .farm-entry .legacy-field{margin-bottom:18px}
+  .farm-entry .legacy-field-row:last-child .legacy-field:last-child{margin-bottom:0}
+  .farm-entry-head{gap:8px;flex-wrap:wrap}
+  .farm-entry-head button{min-height:44px;padding:8px 12px}
+  .radio-group{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+  .radio-group label{margin:0;min-height:48px;border-radius:10px;padding:10px 12px}
+  .radio-group input{width:20px;min-height:20px;flex-shrink:0;margin:0}
+  .add-plot{width:100%;justify-content:center;min-height:48px;padding:12px;line-height:1.6;border-radius:12px;text-align:center}
+  .legacy-submit{min-height:54px;padding:14px 12px;border-radius:12px;line-height:1.5;flex-wrap:wrap}
+  .legacy-consent{line-height:1.75;min-height:44px}
+  .privacy-note,.cash-choice,.legacy-payment-summary{padding:14px 12px}
+  .legacy-registration-form .payment-status{padding:12px;font-size:.9rem}
+  .legacy-registration-form .retry-payment{width:100%;padding:12px 4px;min-height:48px;line-height:1.6}
+  .legacy-registration-form .village-options{max-height:min(260px,40dvh)}
+  .legacy-registration-form .village-help{font-size:13px}
+  .legacy-registration-form .village-list-footer{flex-wrap:wrap;font-size:12px}
+  .legacy-registration-form .village-list-footer button{min-height:44px}
+}
+
+.password-control{position:relative}
+.password-control input{padding-right:54px}
+.password-toggle{position:absolute;right:4px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:8px;color:var(--green);background:transparent;cursor:pointer}
+.password-toggle:hover{background:#e8f5e9}
+.password-toggle:disabled{opacity:.5;cursor:default}
+.legacy-field select:disabled{background:#f0f3ef;color:var(--sub);cursor:not-allowed}
+
+.login-card .password-control{margin-top:7px}

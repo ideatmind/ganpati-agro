@@ -127,3 +127,17 @@ A fresh encrypted backup was taken immediately before application. Account/perso
 Supabase advisors returned informational [RLS enabled without policies](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy) notices for the intentionally service-only tables and [unused indexes](https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index) on the low-traffic database. No warning/error findings were returned. Keep deny-by-default access and the release's indexing until real workload measurements justify changes.
 
 The deployed application and hosted schema now share the required RPC contracts. Schema completion does not establish live payment acceptance: the existing production TEST-key guard remains, and real checkout/capture/webhook/app-return verification is still outstanding. Preserve the new schema during recovery; do not roll back to old authentication/order/payout callers.
+
+## Temporary form switch for the private test phase
+
+Set ENABLE_PAYMENT_MODE_SWITCH=true in Vercel Production and redeploy to show Test mode ON/OFF. ON uses RAZORPAY_TEST_KEY_ID/RAZORPAY_TEST_KEY_SECRET; OFF uses RAZORPAY_LIVE_KEY_ID/RAZORPAY_LIVE_KEY_SECRET. The existing RAZORPAY_KEY_ID/RAZORPAY_KEY_SECRET pair remains a fallback only for its matching key-ID mode. Keep the current standard pair as TEST credentials and add the explicit LIVE pair when ready. Never put secrets in NEXT_PUBLIC variables.
+
+The checkout mode lives only in its signed HttpOnly browser cookie. No database mode field is added. Select mode before registration; it is locked for saved checkout/retries. Existing orders are verified with the selected provider keys, and administrator reconciliation checks either configured provider account when necessary. Missing live credentials produce an explicit message rather than falling back to test checkout.
+
+Razorpay test and live webhooks can both use https://ganpatiagro.in/api/payments/webhook. Configure their matching RAZORPAY_TEST_WEBHOOK_SECRET and RAZORPAY_LIVE_WEBHOOK_SECRET; the original RAZORPAY_WEBHOOK_SECRET remains supported. Verify payment.captured/order.paid delivery for each configured mode. The switch does not enable simulated payment signatures or bypass captured-payment verification.
+
+The owner explicitly approved test membership/receipt/referral records in this current private-test database. No records were deleted. Before public launch, separately reconcile/clear the test dataset as instructed by the owner, remove demo controls, configure live credentials/webhooks, set ENABLE_PAYMENT_MODE_SWITCH=false, and redeploy. Do not treat test entries as real collections.
+
+## Live INR 1 trial (supersedes temporary switch instructions)
+
+Production accepts live credentials only. Configure RAZORPAY_LIVE_KEY_ID, RAZORPAY_LIVE_KEY_SECRET and the separate RAZORPAY_LIVE_WEBHOOK_SECRET as server-only Vercel production variables. The webhook must subscribe to payment.captured and order.paid at /api/payments/webhook. The removed ENABLE_PAYMENT_MODE_SWITCH flag cannot re-enable test mode. Apply the live_trial_fee migration once before promoting the release; do not replay earlier hosted migrations. New registrations quote 100 paise while existing quote snapshots are retained. Complete the release gates in LIVE_PAYMENT_SECURITY_REVIEW.md.
