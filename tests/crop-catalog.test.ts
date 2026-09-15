@@ -32,3 +32,13 @@ test("registration rejects crops and clusters outside the catalog", () => {
     assert.ok(result.error?.issues.some(issue => issue.path.join(".") === "plots.0.crop_name"));
   }
 });
+
+test("each plot must use a crop from the selected cluster", () => {
+  const plot={plot_no:"1",area_acres:1,crop_name:"तूर",irrigation_source:"well"};
+  const input={...registration,cluster_type:"pulses",plots:[plot,{...plot,plot_no:"2",crop_name:"सोयाबीन"}]};
+  const result=registrationSchema.safeParse(input);
+  assert.equal(result.success,false);
+  assert.ok(result.error?.issues.some(issue=>issue.path.join('.')==='plots.1.crop_name'));
+  assert.ok(registrationSchema.safeParse({...input,plots:[plot,{...plot,plot_no:"2",crop_name:"हरभरा"}]}).success);
+  for(const cluster_type of ['spices','vegs'])assert.ok(registrationSchema.safeParse({...input,cluster_type,plots:[{...plot,crop_name:"मिरची"}]}).success);
+});

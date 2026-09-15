@@ -1,0 +1,151 @@
+{
+  "completedDate": "2026-09-16",
+  "environment": "isolated local PostgreSQL 16, production Next.js build, synthetic provider responses",
+  "hostedMutationsPerformed": false,
+  "browser": {
+    "results": [
+      {
+        "path": "/",
+        "width": 320,
+        "overflow": false
+      },
+      {
+        "path": "/register",
+        "width": 320,
+        "overflow": false
+      },
+      {
+        "path": "/login",
+        "width": 320,
+        "overflow": false
+      },
+      {
+        "path": "/",
+        "width": 390,
+        "overflow": false
+      },
+      {
+        "path": "/register",
+        "width": 390,
+        "overflow": false
+      },
+      {
+        "path": "/login",
+        "width": 390,
+        "overflow": false
+      },
+      {
+        "path": "/",
+        "width": 768,
+        "overflow": false
+      },
+      {
+        "path": "/register",
+        "width": 768,
+        "overflow": false
+      },
+      {
+        "path": "/login",
+        "width": 768,
+        "overflow": false
+      },
+      {
+        "path": "/",
+        "width": 1280,
+        "overflow": false
+      },
+      {
+        "path": "/register",
+        "width": 1280,
+        "overflow": false
+      },
+      {
+        "path": "/login",
+        "width": 1280,
+        "overflow": false
+      },
+      {
+        "mobileMenuEscapeAndFocus": true
+      },
+      {
+        "registerSolidColorContrastFailures": []
+      },
+      {
+        "demoHidden": true,
+        "unicodeName": true,
+        "invalidNameRejected": true,
+        "digitsOnlyTyping": true,
+        "cropFiltering": true
+      },
+      {
+        "networkFailureKeepsInputAndAllowsSafeRetry": true
+      },
+      {
+        "databaseFeeReflected": 100
+      },
+      {
+        "path": "/dashboard",
+        "mobileOverflow": false
+      },
+      {
+        "path": "/dashboard/admin",
+        "mobileOverflow": false
+      },
+      {
+        "path": "/dashboard/admin?section=trash",
+        "mobileOverflow": false
+      },
+      {
+        "path": "/dashboard/admin/new/staff",
+        "mobileOverflow": false
+      },
+      {
+        "path": "/dashboard/admin/new/payout",
+        "mobileOverflow": false
+      },
+      {
+        "path": "/dashboard/admin/new/grant",
+        "mobileOverflow": false
+      },
+      {
+        "path": "/dashboard/admin/account",
+        "mobileOverflow": false
+      },
+      {
+        "payoutRecoverySameKeyAndPayload": true,
+        "successNotice": true
+      }
+    ],
+    "pageErrors": []
+  },
+  "gitHistorySecretScan": {
+    "scope": "all reachable git objects; token/private-key signatures; values never printed",
+    "blobs": 508,
+    "findings": [],
+    "trackedEnvFiles": [
+      ".env.example"
+    ]
+  },
+  "configuredSecretScan": {
+    "configuredSecretValuesCompared": 5,
+    "findings": [],
+    "valuesPrinted": false
+  },
+  "checks": {
+    "lint": "passed",
+    "typecheck": "passed",
+    "applicationTestsPassed": 32,
+    "build": "passed",
+    "databaseSuitesPassed": 5,
+    "cleanLocalMigrationsApplied": 17,
+    "httpJourney": "passed",
+    "concurrencyWidth": 12,
+    "npmAuditVulnerabilities": 0
+  },
+  "limitations": [
+    "No real charge or offline disbursement performed",
+    "Browser payout response intercepted; SQL idempotency tested separately",
+    "Contrast scan covers selected solid-color text only",
+    "No independent penetration test, actual mobile payment-app return, or new hosted restore drill"
+  ]
+}

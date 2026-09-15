@@ -2,7 +2,7 @@
 
 1. A normalized mobile number identifies one person and must be unique.
 2. An Aadhaar lookup fingerprint identifies one person and must be unique. The number is encrypted; only an active super administrator may explicitly reveal it on a registration detail page. Every reveal is audited without the number. It is excluded from ordinary page payloads, logs, receipts and CSV exports; the revealed value clears when the page is hidden or after 60 seconds. Passwords are hashed and cannot be displayed.
-3. A registration snapshots its ₹500 fee and applicable referral rate before checkout.
+3. A registration snapshots the effective database fee in paise and applicable referral rate before checkout; the initial/default fee is ₹500 (`50000`). The form displays that trusted fee and submits it as an expectation, never as price authority. If the fee changes before submission, the transaction rejects the stale expectation. A matching retry retains its original snapshot. The hosted ₹1 trial configuration requires an owner decision before public launch.
 4. One registration can have multiple payment attempts but only one successful completion.
 5. Only a verified, captured payment for the expected order, amount, and currency activates membership.
 6. Payment completion creates exactly one farmer, membership, receipt, and optional referral earning.
@@ -32,6 +32,11 @@ Rules 17–23 and the strengthened grant/session controls are locally tested in 
 25. New and changed passwords require at least 8 characters and at most 72 UTF-8 bytes for every role. Mobile must contain exactly 10 ASCII digits and Aadhaar exactly 12, without whitespace, punctuation or other characters.
 
 
-26. Registration crop choices and cluster names use the owner-supplied 13-category catalog in `src/shared/crop-catalog.ts`. Each plot selects a listed crop from grouped categories independently of the profile cluster. The profile cluster remains a single selection. New registrations reject unlisted crop names at the API boundary; existing saved crop text is retained. The duplicate fruit spelling सिताफळ is presented once as सीताफळ. Existing six cluster identifiers remain compatible.
+26. Registration crop choices and cluster names use the owner-supplied 13-category catalog in `src/shared/crop-catalog.ts`. Each plot selects a listed crop belonging to the selected profile cluster. Changing cluster clears incompatible selections. New registrations reject unlisted or mismatched crops at the API boundary; existing saved crop text is retained. The duplicate fruit spelling सिताफळ is presented once as सीताफळ. Existing six cluster identifiers remain compatible.
 
 Crop display labels use Marathi / English throughout website crop chips and registration options, including allied businesses and protected cultivation. Display translations do not change stored crop values.
+
+27. Person names support Unicode letters/marks, spaces, apostrophes, hyphens and periods, normalized to NFC with repeated spaces collapsed; digits, emoji and repeated punctuation are rejected. Plot acreage is 0.01–100000 acres with at most two decimal places, without silent rounding.
+28. Cash declarations and payout allocations cannot be updated or deleted. Original order/webhook evidence is protected; only defined processing fields may change, and a paid order cannot be downgraded. The application has no financial correction editor: retain original records and resolve exceptions through an authorized, documented corrective process.
+29. After permanent profile erasure, managers/super-admins can inspect retained finance through a separate payment detail page; ordinary farmer/profile reads remain unavailable. Retained referral earnings display an anonymous name. This does not remove issued receipts or financial/audit history.
+30. Payout response-loss recovery reuses the exact saved request and UUID. An operator must resolve an uncertain saved record before starting another; confirmation records an already completed offline disbursement, never a transfer or claim request.

@@ -1,5 +1,11 @@
 # Decisions
 
+## Role-aware workspace navigation — 16 September 2026
+
+Management opens directly in operations; personal referral/onboarding activity remains available at `/dashboard?personal=1`. Employees and farmer referrers keep their scoped dashboards. Managers see team oversight wording, while staff administration and Trash remain super-admin-only. Share role-filtered desktop/mobile navigation and repeated admin heading/status patterns without introducing a new UI framework or permission model.
+
+Use validated list returns instead of arbitrary URLs or browser history for operational Cancel/Back actions. Keep bulk success visible after refreshed rows, use named destructive confirmations with keyboard focus containment, and confirm recipient/amount before recording an already-completed offline payout. Preserve the existing independent server/database authorization, grant scope, payment snapshots, PII protection and financial retention. See [role UX remediation report](ROLE_UI_REMEDIATION_20260916.md) for local browser evidence and explicit remaining limits.
+
 ## 2026-09-13
 
 - Membership activates automatically after successful ₹500 payment.
@@ -69,3 +75,35 @@
 ## Temporary registration test helper
 
 - A local testing button may populate synthetic, schema-valid registration values, including unique-looking mobile and Aadhaar numbers and the consent checkbox. It fills only; submission and payment remain explicit user actions. Remove the helper before production release.
+
+## Decision: temporary form switch without database modes
+
+Per the owner's updated instruction, registration exposes a temporary Test mode switch controlled by ENABLE_PAYMENT_MODE_SWITCH. Mode is held only in the signed HttpOnly checkout cookie, never in database columns. ON selects test credentials; OFF selects live credentials. Missing credentials fail explicitly; switching never substitutes test keys for live. Mode locks after registration; the provider verifies existing-order ownership before reuse, so retrying a registration under another mode cannot reuse that gateway order successfully.
+
+The owner approved test memberships, receipts and referral records in the same database during the private test phase. Retain normal payment signature, capture and idempotency checks. A later database cleanup/removal of test tooling is a separate task and was not executed here.
+
+## Mobile registration spacing — 15 September 2026
+
+Keep responsive form styling in legacy-form.css. Fieldsets must not add a second mobile gutter in operations.css. Use a single column below 768px, non-shrinking consent controls and at least 44px action targets. Preserve every bilingual field, validation, consent and payment state; no stepper or new UI dependency is needed for this layout repair.
+
+## Dependent crop selection and public form wording — 15 September 2026
+
+Move the existing registration-level cluster into Farm Details before its plots. All plot crops must belong to that cluster; keep shared crops when valid in the new cluster, clear incompatible crops, and enforce the relationship at API validation. Keep consent's data-use purpose visible, but omit infrastructure and administrator access details from the public form. Password visibility is opt-in, independent for each field, and available on login too.
+
+## Permanent deletion from Trash — 15 September 2026
+
+Super-admins can permanently erase up to 100 explicitly selected trashed profiles after confirming their current password. The server derives the actor from the signed session, limits password attempts and repeats role, password and Trash checks in PostgreSQL. Selections are atomic; repeat requests do not repeat deletion or audit events. There is no all-matching permanent deletion.
+
+Retain the existing financial-history invariant: physically delete persons, encrypted Aadhaar/fingerprint/last-four, plots and sessions; clear login credentials and mobile from a disabled account shell. Disable the referral code and revoke edit grants. Completed registration, farmer and account IDs remain as anonymous linking records for memberships, payments, receipts, earnings, payouts and audit/grant history. Issued receipts retain their original name and masked mobile. This is operational profile erasure, not erasure of every historical reference or backup. Mobile and Aadhaar can be used for a new registration.
+
+Registrations that never started checkout and have no cash declaration can be physically removed. Incomplete registrations with any checkout reservation, order, exception or cash collection are blocked; age alone cannot prove a provider payment is impossible. Staff accounts are blocked. Erased profiles cannot be restored or re-trashed. Accounting links preserve duplicate/late capture handling and employee onboarding attribution.
+
+## Security and UX audit — 15–16 September 2026
+
+Use the current database fee for registration and cash labels, with an atomic stale-price expectation check. Preserve original fee/commission snapshots on retries. The initial fee remains ₹500; the hosted `live_trial_fee` currently sets ₹1. No hosted fee or data was changed during this audit; the owner must resolve that private-trial/public-launch decision.
+
+Strengthen cash/allocation immutability and protect original payment-order/webhook evidence while retaining permitted processing transitions. Keep finance-only management access and anonymized recent earnings after profile erasure. Align profile-edit and purge lock ordering. These changes are in `20260915190000_audit_financial_controls.sql`, following the local permanent-deletion migration.
+
+Persist exact pending payout requests for response-loss recovery, scoped to the signed-in account's browser session. Display employees' own pending online-payment queue. Apply shared Unicode name validation, two-decimal acreage, editable validated referral codes, safe field-specific errors, duplicate-submit guards and recoverable network feedback. Add a validated `/r/[code]` alias. Restrict the demo helper to explicit trial/nonproduction mode; preserve the owner's temporary test-payment decision.
+
+Use the existing green token for the registration action after finding insufficient white/orange text contrast. Keep keyboard access and focus return for the mobile menu. These targeted changes do not replace a screen-reader, real-device or full WCAG audit. See [audit report](SECURITY_UX_AUDIT_20260915.md) for evidence and remaining release gates.

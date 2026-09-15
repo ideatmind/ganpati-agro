@@ -5,6 +5,16 @@ import {bulkActionSchema,adminQuery} from '../src/features/admin/schema.ts';
 import {adminRowsCsv} from '../src/features/admin/csv.ts';
 import {revealAadhaar} from '../src/features/admin/server/records.ts';
 import {passwordSchema,mobileSchema,aadhaarSchema} from '../src/shared/credential-schema.ts';
+import {permanentlyDeleteRegistrations} from '../src/features/admin/server/permanent-delete.ts';
+
+test('permanent deletion requires explicit bounded selection, password and super-admin access',async()=>{
+ const input={ids:[crypto.randomUUID()],action:'purge',password:'test-password'};
+ assert.equal(bulkActionSchema.safeParse(input).success,true);
+ for(const change of [{password:undefined},{password:''},{ids:[]},{ids:Array(101).fill(input.ids[0])},{allMatching:true,filters:{},expectedCount:10},{actorId:crypto.randomUUID()}])assert.equal(bulkActionSchema.safeParse({...input,...change}).success,false);
+ for(const roles of [['manager'],['employee'],['farmer_referrer']] as const){
+  await assert.rejects(()=>permanentlyDeleteRegistrations({id:crypto.randomUUID(),mobile:'8000000001',displayName:'Denied',roles:[...roles]},input),{code:'FORBIDDEN'});
+ }
+});
 
 test('passwords require eight characters and identifiers require exact ASCII digit counts',()=>{
  assert.equal(passwordSchema.safeParse('12345678').success,true);assert.equal(passwordSchema.safeParse('1234567').success,false);assert.equal(passwordSchema.safeParse('क'.repeat(25)).success,false);

@@ -10,7 +10,7 @@ export function createDemoRegistration() {
   const password = `Demo@${serial}`;
 
   return {
-    name: `Demo Farmer ${serial}`,
+    name: "Demo Farmer",
     mobile: `9${String(random[1] % 1_000_000_000).padStart(9, "0")}`,
     date_of_birth: `${1970 + (random[2] % 30)}-${String(1 + (random[2] % 12)).padStart(2, "0")}-${String(1 + (random[3] % 28)).padStart(2, "0")}`,
     aadhar_no: `${String(100_000 + (random[2] % 900_000))}${String(100_000 + (random[3] % 900_000))}`,

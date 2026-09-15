@@ -127,3 +127,27 @@ A fresh encrypted backup was taken immediately before application. Account/perso
 Supabase advisors returned informational [RLS enabled without policies](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy) notices for the intentionally service-only tables and [unused indexes](https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index) on the low-traffic database. No warning/error findings were returned. Keep deny-by-default access and the release's indexing until real workload measurements justify changes.
 
 The deployed application and hosted schema now share the required RPC contracts. Schema completion does not establish live payment acceptance: the existing production TEST-key guard remains, and real checkout/capture/webhook/app-return verification is still outstanding. Preserve the new schema during recovery; do not roll back to old authentication/order/payout callers.
+
+## Temporary form switch for the private test phase
+
+Set ENABLE_PAYMENT_MODE_SWITCH=true in Vercel Production and redeploy to show Test mode ON/OFF. ON uses RAZORPAY_TEST_KEY_ID/RAZORPAY_TEST_KEY_SECRET; OFF uses RAZORPAY_LIVE_KEY_ID/RAZORPAY_LIVE_KEY_SECRET. The existing RAZORPAY_KEY_ID/RAZORPAY_KEY_SECRET pair remains a fallback only for its matching key-ID mode. Keep the current standard pair as TEST credentials and add the explicit LIVE pair when ready. Never put secrets in NEXT_PUBLIC variables.
+
+The checkout mode lives only in its signed HttpOnly browser cookie. No database mode field is added. Select mode before registration; it is locked for saved checkout/retries. Existing orders are verified with the selected provider keys, and administrator reconciliation checks either configured provider account when necessary. Missing live credentials produce an explicit message rather than falling back to test checkout.
+
+Razorpay test and live webhooks can both use https://ganpatiagro.in/api/payments/webhook. Configure their matching RAZORPAY_TEST_WEBHOOK_SECRET and RAZORPAY_LIVE_WEBHOOK_SECRET; the original RAZORPAY_WEBHOOK_SECRET remains supported. Verify payment.captured/order.paid delivery for each configured mode. The switch does not enable simulated payment signatures or bypass captured-payment verification.
+
+The owner explicitly approved test membership/receipt/referral records in this current private-test database. No records were deleted. Before public launch, separately reconcile/clear the test dataset as instructed by the owner, remove demo controls, configure live credentials/webhooks, set ENABLE_PAYMENT_MODE_SWITCH=false, and redeploy. Do not treat test entries as real collections.
+
+## Audit release requirements — 16 September 2026
+
+This section supersedes earlier migration counts and trial assumptions above. The audit made read-only hosted checks and local changes only. Hosted currently has 16 migrations, including `live_trial_fee` (`20260914205349`), which has no local counterpart. Its effective fee is ₹1 (`100` paise). Obtain the owner's launch-price decision; do not silently reset prices or rewrite existing snapshots.
+
+The local application now requires both `20260915090000_admin_permanent_delete.sql` and `20260915190000_audit_financial_controls.sql`, neither remotely applied during this audit. Compare migrations by name and contents against the hosted ledger, inspect the trial migration, back up, rehearse on an isolated database, and coordinate schema/application promotion. Do not blindly push all local migration versions over the differently numbered hosted history. Local clean rehearsal applied all 17 ordered local files; that does not resolve remote drift by itself.
+
+Before public launch, confirm live keys are paired with their matching secrets, capture settings, webhook secrets/subscriptions, payment verification and Android/iPhone app return in the Razorpay dashboard and hosted application. Disable the temporary payment-mode switch and reconcile the approved trial dataset through a separately reviewed procedure that preserves financial evidence. The demo helper is hidden in production when the switch is disabled.
+
+After migration/promotion, recheck all exposed-table RLS, anon/authenticated grants, service-only RPCs and financial write restrictions; then verify login, registration pricing, Trash, permanent-erasure rejection rules, retained finance access and duplicate-capture behavior with authorized fixtures. Confirm trusted client-IP/edge limits, alert delivery, restore access, recovery ownership and isolated staging. No SMS/DLT provider is used; configuration becomes a gate if communications are introduced.
+
+For an uncertain payout result, retry the saved exact request in the same browser session. If storage was lost or is corrupt, inspect payouts/audit evidence and resolve the original UUID before creating a new record. This records an existing offline disbursement and must not trigger another transfer. There is no in-app correction/settlement editor; preserve original financial records during operational investigation.
+
+Full findings, executed adversarial checks and unperformed acceptance tests: [security and UX audit](SECURITY_UX_AUDIT_20260915.md).

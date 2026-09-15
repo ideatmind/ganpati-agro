@@ -1,6 +1,19 @@
 # Project status
 
-**Current phase:** Redesigned admin workspace implemented and tested locally; existing Mumbai candidate predates this redesign. Real hosted-checkout acceptance and coordinated live release remain.
+## Role-based UI audit — 16 September 2026
+
+Targeted local improvements cover role-aware landing/navigation, manager oversight labels, contextual returns, protected staff actions, persistent bulk feedback, shared admin headings/statuses, grant/lookup validation, responsive layout and keyboard/contrast fixes. The [role matrix](docs/ROLE_UI_AUDIT_20260916.md) was recorded before implementation; the [remediation report](docs/ROLE_UI_REMEDIATION_20260916.md) describes changes, browser evidence, checks and remaining usability limits. No deployment or hosted database changes were made by this task.
+
+**Current phase:** Security/UX audit and permanent Trash deletion implemented and verified locally. The latest audit changes and two migrations are not deployed. Public-launch readiness remains conditional on pricing/trial decisions, real hosted Razorpay acceptance and operational verification. Older verification sections below are historical.
+
+## Latest audit — 15–16 September 2026
+
+- Read-only hosted checks: all 28 application tables have RLS and deny anon/authenticated direct access; privileged RPCs remain service-only. Advisors returned informational findings only. Hosted `live_trial_fee` sets ₹1; the initial business fee is ₹500. No hosted price, account, payment or schema changes were made in this audit.
+- Added trusted fee display/stale-price protection, stronger immutable financial evidence, finance-only management access after erasure, anonymized retained earnings and employees' own pending-payment queue. Added safe payout recovery, Unicode name/acreage/referral validation, safe field errors, payment-key pairing, network recovery and keyboard/contrast fixes.
+- Pending local migrations: `20260915090000_admin_permanent_delete.sql` and `20260915190000_audit_financial_controls.sql`. Reconcile the hosted migration ledger before coordinated release.
+- Verification: lint, typecheck and production build passed; 32 application tests, five SQL suites, isolated HTTP journeys and 12-way concurrency checks passed. All 17 local migrations rehearsed cleanly on isolated PostgreSQL 16. Browser checks cover responsive layouts, keyboard behavior, validation, dynamic pricing, onboarding network failure and exact payout retry. No real payment was charged.
+- Dependency audit: zero reported vulnerabilities. Reachable-history/current-client secret scans found no matches within their documented scope. Neither result establishes production security.
+- [Complete audit and remaining release gates](docs/SECURITY_UX_AUDIT_20260915.md), [application/RLS map](docs/AUDIT_20260915_MAP.md), [field matrix](docs/AUDIT_20260915_VALIDATION.md).
 
 ## Complete
 
@@ -142,3 +155,32 @@
 - Verified zero publicly executable privileged RPCs, zero application tables without RLS, and service-role access to the core application RPCs. Security/performance advisors report informational deny-by-default RLS/no-policy and unused-index notices; no warning/error findings. These tables intentionally use server-only service-role RPC access; do not add public policies to suppress the notices.
 - Hosted login now returns INVALID_CREDENTIALS for a nonexistent synthetic account after successfully executing authenticate_limited_session. A rolled-back hosted transaction verified an eight-character password login, wrong-password rejection, session lookup, password change and session revocation. No synthetic account or password change persisted. All nine admin workspace sections returned successfully through the hosted database.
 - Live homepage, registration and login redirect checks pass. Previously published CI passed lint, typecheck, 24 unit tests, database/concurrency regressions, build and synthetic HTTP journeys. Actual browser login with the owner's credentials and real Razorpay capture/webhook/app-return acceptance remain separate; production Razorpay credentials are still TEST keys and production checkout remains blocked by its existing guard.
+
+## Temporary form payment switch — 15 September 2026
+
+- Added the owner-requested Test mode ON/OFF switch. ON uses Razorpay test credentials; OFF uses live credentials and reports clearly when live keys are absent. ENABLE_PAYMENT_MODE_SWITCH controls whether the temporary switch is available.
+- No database mode columns or migrations. The selection is bound to a signed HttpOnly checkout cookie, locked after registration, and reused for order creation, verification and status retries. Existing saved orders are checked against the selected provider account before reuse. Operator reconciliation can look up orders with either configured key pair.
+- The owner explicitly approved creating test memberships, receipts and referral records in the current prelaunch database. No cleanup was performed; removing test/demo data remains a separately scoped prelaunch operation.
+- Lint, typecheck, all 26 unit tests, isolated production build and the full synthetic HTTP payment journey passed. Tests verify distinct test/live keys, mode-bound signatures/cookies, default test blocking, and rejection of body-supplied mode overrides after checkout starts.
+
+- Deployment verification: the switch is live on https://ganpatiagro.in/register. GitHub CI passed on 2b0f575. Browser checks verified ON/OFF labels and missing-live-key feedback. A synthetic hosted registration created one actual Razorpay TEST order for 50000 paise; retrying reused its order and signed-cookie mode. No payment was captured. No database mode migration was applied.
+
+
+## Mobile registration layout — 15 September 2026
+
+- Removed competing mobile fieldset padding and reduced nested gutters. Single-column phone fields now retain usable width; farm fields have explicit vertical spacing. Bilingual section titles stack predictably, action buttons span the form, radios have full-width touch targets, checkboxes cannot shrink, and acreage requests a decimal keyboard. Village results use a viewport-bounded list.
+- Verified the production build at 320, 360, 390, 430, 768 and 1280px: no horizontal control overflow. At 320px, farm input width increased from 150px to 222px. Verified plot add/remove, Marathi village search and keyboard selection, payment toggle feedback and consent layout. Browser viewport testing does not replace an actual iOS/Android keyboard check.
+- Lint, typecheck, all 26 tests and production build passed. No database or payment behavior changes.
+
+## Registration crop flow and password visibility — 15 September 2026
+
+- Cluster Type now starts Farm Details. Every plot's crop selector is disabled until a cluster is chosen and lists only that cluster's crops. Switching cluster clears incompatible selections across all plots; registration validation enforces this relationship. The existing single registration cluster is retained without a database migration.
+- Added accessible independent eye buttons to registration password/confirmation and login, using a shared component with 44px targets. Simplified consent and password guidance, removing encryption/admin-access and byte-count implementation details from the public form.
+- Lint, typecheck, all 27 tests and production build pass. Browser verification covered cluster filtering/reset across two plots, show/hide and keyboard operation, and no horizontal overflow at 320, 390 and 1280px.
+
+## Trash permanent deletion — 15 September 2026
+
+- Implemented **Delete permanently** for selected Trash records with current super-admin password confirmation, rate limiting and atomic database enforcement.
+- Removes personal profiles, Aadhaar, plots and sessions; disables/anonymizes account access. Retains immutable financial/audit history and completed accounting links. Blocks unresolved checkouts/cash declarations and staff accounts.
+- Added migration `20260915090000_admin_permanent_delete.sql`; migration and application are local changes, not deployed by this task.
+- Validation: lint, typecheck, 28 application tests, production build and all four database regression suites pass against a fresh isolated PostgreSQL database. Full authenticated HTTP regression and concurrent deletion/payment retry tests also pass.
