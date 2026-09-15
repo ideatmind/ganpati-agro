@@ -10,7 +10,7 @@ globalThis.fetch=async(input,init)=>{
   const saved=path.match(/^\/v1\/orders\/(order_isolated_.+)$/);
   if(saved&&orders.has(saved[1]))return Response.json(orders.get(saved[1]));
   const match=path.match(/^\/v1\/payments\/(pay_isolated_.+)$/);
-  if(match){const orderId=match[1].replace('pay_isolated_','order_isolated_');const order=orders.get(orderId);return Response.json({id:match[1],order_id:orderId,amount:order?.amount??100,currency:'INR',status:'captured'});}
+  if(match){const orderId=match[1].replace('pay_isolated_','order_isolated_');const order=orders.get(orderId);return Response.json({id:match[1],order_id:orderId,amount:order?.amount??50000,currency:'INR',status:'captured'});}
   if(path.endsWith('/payments'))return Response.json({items:[]});
   return Response.json({error:'Unsupported isolated provider request'},{status:404});
 };

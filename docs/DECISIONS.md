@@ -96,7 +96,7 @@ Super-admins can permanently erase up to 100 explicitly selected trashed profile
 
 Retain the existing financial-history invariant: physically delete persons, encrypted Aadhaar/fingerprint/last-four, plots and sessions; clear login credentials and mobile from a disabled account shell. Disable the referral code and revoke edit grants. Completed registration, farmer and account IDs remain as anonymous linking records for memberships, payments, receipts, earnings, payouts and audit/grant history. Issued receipts retain their original name and masked mobile. This is operational profile erasure, not erasure of every historical reference or backup. Mobile and Aadhaar can be used for a new registration.
 
-Registrations that never started checkout and have no cash declaration can be physically removed. Incomplete registrations with any checkout reservation, order, exception or cash collection are blocked; age alone cannot prove a provider payment is impossible. Staff accounts are blocked. Erased profiles cannot be restored or re-trashed. Accounting links preserve duplicate/late capture handling and employee onboarding attribution.
+Registrations that never started checkout and have no cash declaration can be physically removed. Updated by the owner on 16 September 2026: pending registrations can also be permanently erased. Checkout reservations, orders and cash records retain an anonymous registration reference so late payment evidence remains traceable. Staff accounts are blocked. Erased profiles cannot be restored or re-trashed. Accounting links preserve duplicate/late capture handling and employee onboarding attribution.
 
 ## Security and UX audit — 15–16 September 2026
 
@@ -121,3 +121,23 @@ The owner saved the new live signing secret under RAZORPAY_WEBHOOK_SECRET. Verce
 ## Integrated audit publication — 16 September 2026
 
 Both audit migrations are now applied to ganpati-agro-v2; the hosted ledger contains 18 migrations. Existing records and the effective ₹1 fee are unchanged. The integrated application preserves the newer live-only checkout safeguards and removes the public demo/mode controls. This supersedes earlier pending-migration and temporary-switch statements. See [the release record](AUDIT_RELEASE_20260916.md) for verified scope and migration version mapping.
+
+## Standard fee and continuous hero playback — 16 September 2026
+
+The owner requested ₹500 in the registration form and hosted database, removal of the hero pause/play button, and no GitHub push. Insert a new fee version for 50000 paise rather than editing old versions or registration/payment/commission snapshots. Existing ₹1 checkouts retain their original quote. The database-backed working form displays the effective fee, including employee cash labels; future registration commissions remain 10% (₹50 at this fee).
+
+The hero now uses native muted, looping, inline autoplay with no control button or application-imposed pause. This explicit request supersedes this video's earlier reduced-motion, viewport and connection playback gates; other motion preferences remain supported. Browser or operating-system playback restrictions cannot be overridden by this component.
+
+The fee migration is applied remotely, but all requested source edits remain local and no UI deployment or GitHub push was made. Deploy the database-backed form before relying on the hosted form's displayed price; the earlier live release hardcoded ₹1.
+
+## Distinct filter and results identity — 16 September 2026
+
+Use separate React key namespaces for the admin filter form and results component. Both reset when the validated query changes, but must never share a sibling key. This prevents old filter forms from remaining visible after client navigation or filter submission. Browser regression coverage must use sidebar clicks and history navigation; direct page loads alone did not expose this failure.
+
+## Pending-payment profile erasure — 16 September 2026
+
+Super-admin permanent deletion no longer requires completing or reconciling a pending payment first. Keep the existing password, Trash, explicit-selection, role and atomicity checks. Erase personal identifiers and login access immediately; retain financial/cash evidence. Block new checkout attempts, but allow an already in-flight provider order response to bind for traceability. A verified capture after pending erasure records the payment and a deduplicated admin-review audit entry, without creating entitlements or restoring the profile. If capture committed first, its existing receipt/membership/earning remains immutable. Erased cash profiles leave the employee’s actionable pending queue. This supersedes the unresolved-checkout rejection described in earlier audit reports.
+
+## Registration form wording — 16 September 2026
+
+At the owner's request, removed the employee cash-collection checkbox, its explanatory text and optional collection note from the registration form. Removed the associated client state and form payload field; the existing server schema defaults an omitted cash declaration to false. Signed-session employee onboarding attribution and historical cash records remain intact. The initial submit button now reads exactly नोंदणी करा. The ₹500 membership summary, consent, checkout and payment-status feedback remain visible as appropriate. This explicitly supersedes the earlier requirement to retain cash controls on this form. Changes remain local and unpushed.

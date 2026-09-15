@@ -1,5 +1,5 @@
 begin;
--- Exercise historical ₹500 snapshots independently of the current ₹1 trial fee.
+-- Set an explicit ₹500 baseline independent of other fee-version fixtures.
 insert into public.fee_versions(amount_paise,effective_from) values(50000,now()-interval '1 microsecond');
 do $$
 declare sa uuid:=gen_random_uuid(); emp uuid:=gen_random_uuid(); other_emp uuid:=gen_random_uuid(); r uuid; r2 uuid; fid uuid; profile uuid; result jsonb; payload jsonb; denied boolean; saved_receipt jsonb; tbl text;

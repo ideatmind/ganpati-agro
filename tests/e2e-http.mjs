@@ -19,7 +19,7 @@ const staleFee=await request('/api/registrations',{...body,expected_fee_paise:1}
 assert.equal((await request('/api/farmers/'+crypto.randomUUID(),{name:'Changed Name'},{method:'PATCH'})).status,401);
 assert.equal((await request('/api/registrations',{...body,test_mode:true},{headers:{'x-test-client-ip':testIp+'-mode'}})).status,400);
 const registration=await request('/api/registrations',body);assert.equal(registration.status,201,JSON.stringify(registration));
-assert.equal(registration.data.data.amountPaise,100);
+assert.equal(registration.data.data.amountPaise,50000);
 const checkoutCookie=cookie;
 const oldPayload=Buffer.from(JSON.stringify({id:registration.data.data.id,exp:Date.now()+60000})).toString('base64url');
 const oldSignature=createHmac('sha256','isolated-test-session-secret-more-than-32-characters').update('checkout:test:'+oldPayload).digest('base64url');
@@ -38,7 +38,7 @@ const signature=createHmac('sha256','isolated-payment-secret').update(order+'|'+
 assert.equal((await request('/api/payments/verify',{orderId:order,paymentId:payment,signature:'invalid'})).status,400);
 const verified=await request('/api/payments/verify',{orderId:order,paymentId:payment,signature});assert.equal(verified.status,200,JSON.stringify(verified));
 const duplicate=await request('/api/payments/verify',{orderId:order,paymentId:payment,signature});assert.equal(duplicate.data.data.receiptToken,verified.data.data.receiptToken);
-const webhookBody={event:'payment.captured',payload:{payment:{entity:{id:payment,order_id:order,status:'captured',amount:100,currency:'INR'}}}};
+const webhookBody={event:'payment.captured',payload:{payment:{entity:{id:payment,order_id:order,status:'captured',amount:50000,currency:'INR'}}}};
 const webhookSignature=createHmac('sha256','isolated-webhook-secret').update(JSON.stringify(webhookBody)).digest('hex');
 assert.equal((await request('/api/payments/webhook',webhookBody,{headers:{'x-razorpay-event-id':'event_'+seed,'x-razorpay-signature':'invalid'}})).status,400);
 for(let attempt=0;attempt<2;attempt++)assert.equal((await request('/api/payments/webhook',webhookBody,{headers:{'x-razorpay-event-id':'event_'+seed,'x-razorpay-signature':webhookSignature}})).status,200);
@@ -85,6 +85,24 @@ const deletedDetail=await fetch(origin+'/dashboard/admin/registrations/'+registr
 const retainedFinance=await fetch(origin+'/dashboard/admin/payments/'+registration.data.data.id,{headers:{cookie}});const financeHtml=await retainedFinance.text();assert.ok(financeHtml.includes('Payment history'));assert.ok(financeHtml.includes('Deleted farmer'));assert.ok(financeHtml.includes(order));assert.ok(!financeHtml.includes(body.aadhar_no));
 assert.equal((await request('/api/admin/reconcile',{registrationId:registration.data.data.id})).status,200);
 const trashAfter=await fetch(origin+'/dashboard/admin?section=trash&q='+body.mobile,{headers:{cookie}});assert.ok(!(await trashAfter.text()).includes(body.name));
+// Pending payment is no longer a deletion blocker; stale checkout cannot restart it.
+cookie='';
+const pendingBody={...body,name:'Pending Erasure Farmer',mobile:'75'+seed,aadhar_no:'5678'+seed};
+const pending=await request('/api/registrations',pendingBody,{headers:{'x-test-client-ip':testIp+'-pending'}});assert.equal(pending.status,201,JSON.stringify(pending));
+const pendingCookie=cookie,pendingId=pending.data.data.id;
+const pendingOrderResponse=await request('/api/payments/orders',{registrationId:pendingId});assert.equal(pendingOrderResponse.status,200);
+const pendingOrder=pendingOrderResponse.data.data.providerOrderId,pendingPayment=pendingOrder.replace('order_isolated_','pay_isolated_');
+cookie='';assert.equal((await request('/api/auth/login',{mobile:'6999999997',password:'isolated admin password'})).status,200);
+assert.equal((await request('/api/admin/bulk',{ids:[pendingId],action:'trash',reason:'Delete pending profile'})).status,200);
+const pendingPurged=await request('/api/admin/bulk',{ids:[pendingId],action:'purge',password:'isolated admin password'});assert.equal(pendingPurged.status,200,JSON.stringify(pendingPurged));assert.equal(pendingPurged.data.data.changed,1);
+cookie=pendingCookie;assert.equal((await request('/api/payments/orders',{registrationId:pendingId})).status,404);
+assert.equal((await request('/api/payments/verify',{orderId:pendingOrder,paymentId:pendingPayment,signature:createHmac('sha256','isolated-payment-secret').update(pendingOrder+'|'+pendingPayment).digest('hex')})).status,404);
+const erasedStatus=await request('/api/payments/status',undefined,{method:'GET'});assert.equal(erasedStatus.status,200);assert.equal(erasedStatus.data.data,null);
+const lateBody={event:'payment.captured',payload:{payment:{entity:{id:pendingPayment,order_id:pendingOrder,status:'captured',amount:50000,currency:'INR'}}}};
+for(let i=0;i<2;i++)assert.equal((await request('/api/payments/webhook',lateBody,{headers:{'x-razorpay-event-id':'late_erasure_'+seed,'x-razorpay-signature':createHmac('sha256','isolated-webhook-secret').update(JSON.stringify(lateBody)).digest('hex')}})).status,200);
+cookie=adminCookie;
+const erasedFinance=await fetch(origin+'/dashboard/admin/payments/'+pendingId,{headers:{cookie}});const erasedFinanceHtml=await erasedFinance.text();assert.ok(erasedFinanceHtml.includes(pendingPayment));assert.ok(erasedFinanceHtml.includes('Deleted farmer'));assert.ok(!erasedFinanceHtml.includes(pendingBody.name));
+assert.equal((await request('/api/admin/reconcile',{registrationId:pendingId})).status,200);
 // Test each admin role with successful 204/no-content password RPC responses.
 const managerMobile='73'+seed;
 assert.equal((await request('/api/admin/staff',{name:'HTTP password manager',mobile:managerMobile,password:'manager8',role:'manager'})).status,201);

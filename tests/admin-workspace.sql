@@ -8,7 +8,7 @@ begin
  body:=jsonb_build_object('name','Workspace Farmer','mobile','8100000004','password','isolated test password','date_of_birth','1990-01-01','village','Test village','district','dharashiv','taluka','dharashiv','income_source','agriculture','cluster_type','pulses','aadhar_fingerprint',repeat('7',64),'aadhar_ciphertext','encrypted-fixture-only','aadhar_last_four','0004','consent',true,'plots',jsonb_build_array(jsonb_build_object('plot_no','WORKSPACE-1','area_acres',2,'crop_name','Pulses','irrigation_source','well')));
  result:=public.create_registration(body);r1:=(result->>'id')::uuid;
  result:=public.create_registration(body||jsonb_build_object('name','Workspace Second','mobile','8100000005','aadhar_fingerprint',repeat('8',64),'aadhar_last_four','0005'));r2:=(result->>'id')::uuid;
- result:=public.prepare_payment_order(r1);perform public.record_payment_order(r1,'order_workspace', (result->>'requestKey')::uuid);perform public.finalize_registration_payment('order_workspace','pay_workspace',100,'INR','farmer',true);
+ result:=public.prepare_payment_order(r1);perform public.record_payment_order(r1,'order_workspace', (result->>'requestKey')::uuid);perform public.finalize_registration_payment('order_workspace','pay_workspace',50000,'INR','farmer',true);
  memberships_before:=(select count(*) from public.memberships);
  result:=public.get_admin_record(sa,r1);assert result->>'mobile'='8100000004';assert result->>'dateOfBirth'='1990-01-01';assert result->'plots'->0->>'plotNo'='WORKSPACE-1';assert not(result::text like '%encrypted-fixture-only%');
  result:=public.get_admin_record(mgr,r1);assert result->>'mobile'='******0004';assert result->>'aadhaarLastFour' is null;
@@ -30,7 +30,7 @@ begin
  denied:=false;begin perform public.get_admin_workspace(mgr,'trash');exception when others then denied:=true;end;assert denied,'Manager read Trash';
  result:=public.admin_bulk_action(sa,array[r1,r2],'restore');assert (result->>'changed')::integer=2;
  denied:=false;begin perform public.admin_bulk_action(sa,array[r2,gen_random_uuid()],'trash','Invalid batch');exception when others then denied:=true;end;assert denied;assert not exists(select 1 from private.registration_archives where registration_id=r2),'Failed batch partly applied';
- perform public.admin_bulk_action(sa,array[r2],'trash','Pending test');result:=public.prepare_payment_order(r2);perform public.record_payment_order(r2,'order_workspace2',(result->>'requestKey')::uuid);perform public.finalize_registration_payment('order_workspace2','pay_workspace2',100,'INR','farmer',true);assert exists(select 1 from public.memberships where registration_id=r2),'Trash broke an in-flight payment';
+ perform public.admin_bulk_action(sa,array[r2],'trash','Pending test');result:=public.prepare_payment_order(r2);perform public.record_payment_order(r2,'order_workspace2',(result->>'requestKey')::uuid);perform public.finalize_registration_payment('order_workspace2','pay_workspace2',50000,'INR','farmer',true);assert exists(select 1 from public.memberships where registration_id=r2),'Trash broke an in-flight payment';
  update public.accounts set status='disabled' where id=sa;
  denied:=false;begin perform public.read_admin_aadhaar(sa,r1);exception when others then denied:=true;end;assert denied,'Disabled admin revealed Aadhaar';
  assert not has_table_privilege('anon','private.registration_archives','select');assert not has_function_privilege('authenticated','public.read_admin_aadhaar(uuid,uuid)','execute');

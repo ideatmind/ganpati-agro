@@ -1,5 +1,5 @@
 begin;
--- Exercise historical ₹500 snapshots independently of the current ₹1 trial fee.
+-- Set an explicit ₹500 baseline independent of other fee-version fixtures.
 insert into public.fee_versions(amount_paise,effective_from) values(50000,now());
 do $$
 declare sa uuid:=gen_random_uuid(); mgr uuid:=gen_random_uuid(); r1 uuid; r2 uuid; r3 uuid; pid uuid; aid uuid; body jsonb; result jsonb; denied boolean; receipt jsonb; earning jsonb;
@@ -23,9 +23,9 @@ begin
  denied:=false;begin perform public.purge_admin_registrations(sa,array[r1],'wrong');exception when others then denied:=sqlerrm='Incorrect confirmation password';end;assert denied;
  denied:=false;begin perform public.purge_admin_registrations(sa,array[r1],null);exception when others then denied:=sqlerrm='Password confirmation required';end;assert denied;
  denied:=false;begin perform public.purge_admin_registrations(sa,array[r1],'test-password');exception when others then denied:=sqlerrm='Only trashed registrations can be permanently deleted';end;assert denied;
- perform public.admin_bulk_action(sa,array[r1,r2,r3],'trash','Purge test');
+ perform public.admin_bulk_action(sa,array[r1,r2],'trash','Purge test');
  perform public.prepare_payment_order(r3);
- denied:=false;begin perform public.purge_admin_registrations(sa,array[r1,r2,r3],'test-password');exception when others then denied:=sqlerrm='Unresolved checkout prevents permanent deletion';end;assert denied;
+ denied:=false;begin perform public.purge_admin_registrations(sa,array[r1,r2,r3],'test-password');exception when others then denied:=sqlerrm='Only trashed registrations can be permanently deleted';end;assert denied;
  assert exists(select 1 from public.persons where id=pid),'Failed batch erased profile';
  assert exists(select 1 from public.registrations where id=r2),'Failed batch deleted pending registration';
  result:=public.purge_admin_registrations(sa,array[r1,r2,r1],'test-password');assert (result->>'changed')::integer=2;

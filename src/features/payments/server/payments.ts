@@ -7,11 +7,11 @@ import { isPaymentDemo } from "@/server/env";
 import {checkoutKey,defaultPaymentMode,type PaymentMode} from '@/server/payment-mode';
 import { rateLimitKey } from "@/server/rate-limit";
 
-export interface Checkout { id: string; reference: string; amountPaise: number; status: string; providerOrderId: string | null; receiptToken: string | null }
+export interface Checkout { id: string; reference: string; amountPaise: number; status: string; providerOrderId: string | null; receiptToken: string | null; erasedAt?: string | null }
 interface Finalized { receiptToken?: string; paymentException?: boolean }
-export async function checkoutStatus(id: string,limit?:{operation:string;count:number}) {
+export async function checkoutStatus(id: string,limit?:{operation:string;count:number},allowErased=false) {
   const data = await callRpc<Checkout | null>(limit?'get_limited_checkout':'get_checkout', { p_registration_id: id,...(limit?{p_rate_key:rateLimitKey(limit.operation+':'+id),p_limit:limit.count}:{}) });
-  if (!data) throw new AppError(404, "CHECKOUT_NOT_FOUND", "Registration could not be found.");
+  if (!data || (data.erasedAt && !allowErased)) throw new AppError(404, "CHECKOUT_NOT_FOUND", "Registration could not be found.");
   return data;
 }
 export async function startOrder(id: string,mode:PaymentMode=defaultPaymentMode()) {
@@ -23,13 +23,14 @@ export async function startOrder(id: string,mode:PaymentMode=defaultPaymentMode(
   if (!prepared.requestKey) throw new Error("Invalid checkout reservation");
   const order = await createRazorpayOrder(prepared.amountPaise, prepared.reference,mode);
   if (order.amount !== prepared.amountPaise || order.currency !== "INR") throw new Error("Provider order mismatch");
-  const recorded = await callRpc("record_payment_order", { p_registration_id: id, p_provider_order_id: order.id, p_idempotency_key: prepared.requestKey });
+  const recorded = await callRpc<{erasedAt?:string|null}>("record_payment_order", { p_registration_id: id, p_provider_order_id: order.id, p_idempotency_key: prepared.requestKey });
+  if (recorded.erasedAt) throw new AppError(404, "CHECKOUT_NOT_FOUND", "This registration was permanently deleted. Payment cannot continue.");
   return { ...(recorded as object), keyId, demo: order.id.startsWith("demo_order_") };
 }
 async function finalize(checkout: Checkout, payment: ProviderPayment) {
   if (!checkout.providerOrderId || !isMatchingCapture(payment, checkout.providerOrderId, checkout.amountPaise)) throw new AppError(409, "PAYMENT_PENDING", "Verifying your payment… Please check the status again. Do not pay again.");
   const data = await callRpc<Finalized>("finalize_registration_payment", { p_provider_order_id: checkout.providerOrderId, p_provider_payment_id: payment.id, p_amount_paise: payment.amount, p_currency: payment.currency, p_payer_kind: "farmer", p_signature_verified: true });
-  if (data.paymentException) throw new AppError(409, "PAYMENT_REVIEW", "An additional payment requires review. Please contact support and do not pay again.");
+  if (data.paymentException) throw new AppError(409, "PAYMENT_REVIEW", "A captured payment requires review. Please contact support and do not pay again.");
   return data;
 }
 export async function verifyPayment(id: string, body: { orderId: string; paymentId: string; signature: string },mode:PaymentMode=defaultPaymentMode()) {
@@ -40,9 +41,9 @@ export async function verifyPayment(id: string, body: { orderId: string; payment
   return finalize(checkout, payment);
 }
 export async function reconcileCheckout(id: string,force=false,mode?:PaymentMode) {
-  const checkout = await checkoutStatus(id,{operation:'reconcile',count:10});
+  const checkout = await checkoutStatus(id,{operation:'reconcile',count:10},force);
   if ((!force&&checkout.receiptToken) || !checkout.providerOrderId) return checkout;
   const payments = await fetchOrderPayments(checkout.providerOrderId,mode);
   for (const payment of payments.filter((item) => item.status === "captured")) await finalize(checkout, payment);
-  return checkoutStatus(id);
+  return checkoutStatus(id,undefined,force);
 }
