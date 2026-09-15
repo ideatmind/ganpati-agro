@@ -1,4 +1,4 @@
-export const REGISTRATION_FEE_PAISE = 100;
+export const REGISTRATION_FEE_PAISE = 50_000;
 
 export {DISTRICTS,TALUKAS} from '@/features/geography/directory';
 

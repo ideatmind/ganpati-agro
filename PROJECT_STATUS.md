@@ -1,5 +1,9 @@
 # Project status
 
+## Pending-payment deletion fix — 16 September 2026
+
+Super-admins can now erase trashed pending-payment profiles without reconciling first. Personal data is removed; anonymous checkout/cash references remain. New checkout attempts are blocked, and verified late captures create a deduplicated admin-review record without restoring the profile or granting membership/commission. Requires local migration `20260915195318_allow_pending_profile_erasure.sql` and the accompanying application. No live records were deleted and this change was not deployed in this task. Verification passed: lint, typecheck, build, 34 application tests, all six database suites, the authenticated HTTP pending-erasure/late-webhook journey, and 12-way deletion/capture concurrency. All six changed RPCs remain denied to anon/authenticated and callable by service_role.
+
 ## Role-based UI audit — 16 September 2026
 
 Targeted local improvements cover role-aware landing/navigation, manager oversight labels, contextual returns, protected staff actions, persistent bulk feedback, shared admin headings/statuses, grant/lookup validation, responsive layout and keyboard/contrast fixes. The [role matrix](docs/ROLE_UI_AUDIT_20260916.md) was recorded before implementation; the [remediation report](docs/ROLE_UI_REMEDIATION_20260916.md) describes changes, browser evidence, checks and remaining usability limits. No deployment or hosted database changes were made by this task.
@@ -200,3 +204,35 @@ The hosted fee migration is complete (100 paise); the owner deployed the live re
 ## Integrated audit publication — 16 September 2026
 
 Both audit migrations are now applied to ganpati-agro-v2; the hosted ledger contains 18 migrations. Existing records and the effective ₹1 fee are unchanged. The integrated application preserves the newer live-only checkout safeguards and removes the public demo/mode controls. This supersedes earlier pending-migration and temporary-switch statements. See [the release record](docs/AUDIT_RELEASE_20260916.md) for verified scope and migration version mapping.
+
+## Hero autoplay and standard fee — 16 September 2026
+
+Removed the hero pause/play button and application-level playback gates. The decorative video uses native muted autoplay, looping and inline playback on mobile and desktop; browser/OS autoplay policies still apply. Other reduced-motion behavior is unchanged.
+
+Applied restore_standard_registration_fee to ganpati-agro-v2: new registration quotes now use 50000 paise (₹500). Repository migration 20260915194545 corresponds to hosted version 20260915194733. All 14 existing registration fee snapshots remain unchanged. The working form already reads the database fee and now displays ₹500 in the summary, action and employee cash labels.
+
+Validation: lint, typecheck, all 34 application tests, production build and five database regression suites passed. A local migration rehearsal changed the effective fee from 100 to 50000 without changing existing snapshots. Browser checks at 390px and 1280px verified autoplay without controls and ₹500 summary/button copy. Evidence runner: .audit/hero-fee-browser.mjs.
+
+These source changes and the migration file remain uncommitted and unpushed, per the owner's request. No UI deployment was performed; the currently deployed form may retain its old hardcoded ₹1 label until the updated code is deployed. The hosted database fee is already ₹500.
+
+## Admin filters retained across navigation — 16 September 2026
+
+Reproduced search forms accumulating after clicking between admin sections, including Overview. The filter Form and AdminRecords were siblings with the same serialized-query React key. Each now uses a distinct filters:/records: prefix, preserving filter reset and table selection behavior while removing the previous section's form correctly.
+
+Regression coverage in tests/admin-filter-navigation.mjs clicks through repeated sections as super-admin and manager at 390px and 1280px, checks that Overview has no filters and each list has exactly one matching form, submits successive searches, and exercises browser Back/Forward. Lint, typecheck, 34 application tests and production build passed. Changes remain local. No database migration is needed; no push or deployment was performed.
+
+## Registration form wording — 16 September 2026
+
+At the owner's request, removed the employee cash-collection checkbox, its explanatory text and optional collection note from the registration form. Removed the associated client state and form payload field; the existing server schema defaults an omitted cash declaration to false. Signed-session employee onboarding attribution and historical cash records remain intact. The initial submit button now reads exactly नोंदणी करा. The ₹500 membership summary, consent, checkout and payment-status feedback remain visible as appropriate. This explicitly supersedes the earlier requirement to retain cash controls on this form. Changes remain local and unpushed.
+
+Validation for the registration wording change: lint, typecheck, 34 tests and production build passed. Browser checks covered public, employee, manager and super-admin forms at 390px and 1280px; the button is exactly नोंदणी करा, cash controls and fields are absent, and the ₹500 fee summary remains. Evidence runner: .audit/registration-copy-browser.mjs.
+
+## Complete workspace publication — 16 September 2026
+
+The owner authorized migration and publication of all current changes. The ₹500 fee migration was already applied; allow_pending_profile_erasure is now applied as hosted version 20260915200851. The hosted ledger contains 20 migrations, and before/after data counts and profile/quote checksums match. The combined source preserves live-only checkout and includes hero autoplay, removed cash controls, the नोंदणी करा button, distinct admin filter/results keys and pending-profile erasure. See docs/COMPLETE_RELEASE_20260916.md for current behavior, migration mappings and validation. This supersedes earlier instructions to leave these changes unpushed.
+
+## GitHub HTTP test port collision — 16 September 2026
+
+The GitHub HTTP check failed before exercising the app because its RPC bridge tried to bind occupied port 55434. The runner now requests port 0 by default, reads the port actually bound by the OS from the bridge readiness message, and passes that URL to Next.js. Explicit RPC_BRIDGE_PORT overrides remain supported. Shutdown waits for each owned child process to exit, with a bounded force-stop fallback; early startup exits report captured output immediately.
+
+Added a regression test launching two simultaneous bridges and checking their distinct reachable endpoints. Lint, typecheck, all 36 tests and production build passed. The complete HTTP suite was exercised with port 55434 deliberately occupied; the test app and bridge ports were checked for release after exit. No application behavior or Supabase migration changes are involved.

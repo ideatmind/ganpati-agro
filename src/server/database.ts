@@ -25,7 +25,7 @@ async function executeRpc<T>(name:string,params:Record<string,unknown>):Promise<
       ["Selection changed", [409,"SELECTION_CHANGED","The matching records changed. Refresh the list and select again."]],
       ["Registration fee changed", [409,"FEE_CHANGED","The registration fee changed. Refresh the form and review the new amount before continuing."]],
       ["Only trashed registrations can be permanently deleted", [409,"NOT_IN_TRASH","Move every selected record to Trash before permanently deleting it."]],
-      ["Unresolved checkout prevents permanent deletion", [409,"CHECKOUT_UNRESOLVED","A selected record has an unresolved checkout or cash collection. Complete or reconcile it before permanent deletion."]],
+      ["Registration was permanently deleted", [404,"CHECKOUT_NOT_FOUND","This registration was permanently deleted. Payment cannot continue."]],
       ["Staff accounts cannot be permanently deleted", [409,"STAFF_ACCOUNT","A selected farmer also has staff access. Staff accounts cannot be permanently deleted here."]],
       ["A valid mobile number and password of at least 8 characters are required", [400,"INVALID_PASSWORD","Use a password of at least 8 characters."]],
       ["Not authorized", [403, "FORBIDDEN", "You do not have permission for this action."]],

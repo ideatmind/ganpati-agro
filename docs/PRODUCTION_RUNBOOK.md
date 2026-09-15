@@ -165,3 +165,7 @@ If the LIVE signing secret was saved as RAZORPAY_WEBHOOK_SECRET, set RAZORPAY_WE
 ## Integrated audit publication — 16 September 2026
 
 Both audit migrations are now applied to ganpati-agro-v2; the hosted ledger contains 18 migrations. Existing records and the effective ₹1 fee are unchanged. The integrated application preserves the newer live-only checkout safeguards and removes the public demo/mode controls. This supersedes earlier pending-migration and temporary-switch statements. See [the release record](AUDIT_RELEASE_20260916.md) for verified scope and migration version mapping.
+
+## Complete workspace publication — 16 September 2026
+
+The owner authorized migration and publication of all current changes. The ₹500 fee migration was already applied; allow_pending_profile_erasure is now applied as hosted version 20260915200851. The hosted ledger contains 20 migrations, and before/after data counts and profile/quote checksums match. The combined source preserves live-only checkout and includes hero autoplay, removed cash controls, the नोंदणी करा button, distinct admin filter/results keys and pending-profile erasure. See COMPLETE_RELEASE_20260916.md for current behavior, migration mappings and validation. This supersedes earlier instructions to leave these changes unpushed.

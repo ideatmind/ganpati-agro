@@ -37,3 +37,16 @@ assert.ok(erased.every(result=>!result.failed));
 const retained=JSON.parse(await sql(`select jsonb_build_object('persons',(select count(*) from public.persons where mobile=${sqlLiteral(payload.mobile)}),'receipts',(select count(*) from public.receipts where registration_id=${id}),'memberships',(select count(*) from public.memberships where registration_id=${id}),'audits',(select count(*) from public.audit_events where action='registration_permanently_deleted' and target_id=${id}));`));
 assert.deepEqual(retained,{persons:0,receipts:1,memberships:1,audits:1});
 console.log('PASS: simultaneous permanent-deletion retries and duplicate captures erase one profile, preserve one receipt/membership and record one deletion audit.');
+
+const pending=JSON.parse(await sql('select public.create_registration('+sqlLiteral(JSON.stringify({...payload,mobile:'74'+suffix,aadhar_fingerprint:crypto.randomUUID().replaceAll('-','').repeat(2)}))+'::jsonb);'));
+const pendingId=sqlLiteral(pending.id),pendingOrder='order_pending_race_'+suffix,pendingPayment='pay_pending_race_'+suffix;
+const reservation=JSON.parse(await sql(`select public.prepare_payment_order(${pendingId});`));
+await sql(`select public.record_payment_order(${pendingId},${sqlLiteral(pendingOrder)},${sqlLiteral(reservation.requestKey)});select public.admin_bulk_action(${sqlLiteral(admin)},array[${pendingId}::uuid],'trash','Pending capture race');`);
+const raced=await Promise.all(Array.from({length:12},(_,index)=>sql(index%2===0?
+ `select public.purge_admin_registrations(${sqlLiteral(admin)},array[${pendingId}::uuid],'purge-test-password');`:
+ `select public.record_payment_event('pending_race_${suffix}_${index}','payment.captured',${sqlLiteral(pendingOrder)},${sqlLiteral(pendingPayment)},${pending.amountPaise},'INR','{}');`).then(JSON.parse)));
+assert.ok(raced.every(result=>!result.failed));
+assert.equal(raced.reduce((total,result)=>total+(result.changed??0),0),1);
+const pendingResult=JSON.parse(await sql(`select jsonb_build_object('erased',(select erased_at is not null and person_id is null from public.registrations where id=${pendingId}),'captures',(select count(*) from public.payment_attempts where provider_payment_id=${sqlLiteral(pendingPayment)}),'memberships',(select count(*) from public.memberships where registration_id=${pendingId}),'liveFarmers',(select count(*) from public.farmers where registration_id=${pendingId} and erased_at is null));`));
+assert.equal(pendingResult.erased,true);assert.equal(pendingResult.captures,1);assert.equal(pendingResult.liveFarmers,0);assert.ok(pendingResult.memberships<=1);
+console.log('PASS: pending erasure racing the first capture retains one payment and never restores the erased profile.');
