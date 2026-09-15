@@ -1,4 +1,6 @@
 begin;
+-- Exercise historical ₹500 snapshots independently of the current ₹1 trial fee.
+insert into public.fee_versions(amount_paise,effective_from) values(50000,now());
 do $$
 declare sa uuid:=gen_random_uuid(); mgr uuid:=gen_random_uuid(); r1 uuid; r2 uuid; r3 uuid; pid uuid; aid uuid; body jsonb; result jsonb; denied boolean; receipt jsonb; earning jsonb;
 begin

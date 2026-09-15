@@ -6,16 +6,14 @@ import { getIdentity } from "@/server/session";
 import { api,readJson } from "@/server/http";
 import { setCheckout } from "@/features/registration/server/checkout";
 import {z} from 'zod';
-import {checkoutKey,defaultPaymentMode,testPaymentsEnabled,type PaymentMode} from '@/server/payment-mode';
+import {checkoutKey,defaultPaymentMode} from '@/server/payment-mode';
 import {isPaymentDemo} from '@/server/env';
-import {AppError} from '@/shared/errors';
 export async function POST(request:Request) {
   return api(request,async()=>{
     await enforceLimit('registration:'+clientIp(request.headers),5);
     const raw=await readJson(request);
-    const selected=z.object({test_mode:z.boolean().optional()}).parse(raw).test_mode;
-    const mode:PaymentMode=selected===undefined?(process.env.VERCEL_ENV==='production'?'live':defaultPaymentMode()):selected?'test':'live';
-    if(selected===true&&!testPaymentsEnabled())throw new AppError(403,'TEST_MODE_DISABLED','Test mode is not enabled.');
+    z.object({test_mode:z.literal(false).optional()}).parse(raw);
+    const mode=defaultPaymentMode();
     if(!isPaymentDemo())checkoutKey(mode);
     const data=registrationSchema.parse(raw);
     const identity=await getIdentity();

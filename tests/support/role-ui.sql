@@ -22,7 +22,7 @@ begin
   id:=(r->>'id')::uuid;
   if i<3 then
    pending:=public.prepare_payment_order(id);perform public.record_payment_order(id,'order_roleui_'||i,(pending->>'requestKey')::uuid);
-   perform public.finalize_registration_payment('order_roleui_'||i,'pay_roleui_'||i,50000,'INR','farmer',true);
+   perform public.finalize_registration_payment('order_roleui_'||i,'pay_roleui_'||i,(r->>'amountPaise')::integer,'INR','farmer',true);
   end if;
  end loop;
 end $$;

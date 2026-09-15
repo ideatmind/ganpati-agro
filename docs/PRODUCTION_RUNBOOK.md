@@ -151,3 +151,17 @@ After migration/promotion, recheck all exposed-table RLS, anon/authenticated gra
 For an uncertain payout result, retry the saved exact request in the same browser session. If storage was lost or is corrupt, inspect payouts/audit evidence and resolve the original UUID before creating a new record. This records an existing offline disbursement and must not trigger another transfer. There is no in-app correction/settlement editor; preserve original financial records during operational investigation.
 
 Full findings, executed adversarial checks and unperformed acceptance tests: [security and UX audit](SECURITY_UX_AUDIT_20260915.md).
+
+## Live INR 1 trial (supersedes temporary switch instructions)
+
+Production accepts live credentials only. Configure RAZORPAY_LIVE_KEY_ID, RAZORPAY_LIVE_KEY_SECRET and the separate RAZORPAY_LIVE_WEBHOOK_SECRET as server-only Vercel production variables. The webhook must subscribe to payment.captured and order.paid at /api/payments/webhook. The removed ENABLE_PAYMENT_MODE_SWITCH flag cannot re-enable test mode. Apply the live_trial_fee migration once before promoting the release; do not replay earlier hosted migrations. New registrations quote 100 paise while existing quote snapshots are retained. Complete the release gates in LIVE_PAYMENT_SECURITY_REVIEW.md.
+
+
+### Protected standard webhook secret
+
+If the LIVE signing secret was saved as RAZORPAY_WEBHOOK_SECRET, set RAZORPAY_WEBHOOK_MODE=live in Vercel Production and redeploy. This is an explicit operator assertion that the standard secret belongs to the live webhook, never a browser mode switch. RAZORPAY_LIVE_WEBHOOK_SECRET takes precedence if present. The hosted live_trial_fee migration has already been applied; do not replay it. Verify a real captured payment and webhook delivery separately.
+
+
+## Integrated audit publication — 16 September 2026
+
+Both audit migrations are now applied to ganpati-agro-v2; the hosted ledger contains 18 migrations. Existing records and the effective ₹1 fee are unchanged. The integrated application preserves the newer live-only checkout safeguards and removes the public demo/mode controls. This supersedes earlier pending-migration and temporary-switch statements. See [the release record](AUDIT_RELEASE_20260916.md) for verified scope and migration version mapping.

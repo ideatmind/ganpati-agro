@@ -184,3 +184,19 @@ Targeted local improvements cover role-aware landing/navigation, manager oversig
 - Removes personal profiles, Aadhaar, plots and sessions; disables/anonymizes account access. Retains immutable financial/audit history and completed accounting links. Blocks unresolved checkouts/cash declarations and staff accounts.
 - Added migration `20260915090000_admin_permanent_delete.sql`; migration and application are local changes, not deployed by this task.
 - Validation: lint, typecheck, 28 application tests, production build and all four database regression suites pass against a fresh isolated PostgreSQL database. Full authenticated HTTP regression and concurrent deletion/payment retry tests also pass.
+
+## INR 1 live-payment release prepared — 15 September 2026
+
+- Removed the public payment-mode switch and demo auto-fill; production rejects test checkout, old test cookies and old test webhook signatures. Added a 100-paise fee migration preserving previous quote snapshots.
+- Live credentials validated and stored in Vercel configuration. Security review and release gates are in docs/LIVE_PAYMENT_SECURITY_REVIEW.md. No live charge was executed.
+- Hosted fee migration and deployment remain pending live webhook setup and replacement of the predictable administrator password.
+
+
+## Live webhook configuration repair — 15 September 2026
+
+The hosted fee migration is complete (100 paise); the owner deployed the live release and saved the live webhook secret under RAZORPAY_WEBHOOK_SECRET. Added explicit RAZORPAY_WEBHOOK_MODE=live support for that protected variable, shared by checkout readiness and signature verification. The mode is server configuration only; production test checkout remains disabled. Focused tests cover required opt-in, signature integrity, stale test-secret rejection and explicit live-secret precedence. Actual captured payment/webhook delivery and administrator password replacement remain unverified.
+
+
+## Integrated audit publication — 16 September 2026
+
+Both audit migrations are now applied to ganpati-agro-v2; the hosted ledger contains 18 migrations. Existing records and the effective ₹1 fee are unchanged. The integrated application preserves the newer live-only checkout safeguards and removes the public demo/mode controls. This supersedes earlier pending-migration and temporary-switch statements. See [the release record](docs/AUDIT_RELEASE_20260916.md) for verified scope and migration version mapping.

@@ -11,8 +11,8 @@ import {startOrder} from "../src/features/payments/server/payments.ts";
 import {checkoutKey} from '../src/server/payment-mode.ts';
 
 process.env.SESSION_SECRET='test-only-secret-32-bytes-or-more-never-production';
-process.env.RAZORPAY_KEY_SECRET='synthetic-payment-secret';
 process.env.RAZORPAY_KEY_ID='rzp_live_fixture';
+process.env.RAZORPAY_KEY_SECRET='synthetic-payment-secret';
 process.env.RAZORPAY_WEBHOOK_SECRET='synthetic-webhook-secret';
 process.env.PAYMENT_DEMO_MODE='false';
 process.env.ENABLE_PAYMENT_MODE_SWITCH='false';
@@ -29,17 +29,44 @@ test('production rejects test checkout before reserving an order',async()=>{
   }
 });
 
-test('temporary switch selects independent keys and signatures and cannot disguise live mode as test',()=>{
-  const values={VERCEL_ENV:'production',ENABLE_PAYMENT_MODE_SWITCH:'true',RAZORPAY_TEST_KEY_ID:'rzp_test_fixture',RAZORPAY_TEST_KEY_SECRET:'test-mode-secret',RAZORPAY_LIVE_KEY_ID:'rzp_live_fixture',RAZORPAY_LIVE_KEY_SECRET:'live-mode-secret'};
+test('production rejects test keys even if the removed switch flag remains enabled',()=>{
+  const values={VERCEL_ENV:'production',ENABLE_PAYMENT_MODE_SWITCH:'true',RAZORPAY_TEST_KEY_ID:'rzp_test_fixture',RAZORPAY_TEST_KEY_SECRET:'test-mode-secret',RAZORPAY_LIVE_KEY_ID:'rzp_live_fixture',RAZORPAY_LIVE_KEY_SECRET:'live-mode-secret',RAZORPAY_TEST_WEBHOOK_SECRET:'old-test-hook',RAZORPAY_LIVE_WEBHOOK_SECRET:'new-live-hook'};
   const old=Object.fromEntries(Object.keys(values).map(key=>[key,process.env[key]]));Object.assign(process.env,values);
   try{
-    assert.equal(checkoutKey('test'),'rzp_test_fixture');assert.equal(checkoutKey('live'),'rzp_live_fixture');
+    assert.throws(()=>checkoutKey('test'),{code:'PAYMENTS_UNAVAILABLE'});assert.equal(checkoutKey('live'),'rzp_live_fixture');
+    const raw='{"event":"payment.captured"}';
+    assert.equal(verifyWebhookSignature(raw,createHmac('sha256','old-test-hook').update(raw).digest('hex')),false);
+    assert.equal(verifyWebhookSignature(raw,createHmac('sha256','new-live-hook').update(raw).digest('hex')),true);
     const signature=createHmac('sha256','test-mode-secret').update('order_test|pay_test').digest('hex');
-    assert.equal(verifyCheckoutSignature('order_test','pay_test',signature,'test'),true);assert.equal(verifyCheckoutSignature('order_test','pay_test',signature,'live'),false);
+    assert.equal(verifyCheckoutSignature('order_test','pay_test',signature,'live'),false);
     const id='12345678-1234-4234-8234-123456789012';const token=createToken(id,'checkout:test',60);
-    assert.equal(readToken(token,'checkout:test'),id);assert.equal(readToken(token,'checkout:live'),null);
-    process.env.ENABLE_PAYMENT_MODE_SWITCH='false';assert.throws(()=>checkoutKey('test'),{code:'PAYMENTS_UNAVAILABLE'});assert.equal(checkoutKey('live'),'rzp_live_fixture');
-    process.env.RAZORPAY_LIVE_KEY_ID='rzp_test_wrong';assert.throws(()=>checkoutKey('live'),{code:'PAYMENTS_UNAVAILABLE'});
+    assert.equal(readToken(token,'checkout:live'),null);
+    delete process.env.RAZORPAY_LIVE_WEBHOOK_SECRET;assert.equal(verifyWebhookSignature(raw,createHmac('sha256','synthetic-webhook-secret').update(raw).digest('hex')),false);assert.throws(()=>checkoutKey('live'),{code:'PAYMENTS_UNAVAILABLE'});process.env.RAZORPAY_LIVE_WEBHOOK_SECRET='new-live-hook';
+    delete process.env.RAZORPAY_LIVE_KEY_SECRET;assert.throws(()=>checkoutKey('live'),{code:'PAYMENTS_UNAVAILABLE'});
+    process.env.RAZORPAY_LIVE_KEY_SECRET='live-mode-secret';process.env.RAZORPAY_LIVE_KEY_ID='rzp_test_wrong';assert.throws(()=>checkoutKey('live'),{code:'PAYMENTS_UNAVAILABLE'});
+  }finally{for(const key of Object.keys(values)){if(old[key]===undefined)delete process.env[key];else process.env[key]=old[key];}}
+});
+
+test('standard production webhook secret requires explicit live designation',()=>{
+  const values={VERCEL_ENV:'production',RAZORPAY_LIVE_KEY_ID:'rzp_live_fixture',RAZORPAY_LIVE_KEY_SECRET:'live-mode-secret',RAZORPAY_LIVE_WEBHOOK_SECRET:'',RAZORPAY_WEBHOOK_SECRET:'owner-live-hook',RAZORPAY_WEBHOOK_MODE:''};
+  const old=Object.fromEntries(Object.keys(values).map(key=>[key,process.env[key]]));Object.assign(process.env,values);
+  const raw='{"event":"payment.captured"}';
+  const signature=createHmac('sha256','owner-live-hook').update(raw).digest('hex');
+  try{
+    for(const mode of ['', 'test']){
+      process.env.RAZORPAY_WEBHOOK_MODE=mode;
+      assert.equal(verifyWebhookSignature(raw,signature),false);
+      assert.throws(()=>checkoutKey('live'),{code:'PAYMENTS_UNAVAILABLE'});
+    }
+    process.env.RAZORPAY_WEBHOOK_MODE='live';
+    assert.equal(checkoutKey('live'),'rzp_live_fixture');
+    assert.equal(verifyWebhookSignature(raw,signature),true);
+    assert.equal(verifyWebhookSignature(raw+' ',signature),false);
+    assert.equal(verifyWebhookSignature(raw,createHmac('sha256','old-test-hook').update(raw).digest('hex')),false);
+    assert.throws(()=>checkoutKey('test'),{code:'PAYMENTS_UNAVAILABLE'});
+    process.env.RAZORPAY_LIVE_WEBHOOK_SECRET='preferred-live-hook';
+    assert.equal(verifyWebhookSignature(raw,signature),false);
+    assert.equal(verifyWebhookSignature(raw,createHmac('sha256','preferred-live-hook').update(raw).digest('hex')),true);
   }finally{for(const key of Object.keys(values)){if(old[key]===undefined)delete process.env[key];else process.env[key]=old[key];}}
 });
 

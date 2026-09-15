@@ -4,7 +4,7 @@ import { isPaymentDemo } from "@/server/env";
 import { orderSchema, paymentSchema } from "@/features/payments/schema";
 import { z } from "zod";
 import { timed } from "@/server/timing";
-import {defaultPaymentMode,paymentKeyId,paymentSecret,type PaymentMode} from '@/server/payment-mode';
+import {defaultPaymentMode,productionPayments,paymentKeyId,paymentSecret,webhookSecret,type PaymentMode} from '@/server/payment-mode';
 
 export interface RazorpayOrder { id: string; amount: number; currency: "INR" }
 
@@ -31,7 +31,7 @@ export function verifyCheckoutSignature(orderId: string, paymentId: string, rece
 
 export function verifyWebhookSignature(raw: string, received: string) {
   const actual = Buffer.from(received);
-  const secrets=[process.env.RAZORPAY_TEST_WEBHOOK_SECRET,process.env.RAZORPAY_LIVE_WEBHOOK_SECRET,process.env.RAZORPAY_WEBHOOK_SECRET].filter((value):value is string=>Boolean(value));
+  const secrets=[webhookSecret()].filter((value):value is string=>Boolean(value));
   return secrets.some(secret=>{const expected=Buffer.from(createHmac('sha256',secret).update(raw).digest('hex'));return expected.length===actual.length&&timingSafeEqual(expected,actual);});
 }
 
@@ -50,7 +50,7 @@ export async function fetchOrderPayments(orderId: string,mode?:PaymentMode) {
 }
 async function readOrderPayments(orderId:string,mode?:PaymentMode){
   if (isPaymentDemo() && orderId.startsWith("demo_order_")) return [];
-  const modes=mode?[mode]:(['live','test'] as const).filter(value=>paymentKeyId(value));
+  const modes=mode?[mode]:(['live','test'] as const).filter(value=>(!productionPayments()||value==='live')&&paymentKeyId(value));
   for(const selected of modes){
     const response = await fetch(`https://api.razorpay.com/v1/orders/${encodeURIComponent(orderId)}/payments`, { headers: { Authorization: authHeader(selected) }, cache: "no-store", signal: AbortSignal.timeout(8000) });
     if(response.ok)return z.object({ items: z.array(paymentSchema).max(100) }).parse(await response.json()).items;

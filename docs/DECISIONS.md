@@ -107,3 +107,17 @@ Strengthen cash/allocation immutability and protect original payment-order/webho
 Persist exact pending payout requests for response-loss recovery, scoped to the signed-in account's browser session. Display employees' own pending online-payment queue. Apply shared Unicode name validation, two-decimal acreage, editable validated referral codes, safe field-specific errors, duplicate-submit guards and recoverable network feedback. Add a validated `/r/[code]` alias. Restrict the demo helper to explicit trial/nonproduction mode; preserve the owner's temporary test-payment decision.
 
 Use the existing green token for the registration action after finding insufficient white/orange text contrast. Keep keyboard access and focus return for the mobile menu. These targeted changes do not replace a screen-reader, real-device or full WCAG audit. See [audit report](SECURITY_UX_AUDIT_20260915.md) for evidence and remaining release gates.
+
+## INR 1 live checkout — 15 September 2026
+
+The owner requested removal of the temporary payment-mode switch and a live trial fee of INR 1. New fee versions use 100 paise while previous registration snapshots stay unchanged. Production must reject test credentials and old test checkout capabilities, and require a distinct live webhook secret. The 10% commission remains unchanged (10 paise at the new fee). No test-data cleanup is included.
+
+
+## Existing protected live webhook variable
+
+The owner saved the new live signing secret under RAZORPAY_WEBHOOK_SECRET. Vercel sensitive variables cannot be renamed or read back. Allow that standard name in production only when the server configuration explicitly sets RAZORPAY_WEBHOOK_MODE=live; prefer RAZORPAY_LIVE_WEBHOOK_SECRET if present. Checkout readiness and signature verification use the same selection. Test checkout and unsigned/tampered webhooks remain rejected.
+
+
+## Integrated audit publication — 16 September 2026
+
+Both audit migrations are now applied to ganpati-agro-v2; the hosted ledger contains 18 migrations. Existing records and the effective ₹1 fee are unchanged. The integrated application preserves the newer live-only checkout safeguards and removes the public demo/mode controls. This supersedes earlier pending-migration and temporary-switch statements. See [the release record](AUDIT_RELEASE_20260916.md) for verified scope and migration version mapping.
