@@ -141,3 +141,9 @@ Super-admin permanent deletion no longer requires completing or reconciling a pe
 ## Registration form wording — 16 September 2026
 
 At the owner's request, removed the employee cash-collection checkbox, its explanatory text and optional collection note from the registration form. Removed the associated client state and form payload field; the existing server schema defaults an omitted cash declaration to false. Signed-session employee onboarding attribution and historical cash records remain intact. The initial submit button now reads exactly नोंदणी करा. The ₹500 membership summary, consent, checkout and payment-status feedback remain visible as appropriate. This explicitly supersedes the earlier requirement to retain cash controls on this form. Changes remain local and unpushed.
+
+## GitHub HTTP test port collision — 16 September 2026
+
+The GitHub HTTP check failed before exercising the app because its RPC bridge tried to bind occupied port 55434. The runner now requests port 0 by default, reads the port actually bound by the OS from the bridge readiness message, and passes that URL to Next.js. Explicit RPC_BRIDGE_PORT overrides remain supported. Shutdown waits for each owned child process to exit, with a bounded force-stop fallback; early startup exits report captured output immediately.
+
+Added a regression test launching two simultaneous bridges and checking their distinct reachable endpoints. Lint, typecheck, all 36 tests and production build passed. The complete HTTP suite was exercised with port 55434 deliberately occupied; the test app and bridge ports were checked for release after exit. No application behavior or Supabase migration changes are involved.

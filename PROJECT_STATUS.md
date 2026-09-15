@@ -230,3 +230,9 @@ Validation for the registration wording change: lint, typecheck, 34 tests and pr
 ## Complete workspace publication — 16 September 2026
 
 The owner authorized migration and publication of all current changes. The ₹500 fee migration was already applied; allow_pending_profile_erasure is now applied as hosted version 20260915200851. The hosted ledger contains 20 migrations, and before/after data counts and profile/quote checksums match. The combined source preserves live-only checkout and includes hero autoplay, removed cash controls, the नोंदणी करा button, distinct admin filter/results keys and pending-profile erasure. See docs/COMPLETE_RELEASE_20260916.md for current behavior, migration mappings and validation. This supersedes earlier instructions to leave these changes unpushed.
+
+## GitHub HTTP test port collision — 16 September 2026
+
+The GitHub HTTP check failed before exercising the app because its RPC bridge tried to bind occupied port 55434. The runner now requests port 0 by default, reads the port actually bound by the OS from the bridge readiness message, and passes that URL to Next.js. Explicit RPC_BRIDGE_PORT overrides remain supported. Shutdown waits for each owned child process to exit, with a bounded force-stop fallback; early startup exits report captured output immediately.
+
+Added a regression test launching two simultaneous bridges and checking their distinct reachable endpoints. Lint, typecheck, all 36 tests and production build passed. The complete HTTP suite was exercised with port 55434 deliberately occupied; the test app and bridge ports were checked for release after exit. No application behavior or Supabase migration changes are involved.
