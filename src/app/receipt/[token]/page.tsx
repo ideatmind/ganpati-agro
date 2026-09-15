@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PrintReceiptButton } from "@/components/PrintReceiptButton";
 import { callRpc } from "@/server/database";
@@ -14,7 +15,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ token:
   if (!z.uuid().safeParse(token).success) notFound();
   const receipt = await callRpc<Receipt | null>("get_receipt", { p_public_token: token });
   if (!receipt) notFound();
-  return <main className="receipt-page"><div className="receipt-actions"><PrintReceiptButton /></div><article className="receipt-card">
+  return <main className="receipt-page"><div className="receipt-actions"><Link className="button button-outline" href="/dashboard">My dashboard</Link><Link className="button button-outline" href="/">Website</Link><PrintReceiptButton /></div><article className="receipt-card">
     <header><Image src="/brand/logo-icon.png" width={68} height={68} alt="" /><div><h1>श्री गणपती ॲग्रो</h1><p>PRODUCER COMPANY LTD.</p></div><span className="paid-stamp">PAID</span></header>
     <div className="receipt-title"><span>पेमेंट पावती</span><h2>Payment Receipt</h2><p>{new Intl.DateTimeFormat("mr-IN", { dateStyle: "long", timeStyle: "short", timeZone: "Asia/Kolkata" }).format(new Date(receipt.issuedAt))}</p></div>
     <dl><div><dt>Receipt number</dt><dd>{receipt.receiptNumber}</dd></div><div><dt>Member</dt><dd>{receipt.memberName}</dd></div><div><dt>Mobile</dt><dd>{receipt.memberMobile}</dd></div><div><dt>Registration</dt><dd>{receipt.registrationReference}</dd></div><div><dt>Membership</dt><dd>{receipt.membershipNumber}</dd></div><div><dt>Razorpay payment</dt><dd>{receipt.paymentId}</dd></div></dl>

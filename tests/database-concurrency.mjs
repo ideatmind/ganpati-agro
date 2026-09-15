@@ -18,9 +18,22 @@ const key=reservations.find(result=>result.requestKey).requestKey;
 const order='order_concurrency_'+suffix;const payment='pay_concurrency_'+suffix;
 await sql(`select public.record_payment_order(${id},${sqlLiteral(order)},${sqlLiteral(key)});`);
 const completed=await Promise.all(Array.from({length:12},(_,index)=>sql(index%2===0?
-  `select public.finalize_registration_payment(${sqlLiteral(order)},${sqlLiteral(payment)},100,'INR','farmer',true);`:
-  `select public.record_payment_event('event_concurrent_${suffix}_${index}','payment.captured',${sqlLiteral(order)},${sqlLiteral(payment)},100,'INR','{}');`).then(JSON.parse)));
+  `select public.finalize_registration_payment(${sqlLiteral(order)},${sqlLiteral(payment)},${registration.amountPaise},'INR','farmer',true);`:
+  `select public.record_payment_event('event_concurrent_${suffix}_${index}','payment.captured',${sqlLiteral(order)},${sqlLiteral(payment)},${registration.amountPaise},'INR','{}');`).then(JSON.parse)));
 assert.equal(new Set(completed.map(result=>result.receiptToken)).size,1,'Capture race returned inconsistent receipts');
 const count=JSON.parse(await sql(`select jsonb_build_object('farmers',(select count(*) from public.farmers where registration_id=${id}),'memberships',(select count(*) from public.memberships where registration_id=${id}),'receipts',(select count(*) from public.receipts where registration_id=${id}),'attempts',(select count(*) from public.payment_attempts where provider_payment_id=${sqlLiteral(payment)}));`));
 assert.deepEqual(count,{farmers:1,memberships:1,receipts:1,attempts:1});
 console.log('PASS: 12 concurrent order reservations and 12 simultaneous browser/webhook captures produce one order reservation, farmer, membership, receipt and capture.');
+
+const admin=crypto.randomUUID();
+await sql(`insert into public.accounts(id,mobile,password_hash,display_name,status) values(${sqlLiteral(admin)},${sqlLiteral('72'+suffix)},extensions.crypt('purge-test-password',extensions.gen_salt('bf',4)),'Purge concurrency admin','active');
+insert into public.account_roles(account_id,role) values(${sqlLiteral(admin)},'super_admin');
+select public.admin_bulk_action(${sqlLiteral(admin)},array[${id}::uuid],'trash','Concurrent purge test');`);
+const erased=await Promise.all(Array.from({length:12},(_,index)=>sql(index%2===0?
+  `select public.purge_admin_registrations(${sqlLiteral(admin)},array[${id}::uuid],'purge-test-password');`:
+  `select public.record_payment_event('event_purge_race_${suffix}_${index}','payment.captured',${sqlLiteral(order)},${sqlLiteral(payment)},${registration.amountPaise},'INR','{}');`).then(JSON.parse)));
+assert.equal(erased.reduce((total,result)=>total+(result.changed??0),0),1);
+assert.ok(erased.every(result=>!result.failed));
+const retained=JSON.parse(await sql(`select jsonb_build_object('persons',(select count(*) from public.persons where mobile=${sqlLiteral(payload.mobile)}),'receipts',(select count(*) from public.receipts where registration_id=${id}),'memberships',(select count(*) from public.memberships where registration_id=${id}),'audits',(select count(*) from public.audit_events where action='registration_permanently_deleted' and target_id=${id}));`));
+assert.deepEqual(retained,{persons:0,receipts:1,memberships:1,audits:1});
+console.log('PASS: simultaneous permanent-deletion retries and duplicate captures erase one profile, preserve one receipt/membership and record one deletion audit.');

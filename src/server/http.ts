@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { ZodError } from "zod";
 import { AppError } from "@/shared/errors";
 import { requestTimings } from "@/server/timing";
+import {validationFeedback} from '@/shared/validation-feedback';
 
 export async function readBody(request: Request, limit = 32_768): Promise<string> {
   if (Number(request.headers.get("content-length")) > limit) throw new AppError(413, "BODY_TOO_LARGE", "Request is too large.");
@@ -44,7 +45,8 @@ export async function api(request: Request, work: () => Promise<Response>) {
     const known = error instanceof AppError;
     const status = known ? error.status : error instanceof ZodError || error instanceof SyntaxError ? 400 : 503;
     const code = known ? error.code : status === 400 ? "VALIDATION_ERROR" : "SERVICE_UNAVAILABLE";
-    response = Response.json({ error: known ? error.message : status === 400 ? "Please check the submitted fields." : "Service is temporarily unavailable. Please try again.", code, requestId }, { status });
+    const feedback=error instanceof ZodError?validationFeedback(error):{error:known?error.message:status===400?"Please check the submitted fields.":"Service is temporarily unavailable. Please try again."};
+    response = Response.json({...feedback,code,requestId},{status});
   }
   response.headers.set("X-Request-Id", requestId);
   response.headers.set("Server-Timing", [...timing.stages.map((stage,index)=>`step${index};desc="${stage.name}";dur=${stage.durationMs}`),`total;dur=${Math.round(performance.now()-started)}`].join(', '));

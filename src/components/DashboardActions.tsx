@@ -20,5 +20,5 @@ export function DashboardActions({ referralUrl }: { referralUrl?: string }) {
     catch(error){setError(error instanceof Error?error.message:"Logout failed");}
     finally{setBusy(false);}
   }
-  return <div className="dashboard-actions">{referralUrl&&<button className="button button-outline" onClick={copy}>{copied ? "लिंक कॉपी झाली" : "रेफरल लिंक कॉपी करा"}</button>}<button className="text-button" onClick={logout} disabled={busy}>लॉग आउट</button>{error&&<p role="alert">{error}</p>}</div>;
+  return <div className="dashboard-actions">{referralUrl&&<button className="button button-outline" onClick={copy}>{copied ? "लिंक कॉपी झाली" : "रेफरल लिंक कॉपी करा"}</button>}<button className="text-button" onClick={logout} disabled={busy}>लॉग आउट</button>{copied&&<span role="status">Referral link copied.</span>}{error&&<p role="alert">{error}</p>}</div>;
 }

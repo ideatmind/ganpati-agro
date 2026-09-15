@@ -1,5 +1,11 @@
 # Decisions
 
+## Role-aware workspace navigation — 16 September 2026
+
+Management opens directly in operations; personal referral/onboarding activity remains available at `/dashboard?personal=1`. Employees and farmer referrers keep their scoped dashboards. Managers see team oversight wording, while staff administration and Trash remain super-admin-only. Share role-filtered desktop/mobile navigation and repeated admin heading/status patterns without introducing a new UI framework or permission model.
+
+Use validated list returns instead of arbitrary URLs or browser history for operational Cancel/Back actions. Keep bulk success visible after refreshed rows, use named destructive confirmations with keyboard focus containment, and confirm recipient/amount before recording an already-completed offline payout. Preserve the existing independent server/database authorization, grant scope, payment snapshots, PII protection and financial retention. See [role UX remediation report](ROLE_UI_REMEDIATION_20260916.md) for local browser evidence and explicit remaining limits.
+
 ## 2026-09-13
 
 - Membership activates automatically after successful ₹500 payment.
@@ -84,6 +90,24 @@ Keep responsive form styling in legacy-form.css. Fieldsets must not add a second
 
 Move the existing registration-level cluster into Farm Details before its plots. All plot crops must belong to that cluster; keep shared crops when valid in the new cluster, clear incompatible crops, and enforce the relationship at API validation. Keep consent's data-use purpose visible, but omit infrastructure and administrator access details from the public form. Password visibility is opt-in, independent for each field, and available on login too.
 
+## Permanent deletion from Trash — 15 September 2026
+
+Super-admins can permanently erase up to 100 explicitly selected trashed profiles after confirming their current password. The server derives the actor from the signed session, limits password attempts and repeats role, password and Trash checks in PostgreSQL. Selections are atomic; repeat requests do not repeat deletion or audit events. There is no all-matching permanent deletion.
+
+Retain the existing financial-history invariant: physically delete persons, encrypted Aadhaar/fingerprint/last-four, plots and sessions; clear login credentials and mobile from a disabled account shell. Disable the referral code and revoke edit grants. Completed registration, farmer and account IDs remain as anonymous linking records for memberships, payments, receipts, earnings, payouts and audit/grant history. Issued receipts retain their original name and masked mobile. This is operational profile erasure, not erasure of every historical reference or backup. Mobile and Aadhaar can be used for a new registration.
+
+Registrations that never started checkout and have no cash declaration can be physically removed. Incomplete registrations with any checkout reservation, order, exception or cash collection are blocked; age alone cannot prove a provider payment is impossible. Staff accounts are blocked. Erased profiles cannot be restored or re-trashed. Accounting links preserve duplicate/late capture handling and employee onboarding attribution.
+
+## Security and UX audit — 15–16 September 2026
+
+Use the current database fee for registration and cash labels, with an atomic stale-price expectation check. Preserve original fee/commission snapshots on retries. The initial fee remains ₹500; the hosted `live_trial_fee` currently sets ₹1. No hosted fee or data was changed during this audit; the owner must resolve that private-trial/public-launch decision.
+
+Strengthen cash/allocation immutability and protect original payment-order/webhook evidence while retaining permitted processing transitions. Keep finance-only management access and anonymized recent earnings after profile erasure. Align profile-edit and purge lock ordering. These changes are in `20260915190000_audit_financial_controls.sql`, following the local permanent-deletion migration.
+
+Persist exact pending payout requests for response-loss recovery, scoped to the signed-in account's browser session. Display employees' own pending online-payment queue. Apply shared Unicode name validation, two-decimal acreage, editable validated referral codes, safe field-specific errors, duplicate-submit guards and recoverable network feedback. Add a validated `/r/[code]` alias. Restrict the demo helper to explicit trial/nonproduction mode; preserve the owner's temporary test-payment decision.
+
+Use the existing green token for the registration action after finding insufficient white/orange text contrast. Keep keyboard access and focus return for the mobile menu. These targeted changes do not replace a screen-reader, real-device or full WCAG audit. See [audit report](SECURITY_UX_AUDIT_20260915.md) for evidence and remaining release gates.
+
 ## INR 1 live checkout — 15 September 2026
 
 The owner requested removal of the temporary payment-mode switch and a live trial fee of INR 1. New fee versions use 100 paise while previous registration snapshots stay unchanged. Production must reject test credentials and old test checkout capabilities, and require a distinct live webhook secret. The 10% commission remains unchanged (10 paise at the new fee). No test-data cleanup is included.
@@ -92,3 +116,8 @@ The owner requested removal of the temporary payment-mode switch and a live tria
 ## Existing protected live webhook variable
 
 The owner saved the new live signing secret under RAZORPAY_WEBHOOK_SECRET. Vercel sensitive variables cannot be renamed or read back. Allow that standard name in production only when the server configuration explicitly sets RAZORPAY_WEBHOOK_MODE=live; prefer RAZORPAY_LIVE_WEBHOOK_SECRET if present. Checkout readiness and signature verification use the same selection. Test checkout and unsigned/tampered webhooks remain rejected.
+
+
+## Integrated audit publication — 16 September 2026
+
+Both audit migrations are now applied to ganpati-agro-v2; the hosted ledger contains 18 migrations. Existing records and the effective ₹1 fee are unchanged. The integrated application preserves the newer live-only checkout safeguards and removes the public demo/mode controls. This supersedes earlier pending-migration and temporary-switch statements. See [the release record](AUDIT_RELEASE_20260916.md) for verified scope and migration version mapping.

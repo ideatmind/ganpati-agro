@@ -1,6 +1,19 @@
 # Project status
 
-**Current phase:** Redesigned admin workspace implemented and tested locally; existing Mumbai candidate predates this redesign. Real hosted-checkout acceptance and coordinated live release remain.
+## Role-based UI audit — 16 September 2026
+
+Targeted local improvements cover role-aware landing/navigation, manager oversight labels, contextual returns, protected staff actions, persistent bulk feedback, shared admin headings/statuses, grant/lookup validation, responsive layout and keyboard/contrast fixes. The [role matrix](docs/ROLE_UI_AUDIT_20260916.md) was recorded before implementation; the [remediation report](docs/ROLE_UI_REMEDIATION_20260916.md) describes changes, browser evidence, checks and remaining usability limits. No deployment or hosted database changes were made by this task.
+
+**Current phase:** Security/UX audit and permanent Trash deletion implemented and verified locally. The latest audit changes and two migrations are not deployed. Public-launch readiness remains conditional on pricing/trial decisions, real hosted Razorpay acceptance and operational verification. Older verification sections below are historical.
+
+## Latest audit — 15–16 September 2026
+
+- Read-only hosted checks: all 28 application tables have RLS and deny anon/authenticated direct access; privileged RPCs remain service-only. Advisors returned informational findings only. Hosted `live_trial_fee` sets ₹1; the initial business fee is ₹500. No hosted price, account, payment or schema changes were made in this audit.
+- Added trusted fee display/stale-price protection, stronger immutable financial evidence, finance-only management access after erasure, anonymized retained earnings and employees' own pending-payment queue. Added safe payout recovery, Unicode name/acreage/referral validation, safe field errors, payment-key pairing, network recovery and keyboard/contrast fixes.
+- Pending local migrations: `20260915090000_admin_permanent_delete.sql` and `20260915190000_audit_financial_controls.sql`. Reconcile the hosted migration ledger before coordinated release.
+- Verification: lint, typecheck and production build passed; 32 application tests, five SQL suites, isolated HTTP journeys and 12-way concurrency checks passed. All 17 local migrations rehearsed cleanly on isolated PostgreSQL 16. Browser checks cover responsive layouts, keyboard behavior, validation, dynamic pricing, onboarding network failure and exact payout retry. No real payment was charged.
+- Dependency audit: zero reported vulnerabilities. Reachable-history/current-client secret scans found no matches within their documented scope. Neither result establishes production security.
+- [Complete audit and remaining release gates](docs/SECURITY_UX_AUDIT_20260915.md), [application/RLS map](docs/AUDIT_20260915_MAP.md), [field matrix](docs/AUDIT_20260915_VALIDATION.md).
 
 ## Complete
 
@@ -165,6 +178,13 @@
 - Added accessible independent eye buttons to registration password/confirmation and login, using a shared component with 44px targets. Simplified consent and password guidance, removing encryption/admin-access and byte-count implementation details from the public form.
 - Lint, typecheck, all 27 tests and production build pass. Browser verification covered cluster filtering/reset across two plots, show/hide and keyboard operation, and no horizontal overflow at 320, 390 and 1280px.
 
+## Trash permanent deletion — 15 September 2026
+
+- Implemented **Delete permanently** for selected Trash records with current super-admin password confirmation, rate limiting and atomic database enforcement.
+- Removes personal profiles, Aadhaar, plots and sessions; disables/anonymizes account access. Retains immutable financial/audit history and completed accounting links. Blocks unresolved checkouts/cash declarations and staff accounts.
+- Added migration `20260915090000_admin_permanent_delete.sql`; migration and application are local changes, not deployed by this task.
+- Validation: lint, typecheck, 28 application tests, production build and all four database regression suites pass against a fresh isolated PostgreSQL database. Full authenticated HTTP regression and concurrent deletion/payment retry tests also pass.
+
 ## INR 1 live-payment release prepared — 15 September 2026
 
 - Removed the public payment-mode switch and demo auto-fill; production rejects test checkout, old test cookies and old test webhook signatures. Added a 100-paise fee migration preserving previous quote snapshots.
@@ -175,3 +195,8 @@
 ## Live webhook configuration repair — 15 September 2026
 
 The hosted fee migration is complete (100 paise); the owner deployed the live release and saved the live webhook secret under RAZORPAY_WEBHOOK_SECRET. Added explicit RAZORPAY_WEBHOOK_MODE=live support for that protected variable, shared by checkout readiness and signature verification. The mode is server configuration only; production test checkout remains disabled. Focused tests cover required opt-in, signature integrity, stale test-secret rejection and explicit live-secret precedence. Actual captured payment/webhook delivery and administrator password replacement remain unverified.
+
+
+## Integrated audit publication — 16 September 2026
+
+Both audit migrations are now applied to ganpati-agro-v2; the hosted ledger contains 18 migrations. Existing records and the effective ₹1 fee are unchanged. The integrated application preserves the newer live-only checkout safeguards and removes the public demo/mode controls. This supersedes earlier pending-migration and temporary-switch statements. See [the release record](docs/AUDIT_RELEASE_20260916.md) for verified scope and migration version mapping.

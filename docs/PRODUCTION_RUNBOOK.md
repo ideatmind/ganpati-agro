@@ -138,6 +138,20 @@ Razorpay test and live webhooks can both use https://ganpatiagro.in/api/payments
 
 The owner explicitly approved test membership/receipt/referral records in this current private-test database. No records were deleted. Before public launch, separately reconcile/clear the test dataset as instructed by the owner, remove demo controls, configure live credentials/webhooks, set ENABLE_PAYMENT_MODE_SWITCH=false, and redeploy. Do not treat test entries as real collections.
 
+## Audit release requirements — 16 September 2026
+
+This section supersedes earlier migration counts and trial assumptions above. The audit made read-only hosted checks and local changes only. Hosted currently has 16 migrations, including `live_trial_fee` (`20260914205349`), which has no local counterpart. Its effective fee is ₹1 (`100` paise). Obtain the owner's launch-price decision; do not silently reset prices or rewrite existing snapshots.
+
+The local application now requires both `20260915090000_admin_permanent_delete.sql` and `20260915190000_audit_financial_controls.sql`, neither remotely applied during this audit. Compare migrations by name and contents against the hosted ledger, inspect the trial migration, back up, rehearse on an isolated database, and coordinate schema/application promotion. Do not blindly push all local migration versions over the differently numbered hosted history. Local clean rehearsal applied all 17 ordered local files; that does not resolve remote drift by itself.
+
+Before public launch, confirm live keys are paired with their matching secrets, capture settings, webhook secrets/subscriptions, payment verification and Android/iPhone app return in the Razorpay dashboard and hosted application. Disable the temporary payment-mode switch and reconcile the approved trial dataset through a separately reviewed procedure that preserves financial evidence. The demo helper is hidden in production when the switch is disabled.
+
+After migration/promotion, recheck all exposed-table RLS, anon/authenticated grants, service-only RPCs and financial write restrictions; then verify login, registration pricing, Trash, permanent-erasure rejection rules, retained finance access and duplicate-capture behavior with authorized fixtures. Confirm trusted client-IP/edge limits, alert delivery, restore access, recovery ownership and isolated staging. No SMS/DLT provider is used; configuration becomes a gate if communications are introduced.
+
+For an uncertain payout result, retry the saved exact request in the same browser session. If storage was lost or is corrupt, inspect payouts/audit evidence and resolve the original UUID before creating a new record. This records an existing offline disbursement and must not trigger another transfer. There is no in-app correction/settlement editor; preserve original financial records during operational investigation.
+
+Full findings, executed adversarial checks and unperformed acceptance tests: [security and UX audit](SECURITY_UX_AUDIT_20260915.md).
+
 ## Live INR 1 trial (supersedes temporary switch instructions)
 
 Production accepts live credentials only. Configure RAZORPAY_LIVE_KEY_ID, RAZORPAY_LIVE_KEY_SECRET and the separate RAZORPAY_LIVE_WEBHOOK_SECRET as server-only Vercel production variables. The webhook must subscribe to payment.captured and order.paid at /api/payments/webhook. The removed ENABLE_PAYMENT_MODE_SWITCH flag cannot re-enable test mode. Apply the live_trial_fee migration once before promoting the release; do not replay earlier hosted migrations. New registrations quote 100 paise while existing quote snapshots are retained. Complete the release gates in LIVE_PAYMENT_SECURITY_REVIEW.md.
@@ -146,3 +160,8 @@ Production accepts live credentials only. Configure RAZORPAY_LIVE_KEY_ID, RAZORP
 ### Protected standard webhook secret
 
 If the LIVE signing secret was saved as RAZORPAY_WEBHOOK_SECRET, set RAZORPAY_WEBHOOK_MODE=live in Vercel Production and redeploy. This is an explicit operator assertion that the standard secret belongs to the live webhook, never a browser mode switch. RAZORPAY_LIVE_WEBHOOK_SECRET takes precedence if present. The hosted live_trial_fee migration has already been applied; do not replay it. Verify a real captured payment and webhook delivery separately.
+
+
+## Integrated audit publication — 16 September 2026
+
+Both audit migrations are now applied to ganpati-agro-v2; the hosted ledger contains 18 migrations. Existing records and the effective ₹1 fee are unchanged. The integrated application preserves the newer live-only checkout safeguards and removes the public demo/mode controls. This supersedes earlier pending-migration and temporary-switch statements. See [the release record](AUDIT_RELEASE_20260916.md) for verified scope and migration version mapping.

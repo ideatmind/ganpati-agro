@@ -4,7 +4,8 @@ import {requireIdentity} from "@/server/session";
 import {api,readJson} from "@/server/http";
 import {enforceLimit} from "@/server/rate-limit";
 import {passwordSchema,mobileSchema} from '@/shared/credential-schema';
-const schema=z.object({name:z.string().trim().min(2).max(200),mobile:mobileSchema,password:passwordSchema,role:z.enum(['employee','manager'])});
+import {personNameSchema} from '@/shared/person-name';
+const schema=z.object({name:personNameSchema,mobile:mobileSchema,password:passwordSchema,role:z.enum(['employee','manager'])});
 export async function POST(request:Request){return api(request,async()=>{
   const actor=await requireIdentity(['super_admin']);await enforceLimit('staff:'+actor.id,5);
   const body=schema.parse(await readJson(request));

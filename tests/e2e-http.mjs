@@ -13,6 +13,10 @@ const seed=String(Date.now()).slice(-8);const body={name:'Isolated Test Farmer',
 for(const invalid of [{mobile:body.mobile+'0'},{mobile:body.mobile+'\n'},{aadhar_no:body.aadhar_no.slice(1)},{aadhar_no:body.aadhar_no+'\n'},{password:'1234567'}])assert.equal((await request('/api/registrations',{...body,...invalid},{headers:{'x-test-client-ip':testIp+'-validation'}})).status,400);
 assert.equal((await request('/api/payments/orders',{registrationId:crypto.randomUUID()})).status,403);
 assert.equal((await request('/api/registrations',body,{headers:{origin:'https://evil.example'}})).status,403);
+const invalidName=await request('/api/registrations',{...body,name:'Farmer123'},{headers:{'x-test-client-ip':testIp+'-name'}});assert.equal(invalidName.status,400);assert.equal(invalidName.data.field,'name');assert.ok(!JSON.stringify(invalidName).includes('Farmer123'));
+const invalidArea=await request('/api/registrations',{...body,plots:[{...body.plots[0],area_acres:0.001}]},{headers:{'x-test-client-ip':testIp+'-acre'}});assert.equal(invalidArea.status,400);
+const staleFee=await request('/api/registrations',{...body,expected_fee_paise:1},{headers:{'x-test-client-ip':testIp+'-fee'}});assert.equal(staleFee.status,409);assert.equal(staleFee.data.code,'FEE_CHANGED');
+assert.equal((await request('/api/farmers/'+crypto.randomUUID(),{name:'Changed Name'},{method:'PATCH'})).status,401);
 assert.equal((await request('/api/registrations',{...body,test_mode:true},{headers:{'x-test-client-ip':testIp+'-mode'}})).status,400);
 const registration=await request('/api/registrations',body);assert.equal(registration.status,201,JSON.stringify(registration));
 assert.equal(registration.data.data.amountPaise,100);
@@ -45,6 +49,7 @@ const sessionCookie=cookie;
 assert.equal((await request('/api/admin/payouts',{})).status,403);
 assert.equal((await request('/api/admin/aadhaar',{registrationId:registration.data.data.id})).status,403);
 assert.equal((await request('/api/admin/bulk',{ids:[registration.data.data.id],action:'trash',reason:'Unauthorized attempt'})).status,403);
+assert.equal((await request('/api/admin/bulk',{ids:[registration.data.data.id],action:'purge',password:'irrelevant'})).status,403);
 assert.equal((await request('/api/auth/logout',{})).status,200);
 cookie=sessionCookie;assert.equal((await request('/api/auth/password',{currentPassword:body.password,newPassword:'new isolated password'})).status,401);
 cookie=checkoutCookie;assert.equal((await request('/api/payments/status',undefined,{method:'DELETE'})).status,200);
@@ -70,6 +75,16 @@ assert.equal((await request('/api/admin/bulk',{...allMatching,password:'isolated
 assert.equal((await request('/api/admin/bulk',{ids:[registration.data.data.id],action:'restore'})).status,200);
 for(const kind of ['staff','payout','grant']){const page=await fetch(origin+'/dashboard/admin/new/'+kind,{headers:{cookie}});assert.equal(page.status,200);assert.ok((await page.text()).includes('<form'));}
 assert.equal((await request('/api/admin/reconcile',{registrationId:registration.data.data.id})).status,200);
+// Permanently erase a paid profile through the actual authenticated boundary.
+assert.equal((await request('/api/admin/bulk',{ids:[registration.data.data.id],action:'trash',reason:'Permanent deletion HTTP test'})).status,200);
+const trashPage=await fetch(origin+'/dashboard/admin?section=trash&q='+body.mobile,{headers:{cookie}});assert.equal(trashPage.status,200);
+const purgeInput={ids:[registration.data.data.id],action:'purge',password:'wrong-password'};
+assert.equal((await request('/api/admin/bulk',purgeInput)).status,403);
+const purged=await request('/api/admin/bulk',{...purgeInput,password:'isolated admin password'});assert.equal(purged.status,200);assert.equal(purged.data.data.changed,1);
+const deletedDetail=await fetch(origin+'/dashboard/admin/registrations/'+registration.data.data.id,{headers:{cookie}});const deletedHtml=await deletedDetail.text();assert.ok(!deletedHtml.includes(body.name));assert.ok(deletedHtml.includes('404')||deletedHtml.includes('NEXT_HTTP_ERROR_FALLBACK;404')); // Streamed notFound pages may return HTTP 200.
+const retainedFinance=await fetch(origin+'/dashboard/admin/payments/'+registration.data.data.id,{headers:{cookie}});const financeHtml=await retainedFinance.text();assert.ok(financeHtml.includes('Payment history'));assert.ok(financeHtml.includes('Deleted farmer'));assert.ok(financeHtml.includes(order));assert.ok(!financeHtml.includes(body.aadhar_no));
+assert.equal((await request('/api/admin/reconcile',{registrationId:registration.data.data.id})).status,200);
+const trashAfter=await fetch(origin+'/dashboard/admin?section=trash&q='+body.mobile,{headers:{cookie}});assert.ok(!(await trashAfter.text()).includes(body.name));
 // Test each admin role with successful 204/no-content password RPC responses.
 const managerMobile='73'+seed;
 assert.equal((await request('/api/admin/staff',{name:'HTTP password manager',mobile:managerMobile,password:'manager8',role:'manager'})).status,201);
