@@ -236,3 +236,16 @@ The owner authorized migration and publication of all current changes. The ₹50
 The GitHub HTTP check failed before exercising the app because its RPC bridge tried to bind occupied port 55434. The runner now requests port 0 by default, reads the port actually bound by the OS from the bridge readiness message, and passes that URL to Next.js. Explicit RPC_BRIDGE_PORT overrides remain supported. Shutdown waits for each owned child process to exit, with a bounded force-stop fallback; early startup exits report captured output immediately.
 
 Added a regression test launching two simultaneous bridges and checking their distinct reachable endpoints. Lint, typecheck, all 36 tests and production build passed. The complete HTTP suite was exercised with port 55434 deliberately occupied; the test app and bridge ports were checked for release after exit. No application behavior or Supabase migration changes are involved.
+
+
+## Multiple crops and irrigation sources — 17 September 2026
+
+Registration plots now support multiple crop names and irrigation sources through accessible bilingual checkbox groups, visible selection counts and summaries. Crop options follow the selected cluster, with compatible choices retained on cluster changes. The admin registration detail and authorized employee farmer view display every selection using bilingual labels.
+
+Applied plot_multi_select to hosted ganpati-agro-v2 (hosted 20260917103536; repository 20260917102532). Both plot tables now contain validated text arrays. Existing scalar columns and old single-choice submissions remain compatible. Verified all six registration plots and three farmer plots were backfilled correctly; original plot, registration, order and receipt checksums are unchanged. Privileged RPCs remain service-only and both plot tables retain RLS. No production customer or payment fixtures were created. The release branch is based on current GitHub main and preserves its live-only payment safeguards. Supabase is ready for the array-aware UI.
+
+Validation: lint, typecheck, 37 unit tests, production build, eight database regression suites, concurrent order/capture/deletion tests and HTTP checkout regression passed. A populated-database upgrade rehearsal preserved pending and completed plot data. Browser checks at 320, 390 and 1280px covered keyboard toggling, required selection, cluster retention/reset, plot removal, submitted arrays, touch targets and overflow. Admin and employee views rendered all selections. Repeatable coverage: tests/plot-multi-select.sql and tests/plot-multi-select-browser.mjs.
+
+## Deterministic plot assertions — 17 September 2026
+
+CI exposed a positional assumption in the multi-select SQL regression: plots created in one transaction share created_at and are ordered by random UUID as the tie-breaker. The test now identifies each plot by plotNo and explicitly exercises both return orders, checking both plots' complete crop and irrigation arrays. Reproduced the original failure by forcing MULTI-2 first. No application or hosted migration change is required.
