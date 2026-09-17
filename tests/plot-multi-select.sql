@@ -3,7 +3,7 @@ begin;
 do $$
 declare
  manager uuid:=gen_random_uuid(); employee uuid:=gen_random_uuid(); outsider uuid:=gen_random_uuid();
- body jsonb; result jsonb; reservation jsonb; reg uuid; farmer uuid; legacy uuid; denied boolean;
+ body jsonb; result jsonb; reservation jsonb; reg uuid; farmer uuid; legacy uuid; denied boolean; first_plot text;
 begin
  insert into public.accounts(id,mobile,password_hash,display_name,status) values
  (manager,'8900000001','synthetic','Multi manager','active'),
@@ -19,8 +19,19 @@ begin
  reg:=(public.create_registration(body)->>'id')::uuid;
  assert (public.create_registration(body)->>'id')::uuid=reg,'Retry changed registration';
  assert (select crop_names=array['तूर','हरभरा'] and irrigation_sources=array['well','drip'] from public.registration_plots where registration_id=reg and plot_no='MULTI-1'),'Registration lost choices';
- assert (public.get_admin_record(manager,reg)->'plots'->0->'cropNames')='["तूर","हरभरा"]'::jsonb,'Admin lost crops';
- assert (public.get_admin_record(manager,reg)->'plots'->0->'irrigationSources')='["well","drip"]'::jsonb,'Admin lost sources';
+ -- Plots created together share a timestamp; their UUID tie-breaker is random.
+ -- Exercise both return orders and identify each plot by its survey number.
+ foreach first_plot in array array['MULTI-2','MULTI-1'] loop
+  update public.registration_plots
+   set created_at=now()+case when plot_no=first_plot then interval '0 seconds' else interval '1 second' end
+   where registration_id=reg;
+  result:=public.get_admin_record(manager,reg)->'plots';
+  assert jsonb_array_length(result)=2 and result->0->>'plotNo'=first_plot,'Expected plot order not exercised';
+  assert (select plot->'cropNames'='["तूर","हरभरा"]'::jsonb and plot->'irrigationSources'='["well","drip"]'::jsonb
+   from jsonb_array_elements(result) plot where plot->>'plotNo'='MULTI-1'),'Admin lost MULTI-1 choices';
+  assert (select plot->'cropNames'='["मूग"]'::jsonb and plot->'irrigationSources'='["rainfed"]'::jsonb
+   from jsonb_array_elements(result) plot where plot->>'plotNo'='MULTI-2'),'Admin lost MULTI-2 choices';
+ end loop;
  assert not exists(select 1 from public.farmers where registration_id=reg),'Premature farmer';
  reservation:=public.prepare_payment_order(reg);
  perform public.record_payment_order(reg,'order_multi_select',(reservation->>'requestKey')::uuid);
