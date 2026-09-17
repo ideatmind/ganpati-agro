@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { isCatalogCrop } from "@/shared/crop-catalog";
+import { isCatalogCrop, cropBelongsToCluster } from "@/shared/crop-catalog";
 import { CLUSTER_OPTIONS, DISTRICTS, INCOME_OPTIONS, IRRIGATION_OPTIONS, TALUKAS } from "@/shared/constants";
 
 import {passwordSchema,mobileSchema,aadhaarSchema} from '@/shared/credential-schema';
@@ -31,6 +31,9 @@ export const registrationSchema = z.object({
     irrigation_source: z.enum(IRRIGATION_OPTIONS),
   })).min(1).max(10),
 }).superRefine((data, ctx) => {
+  data.plots.forEach((plot,index)=>{
+    if(!cropBelongsToCluster(data.cluster_type,plot.crop_name))ctx.addIssue({code:"custom",path:["plots",index,"crop_name"],message:"निवडलेल्या समूहातील पीक निवडा. / Select a crop from the selected cluster."});
+  });
   const match = TALUKAS.some(([taluka, district]) => taluka === data.taluka && district === data.district);
   if (!match) ctx.addIssue({ code: "custom", path: ["taluka"], message: "Taluka does not belong to the selected district" });
   const birth = new Date(`${data.date_of_birth}T00:00:00Z`);
