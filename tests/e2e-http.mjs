@@ -9,7 +9,7 @@ async function request(path,body,options={}){
   const set=response.headers.getSetCookie();if(set.length)cookie=set.map(value=>value.split(';')[0]).join('; ');
   return {status:response.status,data:await response.json()};
 }
-const seed=String(Date.now()).slice(-8);const body={name:'Isolated Test Farmer',mobile:'70'+seed,password:'test1234',date_of_birth:'1990-01-01',aadhar_no:'1234'+seed,village:'Fixture village',district:'dharashiv',taluka:'dharashiv',income_source:'agriculture',cluster_type:'pulses',referral_code:'',consent:true,cash_received:false,plots:[{plot_no:'Fixture-1',area_acres:1,crop_name:'तूर',irrigation_source:'well'}]};
+const seed=String(Date.now()).slice(-8);const body={name:'Isolated Test Farmer',mobile:'70'+seed,password:'test1234',date_of_birth:'1990-01-01',aadhar_no:'1234'+seed,village:'Fixture village',district:'dharashiv',taluka:'dharashiv',income_source:'agriculture',cluster_type:'pulses',referral_code:'',consent:true,cash_received:false,plots:[{plot_no:'Fixture-1',area_acres:1,crop_names:['तूर','हरभरा'],irrigation_sources:['well','drip']}]};
 for(const invalid of [{mobile:body.mobile+'0'},{mobile:body.mobile+'\n'},{aadhar_no:body.aadhar_no.slice(1)},{aadhar_no:body.aadhar_no+'\n'},{password:'1234567'}])assert.equal((await request('/api/registrations',{...body,...invalid},{headers:{'x-test-client-ip':testIp+'-validation'}})).status,400);
 assert.equal((await request('/api/payments/orders',{registrationId:crypto.randomUUID()})).status,403);
 assert.equal((await request('/api/registrations',body,{headers:{origin:'https://evil.example'}})).status,403);
@@ -55,6 +55,7 @@ cookie=sessionCookie;assert.equal((await request('/api/auth/password',{currentPa
 cookie=checkoutCookie;assert.equal((await request('/api/payments/status',undefined,{method:'DELETE'})).status,200);
 cookie='';assert.equal((await request('/api/auth/login',{mobile:'6999999998',password:'isolated admin password'})).status,200);
 const adminCookie=cookie;
+const multiRecord=await fetch(origin+'/dashboard/admin/registrations/'+registration.data.data.id,{headers:{cookie}});assert.equal(multiRecord.status,200);const multiHtml=await multiRecord.text();for(const label of ['Pigeon Pea','Chickpea','Well','Drip'])assert.ok(multiHtml.includes(label),'Missing multi-select label: '+label);
 const staff=await request('/api/admin/staff',{name:'HTTP test employee',mobile:'72'+seed,password:'staff123',role:'employee'});assert.equal(staff.status,201,JSON.stringify(staff));
 assert.equal((await request('/api/admin/staff',{accountId:staff.data.data.id,status:'disabled'},{method:'PATCH'})).status,200);
 cookie='';assert.equal((await request('/api/auth/login',{mobile:'72'+seed,password:'staff123'})).status,401);

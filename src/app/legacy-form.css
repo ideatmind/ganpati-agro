@@ -47,4 +47,18 @@
 .password-toggle:disabled{opacity:.5;cursor:default}
 .legacy-field select:disabled{background:#f0f3ef;color:var(--sub);cursor:not-allowed}
 
+.plot-choice-groups{display:grid;gap:24px;margin-top:24px}
+.plot-choices{min-width:0;margin:0;padding:0;border:0}
+.legacy-form-section .plot-choices legend{display:block;width:auto;padding:0;margin:0 0 4px;border:0;font-size:.94rem}
+.plot-choices legend b{color:#d13838}
+.plot-choices-hint,.plot-choices-count,.plot-choices-summary{margin:0 0 8px;font-size:.8rem;color:var(--sub)}
+.plot-choices-count{font-weight:700;color:var(--deep)}
+.plot-choices-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:300px;overflow:auto;padding:4px}
+.plot-choices-list label{display:flex;align-items:center;gap:10px;min-height:48px;padding:10px 12px;border:2px solid #d7e2d5;border-radius:10px;background:white;font-size:.86rem;cursor:pointer;overflow-wrap:anywhere}
+.plot-choices-list label:has(input:checked){border-color:var(--green);background:#e8f5e9;color:var(--deep)}
+.plot-choices-list input{width:20px;height:20px;min-height:20px;flex:0 0 20px;accent-color:var(--green)}
+.plot-choices-list label:has(input:focus-visible){outline:3px solid var(--gold);outline-offset:1px}
+.plot-choices-summary{margin:8px 4px 0;overflow-wrap:anywhere}
+@media(max-width:480px){.plot-choices-list{grid-template-columns:minmax(0,1fr)}}
+
 .login-card .password-control{margin-top:7px}

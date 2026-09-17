@@ -24,8 +24,8 @@ export function createDemoRegistration() {
     plots: [{
       plot_no: `DEMO-${serial}`,
       area_acres: String(1 + (random[2] % 20) / 2),
-      crop_name: category.crops[random[3] % category.crops.length],
-      irrigation_source: IRRIGATION_OPTIONS[random[3] % IRRIGATION_OPTIONS.length],
+      crop_names: [category.crops[random[3] % category.crops.length]],
+      irrigation_sources: [IRRIGATION_OPTIONS[random[3] % IRRIGATION_OPTIONS.length]],
     }],
   };
 }

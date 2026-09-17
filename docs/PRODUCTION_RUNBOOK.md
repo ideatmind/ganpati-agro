@@ -169,3 +169,8 @@ Both audit migrations are now applied to ganpati-agro-v2; the hosted ledger cont
 ## Complete workspace publication — 16 September 2026
 
 The owner authorized migration and publication of all current changes. The ₹500 fee migration was already applied; allow_pending_profile_erasure is now applied as hosted version 20260915200851. The hosted ledger contains 20 migrations, and before/after data counts and profile/quote checksums match. The combined source preserves live-only checkout and includes hero autoplay, removed cash controls, the नोंदणी करा button, distinct admin filter/results keys and pending-profile erasure. See COMPLETE_RELEASE_20260916.md for current behavior, migration mappings and validation. This supersedes earlier instructions to leave these changes unpushed.
+
+
+## Multi-select release — 17 September 2026
+
+The repository migration 20260917102532_plot_multi_select.sql is already applied to hosted ganpati-agro-v2 as 20260917103536. Do not replay it. Migration names and function-body hashes were checked before applying; existing plot, registration, payment-order and receipt checksums were preserved afterward. Both plot tables retain RLS and privileged RPCs remain service-only. Deploy the array-aware UI with the existing live-only payment safeguards from main.

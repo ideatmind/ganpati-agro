@@ -147,3 +147,12 @@ At the owner's request, removed the employee cash-collection checkbox, its expla
 The GitHub HTTP check failed before exercising the app because its RPC bridge tried to bind occupied port 55434. The runner now requests port 0 by default, reads the port actually bound by the OS from the bridge readiness message, and passes that URL to Next.js. Explicit RPC_BRIDGE_PORT overrides remain supported. Shutdown waits for each owned child process to exit, with a bounded force-stop fallback; early startup exits report captured output immediately.
 
 Added a regression test launching two simultaneous bridges and checking their distinct reachable endpoints. Lint, typecheck, all 36 tests and production build passed. The complete HTTP suite was exercised with port 55434 deliberately occupied; the test app and bridge ports were checked for release after exit. No application behavior or Supabase migration changes are involved.
+
+
+## Multiple crops and irrigation sources per plot — 17 September 2026
+
+Use native checkbox groups with bilingual labels, selection counts, summaries and 48px touch targets. Crop choices remain filtered by the existing single profile cluster. Each plot requires at least one crop and one irrigation source; duplicates and unknown values are rejected. Native keyboard and required-field validation work without a custom listbox or new dependency.
+
+Store bounded text arrays in registration_plots and farmer_plots. Backfill existing scalar choices as singleton arrays and copy full arrays only during verified payment finalization. Keep the old scalar columns as the first selection and accept legacy scalar RPC/API payloads for compatibility with the deployed form. The array fields are canonical for new requests and admin/employee views. Plot editing permissions remain read-only; profile editing and financial behavior are unchanged.
+
+Applied local migration 20260917102532_plot_multi_select.sql to hosted ganpati-agro-v2 as version 20260917103536. Match by migration name when reconciling local/hosted history. Prepared for publication from current GitHub main; the database migration is already applied.

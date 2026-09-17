@@ -8,7 +8,7 @@ import { CROP_CATEGORIES } from "@/shared/crop-catalog";
 import {VillageSearch} from './VillageSearch';
 import { requestJson } from "@/shared/request";
 
-interface FarmerDetail { id:string;name:string;mobileMasked:string;dateOfBirth:string;village:string;district:string;taluka:string;incomeSource:string;clusterType:string;membershipNumber:string;editableFields:string[];plots:{plotNo:string;areaAcres:number;cropName:string;irrigationSource:string}[] }
+interface FarmerDetail { id:string;name:string;mobileMasked:string;dateOfBirth:string;village:string;district:string;taluka:string;incomeSource:string;clusterType:string;membershipNumber:string;editableFields:string[];plots:{plotNo:string;areaAcres:number;cropNames:string[];irrigationSources:string[]}[] }
 
 export function FarmerProfileForm({ farmer,returnTo="/dashboard" }:{ farmer:FarmerDetail;returnTo?:string }) {
   const running=useRef(false);const [failed,setFailed]=useState(false);const [message,setMessage]=useState("");const [busy,setBusy]=useState(false);const [district,setDistrict]=useState(farmer.district);const [taluka,setTaluka]=useState(farmer.taluka);const [village,setVillage]=useState(farmer.village);const editable=new Set(farmer.editableFields);

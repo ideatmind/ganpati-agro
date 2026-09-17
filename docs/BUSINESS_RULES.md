@@ -32,7 +32,7 @@ Rules 17–23 and the strengthened grant/session controls are locally tested in 
 25. New and changed passwords require at least 8 characters and at most 72 UTF-8 bytes for every role. Mobile must contain exactly 10 ASCII digits and Aadhaar exactly 12, without whitespace, punctuation or other characters.
 
 
-26. Registration crop choices and cluster names use the owner-supplied 13-category catalog in `src/shared/crop-catalog.ts`. Each plot selects a listed crop belonging to the selected profile cluster. Changing cluster clears incompatible selections. New registrations reject unlisted or mismatched crops at the API boundary; existing saved crop text is retained. The duplicate fruit spelling सिताफळ is presented once as सीताफळ. Existing six cluster identifiers remain compatible.
+26. Registration crop choices and cluster names use the owner-supplied 13-category catalog in `src/shared/crop-catalog.ts`. Each plot selects one or more distinct listed crops belonging to the selected profile cluster and one or more distinct irrigation sources. Changing cluster keeps compatible crop selections and clears only incompatible selections; irrigation choices remain unchanged. New registrations reject unlisted or mismatched crops at the API boundary; existing saved crop text is retained. The duplicate fruit spelling सिताफळ is presented once as सीताफळ. Existing six cluster identifiers remain compatible.
 
 Crop display labels use Marathi / English throughout website crop chips and registration options, including allied businesses and protected cultivation. Display translations do not change stored crop values.
 
