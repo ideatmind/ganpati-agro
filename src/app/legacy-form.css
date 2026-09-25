@@ -4,7 +4,6 @@
 .legacy-field{min-width:0}
 .legacy-field input,.legacy-field select{min-width:0;max-width:100%}
 .legacy-field-row{grid-template-columns:repeat(2,minmax(0,1fr))}
-.demo-data-button{display:flex;margin:16px 0 24px auto}
 .legacy-consent input,.cash-choice input{flex-shrink:0}
 .legacy-registration-form .payment-status,.legacy-registration-form .checkout-summary{overflow-wrap:anywhere}
 .legacy-registration-form .payment-status p:last-child{margin-bottom:0}
@@ -65,6 +64,8 @@
 
 .membership-switch{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
 .membership-switch a{display:flex;flex-direction:column;gap:6px;padding:16px;border:1px solid var(--border,#ccd7ce);border-radius:12px;color:var(--green-dark,#174c2a);text-decoration:none;background:#fff}
+.membership-switch a:hover{border-color:var(--green);background:#f1f7f0}
+.membership-switch a strong{font-weight:800}
 .membership-switch a[aria-current=page]{border:2px solid var(--green,#1f6b3a);background:#f1f7f0}
 .membership-switch span{font-size:.85rem}.membership-help{padding:16px;border-radius:10px;background:#f1f7f0;margin-bottom:24px;line-height:1.7}
 .membership-help a{text-decoration:underline;font-weight:600}.membership-switch a:focus-visible{outline:3px solid #956719;outline-offset:3px}

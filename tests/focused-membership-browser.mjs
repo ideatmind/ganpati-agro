@@ -16,9 +16,11 @@ try{
   assert.equal(await page.locator('#cluster option').count(),14);
   assert.match(await page.locator('.legacy-payment-summary').innerText(),/500/);
   assert.equal(await page.locator('.membership-switch [aria-current="page"]').getAttribute('href'),'/register?ref=ABCDEF');
-  await page.locator('.membership-switch a').nth(1).click();
+  assert.equal(await page.getByRole('button',{name:/Demo data|चाचणी माहिती/}).count(),0);
+  await page.locator('.membership-switch').getByRole('link',{name:/^Exclusive form/}).click();
   await page.waitForURL('**/register/focused-value-chain?ref=ABCDEF');
   assert.equal(await page.locator('h1').innerText(),'Focused Value Chain Membership Form');
+  assert.equal(await page.getByRole('button',{name:/Demo data|चाचणी माहिती/}).count(),0);
   assert.match(await page.locator('.legacy-payment-summary').innerText(),/2,500/);
   assert.equal(await page.locator('#referral').inputValue(),'ABCDEF');
   assert.deepEqual(await page.locator('#cluster option').evaluateAll(options=>options.map(option=>option.value)),['','fruits','allied']);
@@ -35,7 +37,7 @@ try{
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'Focused form overflows at '+width);
   await page.screenshot({path:'.audit/membership-screens/focused-'+width+'.png',fullPage:true});
   await page.goto(origin+'/',{waitUntil:'networkidle'});
-  assert.equal(await page.locator('a[href="/register"]').count()>0,true);
+  assert.equal(await page.locator('.hero-actions').getByRole('link',{name:'नोंदणी करा',exact:true}).getAttribute('href'),'/register');
   if(width<768){await page.getByRole('button',{name:'Open menu'}).click();assert.equal(await page.locator('#marketing-navigation a[href="/register/focused-value-chain"]').isVisible(),true);await page.keyboard.press('Escape');}
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'Homepage overflows at '+width);
   await page.screenshot({path:'.audit/membership-screens/home-'+width+'.png',fullPage:false});
