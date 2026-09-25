@@ -1,6 +1,6 @@
 # Digital brand kit
 
-The original production site is the interaction and composition reference: centered full-screen hero, glowing emblem, transparent-to-solid navigation, generous rounded fieldsets, agricultural line motifs, and calm reveal motion. V2 preserves these recognizable patterns while applying the supplied brand-kit colors and the new ₹500/payment messaging.
+The original production site is the interaction and composition reference: centered full-screen hero, glowing emblem, transparent-to-solid navigation, generous rounded fieldsets, agricultural line motifs, and calm reveal motion. V2 preserves these recognizable patterns while applying the supplied brand-kit colors and the standard ₹500 and focused ₹2,500 membership messaging.
 
 **Essence:** Growing Farmers. Building Futures.
 
@@ -20,10 +20,12 @@ The experience should feel grounded, trustworthy, empowering, and progressive. I
 | Surface | `#FFFFFF` | Cards and forms |
 | Border | `#DDE2DA` | Dividers and inputs |
 | Primary text | `#1C241E` | Main text |
-| Secondary text | `#667067` | Supporting text |
+| Secondary text | `#58665B` | Supporting text |
 
 Use roughly 60% neutral, 30% green, and 10% accent.
 
 ## Typography and layout
 
-Noto Sans Devanagari is used for Marathi headings and Noto Sans for body copy, with local system fallbacks to keep builds deterministic. Type uses 400, 500, 600, and 700 weights. Spacing follows an 8px grid, buttons use an 8px radius, cards use subtle borders and minimal shadows, and icons use a consistent rounded line style.
+Noto Sans Devanagari and Poppins are self-hosted through Fontsource. All pages share the same body stack; numeric totals use Poppins with tabular numbers. Spacing follows an 8px grid, primary controls have 48px touch targets and an 8px radius, and cards use a 16px radius with subtle borders and shadows. Keyboard focus uses a visible warm outline.
+
+The shared tokens in src/app/theme.css are the source of truth for public pages, registration, login, receipts, employee/member dashboards, admin screens and error states. Reuse brand and semantic tokens for surfaces, borders, feedback and typography. Keep page-specific layout and the original homepage hero, illustrations and motion; avoid local replacement palettes. Dense administrative controls may use 44px touch targets.

@@ -1,0 +1,38 @@
+/* Shared Ganpati Agro brand, surface, control, and feedback tokens. */
+:root {
+  --green: #1f6b3a;
+  --deep: #123b24;
+  --gold: #d99a2b;
+  --leaf: #6faf45;
+  --earth: #7a5635;
+  --sky: #3d8fbf;
+  --warm: #fafaf7;
+  --surface: #fff;
+  --muted: #f1f3ef;
+  --surface-tint: #edf4ee;
+  --surface-gold: #fcf4e4;
+  --border: #dde2da;
+  --border-strong: #819886;
+  --text: #1c241e;
+  --sub: #58665b;
+  --on-dark: #e5eee7;
+  --on-dark-muted: #c3d4c8;
+  --on-dark-border: rgba(255, 255, 255, .2);
+  --on-dark-surface: rgba(255, 255, 255, .08);
+  --on-dark-hover: rgba(255, 255, 255, .14);
+  --danger: #a52a2a;
+  --danger-soft: #fff1ef;
+  --danger-border: #e8bab4;
+  --info: #205b7d;
+  --info-soft: #eaf3f8;
+  --warning: #73501c;
+  --warning-border: #e5cf9f;
+  --focus: #956719;
+  --shadow: 0 8px 24px rgba(18, 59, 36, .08);
+  --shadow-raised: 0 16px 40px rgba(18, 59, 36, .14);
+  --radius: 8px;
+  --radius-card: 16px;
+  --font-body: "Noto Sans Devanagari", "Poppins", system-ui, sans-serif;
+  --font-number: "Poppins", "Noto Sans Devanagari", sans-serif;
+  --max: 1180px;
+}

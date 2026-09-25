@@ -15,12 +15,13 @@ async function start(args,ready){return new Promise((resolve,reject)=>{
   child.on('exit',code=>{clearTimeout(timer);reject(Error('Isolated service exited ('+code+'): '+output));});
 });}
 try{
+  if(process.env.UI_REVIEW_ONLY){const fixture=spawnSync(env.PSQL_PATH||'psql',['-X','-q','-v','ON_ERROR_STOP=1','-f','tests/support/role-ui.sql','--dbname',database],{stdio:'inherit',windowsHide:true});if(fixture.status)throw Error('Isolated role UI fixture failed');}
   if(!process.env.PERF_LABEL){const fixture=spawnSync(env.PSQL_PATH||'psql',['-X','-q','-v','ON_ERROR_STOP=1','-f','tests/support/admin-http.sql','--dbname',database],{stdio:'inherit',windowsHide:true});if(fixture.status)throw Error('Isolated admin fixture failed');}
   const bridge=await start(['tests/support/rpc-bridge.mjs'],/Isolated RPC bridge ready on port (\d+)\r?\n/);
   env.SUPABASE_URL='http://127.0.0.1:'+bridge[1];
   console.log('Using isolated RPC bridge at '+env.SUPABASE_URL);
   await start(['--import','./tests/support/provider-stub.mjs','node_modules/next/dist/bin/next','start','-H','127.0.0.1','-p','3101'],'Ready');
-  for(const script of process.env.PERF_LABEL?['tests/performance-http.mjs']:process.env.MEMBERSHIP_BROWSER_ONLY?['tests/focused-membership-http.mjs','tests/focused-membership-browser.mjs']:['tests/e2e-http.mjs','tests/focused-membership-http.mjs'])await new Promise((resolve,reject)=>{const test=spawn(process.execPath,[script],{env,stdio:'inherit',windowsHide:true});test.on('error',reject);test.on('exit',code=>code?reject(Error('HTTP regression failed')):resolve());});
+  for(const script of process.env.PERF_LABEL?['tests/performance-http.mjs']:process.env.UI_REVIEW_ONLY?['tests/role-ui-browser.mjs','tests/role-ui-accessibility.mjs','tests/focused-membership-http.mjs','tests/focused-membership-browser.mjs']:process.env.MEMBERSHIP_BROWSER_ONLY?['tests/focused-membership-http.mjs','tests/focused-membership-browser.mjs']:['tests/e2e-http.mjs','tests/focused-membership-http.mjs','tests/registration-rate-limit-http.mjs'])await new Promise((resolve,reject)=>{const test=spawn(process.execPath,[script],{env,stdio:'inherit',windowsHide:true});test.on('error',reject);test.on('exit',code=>code?reject(Error('HTTP regression failed')):resolve());});
 }finally{for(const child of children.reverse()){
   if(!child.pid||child.exitCode!==null||child.signalCode!==null)continue;
   const exited=once(child,'exit');child.kill();

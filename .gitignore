@@ -10,3 +10,6 @@ npm-debug.log*
 /.audit/
 /.vercel/
 /supabase/.temp/
+/tmp/leaflet/
+/output/documents/
+/output/pdf/

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {createHmac} from 'node:crypto';
+import {expireAccountRateLimit} from './support/rate-limit-fixture.mjs';
 const origin=process.env.TEST_APP_URL;
 if(!origin||!['localhost','127.0.0.1'].includes(new URL(origin).hostname))throw Error('Use an isolated loopback app.');
 const jar=new Map();
@@ -32,6 +33,8 @@ assert.equal((await request('/api/auth/login',{mobile:body.mobile,password:body.
 assert.equal((await request('/api/registrations',{...focus,expected_fee_paise:50000})).status,409);
 assert.equal((await request('/api/registrations',{...focus,plots:[{...focus.plots[0],crop_names:['द्राक्ष']}]})).status,400);
 assert.equal((await request('/api/registrations',{...focus,name:'Different Person'})).status,409);
+// The negative cases deliberately use the full shared authentication budget.
+expireAccountRateLimit(body.mobile);
 const focused=await request('/api/registrations',focus);
 assert.equal(focused.status,201,JSON.stringify(focused));
 assert.equal(focused.data.data.amountPaise,250000);
