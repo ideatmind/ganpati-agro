@@ -41,3 +41,10 @@ Select records in Trash and choose **Delete permanently**. Confirm with the acti
 Requires `20260915090000_admin_permanent_delete.sql` before deploying the accompanying application. The migration itself deletes no customer data. Completed registration/farmer/account shells remain for accounting links; pending registrations with checkout or cash evidence retain an anonymous registration shell, while pristine pending registrations are deleted. Apply `20260915195318_allow_pending_profile_erasure.sql` with the accompanying application to enable pending deletion. New checkout attempts are blocked after erasure. Verified late captures are retained for admin review without recreating a farmer, membership, receipt or referral earning. Existing backups and issued receipts are not erased. SQL regression coverage includes authorization, password checks, all-or-nothing failure, physical profile erasure, identifier reuse, login invalidation, retained earnings/receipts and duplicate webhook finalization.
 
 Verification completed: all four database suites, authenticated HTTP deletion (including wrong-password and manager rejection), and 12 simultaneous deletion/capture calls passed. Lint, typecheck, 28 application tests and production build passed. No live farmer records were deleted or migrated during this work.
+
+
+## Membership types — 25 September 2026
+
+Overview counts distinguish standard and Focused Value Chain registrations. Registrations and Trash support a membership-type filter alongside the existing search/status/date filters. Pagination, CSV exports and all-matching Trash selections retain that filter. Registration cards, details, finance history and receipts show the type and snapshotted fee. Admins can open either onboarding form directly.
+
+A farmer detail page supports both membership numbers and labels each set of plots with its membership type. Existing members retain one personal profile. Permanent deletion requires selecting every registration attached to that profile after moving all of them to Trash; it preserves the original financial history.

@@ -17,12 +17,12 @@ export async function POST(request:Request) {
     if(!isPaymentDemo())checkoutKey(mode);
     const data=registrationSchema.parse(raw);
     const identity=await getIdentity();
-    const assisted=identity?.roles.some(role=>['employee','manager','super_admin'].includes(role));
+    const assisted=identity?.mobile!==data.mobile&&identity?.roles.some(role=>['employee','manager','super_admin'].includes(role));
     const protectedId=protectAadhaar(data.aadhar_no);
     const {aadhar_no: omitted, ...input}=data;
     void omitted;
-    const result=await callRpc<{id:string;reference:string;amountPaise:number;status:string}>('create_registration',{p_payload:{...input,aadhar_fingerprint:protectedId.fingerprint,aadhar_ciphertext:protectedId.ciphertext,aadhar_last_four:protectedId.lastFour,onboarding_employee_id:assisted?identity!.id:null,cash_received:assisted&&data.cash_received,cash_note:assisted?data.cash_note:''}});
-    await setCheckout(result.id,mode);
+    const result=await callRpc<{id:string;reference:string;amountPaise:number;status:string}>('create_membership_registration',{p_actor_id:identity?.id??null,p_payload:{...input,aadhar_fingerprint:protectedId.fingerprint,aadhar_ciphertext:protectedId.ciphertext,aadhar_last_four:protectedId.lastFour,onboarding_employee_id:assisted?identity!.id:null,cash_received:assisted&&data.cash_received,cash_note:assisted?data.cash_note:''}});
+    await setCheckout(result.id,mode,data.membership_type);
     return Response.json({data:result},{status:201});
   });
 }

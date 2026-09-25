@@ -1,5 +1,15 @@
 # Project status
 
+## Focused Value Chain membership — 25 September 2026
+
+Implemented the ₹2,500 focused form at /register/focused-value-chain, limited to the six requested crops/businesses, with the original ₹500 form remaining the default. Existing members can sign in and purchase the second membership while retaining one account, person and farmer. Checkout, receipts, referral accounting, member dashboards and admin filtering/export/details support both types.
+
+Migration 20260925122350_focused_value_chain_membership.sql is additive for existing identity and financial data, preserves legacy RPC compatibility, and enforces one membership per type. A populated PostgreSQL 16 rehearsal preserved original records and pending checkout retries. Deployed routine bodies match the repository baseline. Applied to hosted Supabase as version 20260925122350. Before/after aggregate snapshots across 11 identity/payment/plot tables were identical; both fee RPCs return the expected 50000/250000 paise. All five new RPCs remain service-role-only and every public table retains RLS. Advisors report informational deny-by-default RLS/unused-index notices only. Application release verification follows the pull request checks.
+
+Passed lint, typecheck, 41 application tests, production build, nine database suites, isolated HTTP payment journeys and 12-way concurrent checkout/capture/deletion. Browser checks cover 320/390/1280px forms, exact crop options, keyboard controls, navigation, prices and admin filtering. All payment fixtures run against a disposable loopback database with a stubbed provider; no real payment is charged. A local database is not required to run the application against hosted Supabase.
+
+The earlier dated sections below are historical records of their respective tasks.
+
 ## Pending-payment deletion fix — 16 September 2026
 
 Super-admins can now erase trashed pending-payment profiles without reconciling first. Personal data is removed; anonymous checkout/cash references remain. New checkout attempts are blocked, and verified late captures create a deduplicated admin-review record without restoring the profile or granting membership/commission. Requires local migration `20260915195318_allow_pending_profile_erasure.sql` and the accompanying application. No live records were deleted and this change was not deployed in this task. Verification passed: lint, typecheck, build, 34 application tests, all six database suites, the authenticated HTTP pending-erasure/late-webhook journey, and 12-way deletion/capture concurrency. All six changed RPCs remain denied to anon/authenticated and callable by service_role.

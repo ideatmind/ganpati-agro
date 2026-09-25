@@ -5,7 +5,7 @@
 3. A registration snapshots the effective database fee in paise and applicable referral rate before checkout. The owner restored the current fee to ₹500 (`50000`) on 16 September 2026, superseding the ₹1 trial. The form displays that trusted fee and submits it as an expectation, never as price authority. If the fee changes before submission, the transaction rejects the stale expectation. A matching retry retains its original snapshot, including existing ₹1 quotes.
 4. One registration can have multiple payment attempts but only one successful completion.
 5. Only a verified, captured payment for the expected order, amount, and currency activates membership.
-6. Payment completion creates exactly one farmer, membership, receipt, and optional referral earning.
+6. Each registration creates exactly one membership, receipt, and optional referral earning after verified capture. The first paid membership creates the farmer; a later membership reuses that same farmer and person.
 7. Farmer referral attribution takes precedence when an employee assists a referred farmer. The employee still receives onboarding-count attribution.
 8. Self-referrals and referral changes after checkout begins are rejected.
 9. Employee cash receipt does not mark a fee paid; only confirmed online payment does.
@@ -32,7 +32,7 @@ Rules 17–23 and the strengthened grant/session controls are locally tested in 
 25. New and changed passwords require at least 8 characters and at most 72 UTF-8 bytes for every role. Mobile must contain exactly 10 ASCII digits and Aadhaar exactly 12, without whitespace, punctuation or other characters.
 
 
-26. Registration crop choices and cluster names use the owner-supplied 13-category catalog in `src/shared/crop-catalog.ts`. Each plot selects one or more distinct listed crops belonging to the selected profile cluster and one or more distinct irrigation sources. Changing cluster keeps compatible crop selections and clears only incompatible selections; irrigation choices remain unchanged. New registrations reject unlisted or mismatched crops at the API boundary; existing saved crop text is retained. The duplicate fruit spelling सिताफळ is presented once as सीताफळ. Existing six cluster identifiers remain compatible.
+26. Registration crop choices and cluster names use the owner-supplied 13-category catalog in `src/shared/crop-catalog.ts`. Each plot selects one or more distinct listed crops belonging to the selected registration cluster and one or more distinct irrigation sources. Changing cluster keeps compatible crop selections and clears only incompatible selections; irrigation choices remain unchanged. New registrations reject unlisted or mismatched crops at the API boundary; existing saved crop text is retained. The duplicate fruit spelling सिताफळ is presented once as सीताफळ. Existing six cluster identifiers remain compatible.
 
 Crop display labels use Marathi / English throughout website crop chips and registration options, including allied businesses and protected cultivation. Display translations do not change stored crop values.
 
@@ -42,3 +42,10 @@ Crop display labels use Marathi / English throughout website crop chips and regi
 30. Payout response-loss recovery reuses the exact saved request and UUID. An operator must resolve an uncertain saved record before starting another; confirmation records an already completed offline disbursement, never a transfer or claim request.
 
 31. Super-admins may permanently erase trashed profiles even while payment is pending or a cash declaration/order reservation exists. Retain anonymous financial links and block new checkout. Verified late captures for an erased, previously incomplete registration are recorded for admin review without creating a new farmer, membership, receipt or commission. A capture completed before erasure retains its existing financial history.
+
+
+32. The default standard membership uses /register, all 13 crop categories and a current fee of ₹500 (50000 paise). /register/focused-value-chain offers the Focused Value Chain Membership Form for ₹2,500 (250000 paise), restricted to pomegranate (डाळिंब), mango (आंबा), guava/peru (पेरू), papaya (पपई), poultry (कुक्कुटपालन) and goat farming (शेळी पालन). Both forms retain the same personal, plot, irrigation, consent, referral, password and payment fields.
+33. A person may hold one registration and one membership of each type. Mobile and Aadhaar uniqueness remain per person. An existing member must sign in to their own active account and confirm their current password and Aadhaar before purchasing the other type. This reuses their personal details without changing their account credentials or creating a second farmer. New people can start with either membership.
+34. Fees, crop/cluster choices, referral recipient/rate, payment history and receipts are independent snapshots for each registration. Membership type cannot change after creation. At the current 10% commission, a referred standard membership earns ₹50 and a referred focused membership earns ₹250; farmer referral priority and employee attribution rules remain unchanged.
+35. Each type has its own signed checkout capability, allowing both flows without overwriting one another. The membership dashboard lists each separate payment/receipt. Admin records, exports and filters identify membership type; all-matching Trash actions retain the selected type filter.
+36. Permanent deletion erases the shared person, so every registration for that person must be selected and already in Trash. Partial erasure is rejected. Anonymous original financial history remains retained and duplicate/late payment processing stays idempotent.

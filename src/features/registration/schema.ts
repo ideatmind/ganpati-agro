@@ -1,4 +1,5 @@
 import { z } from "zod";
+import {membershipTypeSchema,FOCUSED_CROPS} from "@/features/registration/membership";
 import { isCatalogCrop, cropBelongsToCluster } from "@/shared/crop-catalog";
 import { CLUSTER_OPTIONS, DISTRICTS, INCOME_OPTIONS, IRRIGATION_OPTIONS, TALUKAS } from "@/shared/constants";
 
@@ -11,6 +12,7 @@ const talukaValues = TALUKAS.map((item) => item[0]) as [string, ...string[]];
 
 export const registrationSchema = z.object({
   name: personNameSchema,
+  membership_type: membershipTypeSchema.default("standard"),
   expected_fee_paise:z.number().int().positive().max(2_147_483_647).optional(),
   mobile: mobileSchema,
   password: passwordSchema,
@@ -40,6 +42,7 @@ export const registrationSchema = z.object({
   }))).min(1).max(10),
 }).superRefine((data, ctx) => {
   data.plots.forEach((plot,index)=>{
+    if(data.membership_type==='focused_value_chain'&&plot.crop_names.some(crop=>!FOCUSED_CROPS.some(value=>value===crop)))ctx.addIssue({code:'custom',path:['plots',index,'crop_names'],message:'Select pomegranate, mango, guava, papaya, poultry or goat farming for this membership.'});
     if(plot.crop_names.some(crop=>!cropBelongsToCluster(data.cluster_type,crop)))ctx.addIssue({code:"custom",path:["plots",index,"crop_names"],message:"निवडलेल्या समूहातील पीक निवडा. / Select a crop from the selected cluster."});
   });
   const match = TALUKAS.some(([taluka, district]) => taluka === data.taluka && district === data.district);

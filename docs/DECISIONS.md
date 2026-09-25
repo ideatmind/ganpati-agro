@@ -156,3 +156,12 @@ Use native checkbox groups with bilingual labels, selection counts, summaries an
 Store bounded text arrays in registration_plots and farmer_plots. Backfill existing scalar choices as singleton arrays and copy full arrays only during verified payment finalization. Keep the old scalar columns as the first selection and accept legacy scalar RPC/API payloads for compatibility with the deployed form. The array fields are canonical for new requests and admin/employee views. Plot editing permissions remain read-only; profile editing and financial behavior are unchanged.
 
 Applied local migration 20260917102532_plot_multi_select.sql to hosted ganpati-agro-v2 as version 20260917103536. Match by migration name when reconciling local/hosted history. Prepared for publication from current GitHub main; the database migration is already applied.
+
+
+## 25 September 2026 — Focused Value Chain membership
+
+The owner requested a second version of the original bilingual membership form with a ₹2,500 fee and only pomegranate, mango, guava, papaya, poultry and goat farming. The ₹500 standard form remains the default entry from the homepage and /register; both forms link to one another.
+
+The owner explicitly confirmed that existing ₹500 members may also purchase the focused membership using the same mobile/Aadhaar. Keep one account, person and farmer, with a registration, fee/referral snapshot, plots, membership and receipt for each type. Require the existing member's signed-in session plus current password/Aadhaar confirmation to add the second type. No automatic upgrade, fee difference, duplicate identity, or replacement of the original membership is introduced.
+
+Separate typed checkout cookies preserve simultaneous/resumable flows. Admin membership filtering is propagated through pagination, CSV export and all-matching deletion. Full personal erasure must include all of the person's trashed registrations, protecting another active membership from partial deletion.

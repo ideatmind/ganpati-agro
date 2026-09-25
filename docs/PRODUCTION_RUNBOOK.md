@@ -174,3 +174,12 @@ The owner authorized migration and publication of all current changes. The ₹50
 ## Multi-select release — 17 September 2026
 
 The repository migration 20260917102532_plot_multi_select.sql is already applied to hosted ganpati-agro-v2 as 20260917103536. Do not replay it. Migration names and function-body hashes were checked before applying; existing plot, registration, payment-order and receipt checksums were preserved afterward. Both plot tables retain RLS and privileged RPCs remain service-only. Deploy the array-aware UI with the existing live-only payment safeguards from main.
+
+
+## Focused membership release — 25 September 2026
+
+Supabase migration 20260925122350_focused_value_chain_membership.sql is applied. Current fees are ₹500 standard and ₹2,500 focused; this supersedes older trial-fee notes above. Existing quote snapshots are retained. Legacy standard RPC signatures remain callable for a rolling application release. Do not replay the migration or restore person/farmer single-membership uniqueness.
+
+All existing row counts and aggregate record hashes across 11 identity/payment/plot tables matched before and after migration. New RPCs deny anon/authenticated and grant service_role; RLS remains enabled throughout. Advisors returned informational [RLS enabled without policies](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy) and [unused indexes](https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index), consistent with service-only access and a new index awaiting traffic.
+
+Local verification uses a disposable loopback PostgreSQL instance and stubbed Razorpay responses. No local database is needed for normal development against hosted Supabase. After npm run build, run npm run test:http for both membership journeys. For browser checks, install Playwright Chromium and run the same runner with MEMBERSHIP_BROWSER_ONLY=1; screenshots are written to the ignored .audit/membership-screens directory. Existing live-only gateway checks remain unchanged; no real payment is made during automated verification.
