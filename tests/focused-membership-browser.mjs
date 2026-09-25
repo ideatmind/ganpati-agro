@@ -38,7 +38,18 @@ try{
   await page.screenshot({path:'.audit/membership-screens/focused-'+width+'.png',fullPage:true});
   await page.goto(origin+'/',{waitUntil:'networkidle'});
   assert.equal(await page.locator('.hero-actions').getByRole('link',{name:'नोंदणी करा',exact:true}).getAttribute('href'),'/register');
-  if(width<768){await page.getByRole('button',{name:'Open menu'}).click();assert.equal(await page.locator('#marketing-navigation a[href="/register/focused-value-chain"]').isVisible(),true);await page.keyboard.press('Escape');}
+  assert.equal(await page.locator('#membership a[href="/register/focused-value-chain"]').count(),0);
+  assert.equal(await page.locator('#membership a[href="/register"]').count(),1);
+  if(width<768){
+   const exclusiveLink=page.locator('#marketing-navigation a[href="/register/focused-value-chain"]');
+   await page.getByRole('button',{name:'Open menu'}).click();
+   await exclusiveLink.waitFor({state:'visible'});
+   assert.equal(await page.locator('.hamburger').getAttribute('aria-expanded'),'true');
+   await page.keyboard.press('Escape');
+   await exclusiveLink.waitFor({state:'hidden'});
+   assert.equal(await page.locator('.hamburger').getAttribute('aria-expanded'),'false');
+   assert.equal(await page.locator('.hamburger').evaluate(button=>button===document.activeElement),true);
+  }
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'Homepage overflows at '+width);
   await page.screenshot({path:'.audit/membership-screens/home-'+width+'.png',fullPage:false});
  }

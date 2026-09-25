@@ -165,3 +165,16 @@ The owner requested a second version of the original bilingual membership form w
 The owner explicitly confirmed that existing ₹500 members may also purchase the focused membership using the same mobile/Aadhaar. Keep one account, person and farmer, with a registration, fee/referral snapshot, plots, membership and receipt for each type. Require the existing member's signed-in session plus current password/Aadhaar confirmation to add the second type. No automatic upgrade, fee difference, duplicate identity, or replacement of the original membership is introduced.
 
 Separate typed checkout cookies preserve simultaneous/resumable flows. Admin membership filtering is propagated through pagination, CSV export and all-matching deletion. Full personal erasure must include all of the person's trashed registrations, protecting another active membership from partial deletion.
+
+
+## 25 September 2026 — Consistent interface and preserved local work
+
+The owner requested one consistent visual system across the website and operations pages. Share the brand palette, type stacks, controls, card radii, surfaces and feedback colors through theme.css while retaining page-specific information and interactions. Standard registration stays the default ₹500 action; the ₹2,500 Exclusive form remains reachable in navigation, the two-form switch and employee/admin actions.
+
+The homepage participation section shows only समूह सहभाग with its four existing benefits and one standard registration link. Do not show the Exclusive form button in this section or restore the removed share-certificate/voting claims. This preserves the owner's previously unpublished local homepage decision.
+
+The original local main checkout had no unique commits and was behind the released branch. Integrate its genuinely unique homepage/setup/tooling changes into current main; retain a recovery snapshot and stash before updating the original checkout. Optional leaflet generators are retained as historical utilities with explicit content-review notes, and their generated files remain local.
+
+## 25 September 2026 — Shared account authentication budget
+
+Registration retries and second-membership requests verify existing account credentials. Their API must consume the same hashed per-account five-attempts-per-minute budget as login, in addition to its IP budget. Consume it after input validation and before the registration transaction so failed transactions cannot erase rate-limit evidence. The shared budget covers both membership types and rotating IPs. Test-only expiry helpers may operate only on an explicitly configured loopback database.

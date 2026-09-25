@@ -1,3 +1,4 @@
+import { SiteHeader } from "@/components/SiteHeader";
 import {MEMBERSHIP_LABELS,membershipPath,type MembershipType} from '@/features/registration/membership';
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -32,7 +33,7 @@ export default async function DashboardPage({searchParams}:{searchParams:Promise
   const origin = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const referralUrl = data.referralCode ? `${origin}/register?ref=${encodeURIComponent(data.referralCode)}` : undefined;
 
-  return <main className="dashboard-shell">
+  return <><SiteHeader /><main className="dashboard-shell">
     <header className="dashboard-header"><div><span className="eyebrow">नमस्कार</span><h1>{identity.displayName}</h1><p>{identity.roles.map(role=>role.replaceAll("_"," ")).join(" · ")}</p></div><DashboardActions referralUrl={referralUrl} /></header>
     <nav className="dashboard-quick-links" aria-label="Dashboard navigation">{isOps&&<Link href="/dashboard/admin">Operations workspace</Link>}{isEmployee&&<><Link href="/register">Add registration</Link><Link href="#pending-work">Pending work</Link><Link href="#my-farmers">My farmers</Link></>}{data.referralCode&&<Link href="#my-referrals">My referrals</Link>}<Link href="/register/focused-value-chain">Exclusive form</Link><Link href="#my-password">Account &amp; password</Link><Link href="/">Website</Link></nav>
     {data.memberships.length>0&&<section className="panel"><div className="panel-head"><h2>माझे सभासदत्व / My memberships</h2><Link className="table-link" href="/register/focused-value-chain">Exclusive form →</Link></div><div className="table-wrap"><table><thead><tr><th>Membership</th><th>Number / Reference</th><th>Fee</th><th>Status</th><th>Receipt / Payment</th></tr></thead><tbody>{data.memberships.map(item=><tr key={item.id}><td>{MEMBERSHIP_LABELS[item.type]}</td><td>{item.number||item.reference}</td><td>{formatRupees(item.amountPaise)}</td><td>{item.status==='completed'?'Active':item.status.replaceAll('_',' ')}</td><td><Link className="table-link" href={item.receiptToken?'/receipt/'+item.receiptToken:membershipPath(item.type)}>{item.receiptToken?'Open receipt':'Resume registration'}</Link></td></tr>)}</tbody></table></div></section>}
@@ -54,5 +55,5 @@ export default async function DashboardPage({searchParams}:{searchParams:Promise
     {isOps && <section className="admin-callout"><div><span className="eyebrow light">Admin operations</span><h2>व्यवस्थापन नियंत्रण</h2><p>Review registrations, payment exceptions and temporary edit access in your operations workspace.</p></div><Link className="button button-gold" href="/dashboard/admin">Open admin console</Link></section>}
 
     <div id="my-password"><PasswordChangeForm /></div>
-  </main>;
+  </main></>;
 }

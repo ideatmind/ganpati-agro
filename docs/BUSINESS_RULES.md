@@ -51,3 +51,8 @@ Crop display labels use Marathi / English throughout website crop chips and regi
 36. Permanent deletion erases the shared person, so every registration for that person must be selected and already in Trash. Partial erasure is rejected. Anonymous original financial history remains retained and duplicate/late payment processing stays idempotent.
 
 37. “नोंदणी करा” opens the standard ₹500 form. A visible “Exclusive form” navigation button switches to the ₹2,500 Focused Value Chain form; the same label is used in employee/admin entry points. Both forms exclude demo-data fill controls.
+
+
+## Account retry protection
+
+Login and validated registration requests share a hashed per-mobile limit of five attempts per minute, alongside endpoint-specific IP limits. This covers retries of pending registrations and adding a second membership. A failed registration transaction still consumes an attempt; clients receive HTTP 429 with Retry-After when the budget is exhausted.

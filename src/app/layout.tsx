@@ -7,6 +7,7 @@ import "@fontsource/noto-sans-devanagari/800.css";
 import "@fontsource/poppins/400.css";
 import "@fontsource/poppins/600.css";
 import "@fontsource/poppins/700.css";
+import "./theme.css";
 import "./globals.css";
 import "./marketing.css";
 import "./legacy-form.css";

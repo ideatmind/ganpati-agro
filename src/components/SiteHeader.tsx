@@ -11,7 +11,7 @@ export function SiteHeader({registration=false}:{registration?:boolean}) {
       <Link href="/#about">आमच्याबद्दल</Link>
       <Link href="/#purpose">आमचे कार्य</Link>
       <Link href="/register/focused-value-chain">Exclusive form</Link>
-      {registration?<Link href="/login" className="button button-small">लॉग इन</Link>:<Link href="/register" className="button button-small">सभासद व्हा</Link>}
     </nav>
+    {registration?<Link href="/login" className="button button-small">लॉग इन</Link>:<Link href="/register" className="button button-small">नोंदणी करा</Link>}
   </header>;
 }

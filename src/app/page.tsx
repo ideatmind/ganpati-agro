@@ -13,10 +13,11 @@ const purpose=[
   {kind:"mission",icon:"⌖",title:"मिशन",text:"शेतकऱ्यांचा उत्पादन खर्च कमी करणे, फायदेशीर बाजारपेठ उपलब्ध करून देणे आणि मूल्यवर्धन साखळीचा विकास व व्यवस्थापन करणे."},
   {kind:"values",icon:"♡",title:"मूल्ये",text:"शेतकरी केंद्रित विचार, अखंडता, उत्कृष्टता, संघटित कार्य, उत्तरदायित्व आणि प्रामाणिक हेतू या मूल्यांवर आमचा पाया आहे."},
 ];
-const benefits=[
-  ["▧","शेअर प्रमाणपत्र",["कंपनीत शेअर मालकी हक्क","नॉमिनी नोंदणी सुविधा","बोर्ड मान्यतेने हस्तांतरण शक्यता","कायदेशीर संरक्षण"]],
-  ["⌂","कंपनी सभासदत्व",["सर्वसाधारण सभेत मतदान अधिकार","मूल्यवर्धनातून लाभांश हक्क","MOA / AOA अंतर्गत अधिकार","सभासद रजिस्टरमध्ये नोंद"]],
-  ["♧","समूह सहभाग",["तज्ञ मार्गदर्शन व तंत्रज्ञान सहाय्य","बाजार जोडणी व मूल्यवर्धन","बियाणे, खते, यंत्रसामग्री सहाय्य","उत्पादन खर्चात बचत"]],
+const participationBenefits = [
+  "तज्ञ मार्गदर्शन व तंत्रज्ञान सहाय्य",
+  "बाजार जोडणी व मूल्यवर्धन",
+  "बियाणे, खते, यंत्रसामग्री सहाय्य",
+  "उत्पादन खर्चात बचत",
 ] as const;
 
 export default function Home(){return <><a className="skip-link" href="#main">मुख्य सामग्रीकडे जा / Skip to content</a><MarketingNav/><main id="main">
@@ -25,6 +26,26 @@ export default function Home(){return <><a className="skip-link" href="#main">�
   <section className="legacy-section purpose" id="purpose"><div className="legacy-container"><ScrollReveal className="legacy-heading"><p className="legacy-eyebrow">आमचा उद्देश</p><h2>उद्देश, दृष्टी आणि मूल्ये</h2></ScrollReveal><div className="purpose-grid">{purpose.map((item)=><ScrollReveal className={`purpose-card ${item.kind}`} key={item.title}><span className="purpose-icon">{item.icon}</span><h3>{item.title}</h3><p>{item.text}</p></ScrollReveal>)}</div><ScrollReveal className="values-strip">{values.map((value)=><span key={value}>{value}</span>)}</ScrollReveal><ScrollReveal className="quote"><p>&quot;शेतकऱ्यांसोबत योग्य व प्रामाणिक हेतूने काम करा, यश हमखास मिळेल!&quot;</p></ScrollReveal></div></section>
   <section className="legacy-section clusters" id="clusters"><div className="legacy-container"><ScrollReveal className="legacy-heading"><p className="legacy-eyebrow">समूह प्रकार</p><h2>पीक आणि शेतीपूरक व्यवसाय</h2></ScrollReveal><ScrollReveal><ClusterExplorer/></ScrollReveal></div></section>
   <CoverageMap/>
-  <section className="legacy-section membership" id="membership"><div className="legacy-container"><ScrollReveal className="legacy-heading"><p className="legacy-eyebrow">सभासदत्व</p><h2>सभासद होण्याचे फायदे</h2></ScrollReveal><div className="benefits-grid">{benefits.map(([icon,title,items])=><ScrollReveal className="benefit" key={title}><span className="benefit-icon">{icon}</span><h3>{title}</h3><ul>{items.map((item)=><li key={item}>{item}</li>)}</ul></ScrollReveal>)}</div><ScrollReveal className="membership-cta"><Link href="/register" className="legacy-btn gold">नियमित सभासदत्व · ₹500</Link><Link href="/register/focused-value-chain" className="legacy-btn primary">Exclusive form</Link></ScrollReveal></div></section>
+  <section className="legacy-section membership" id="membership" aria-labelledby="participation-heading">
+    <div className="legacy-container participation-layout">
+      <ScrollReveal className="participation-intro">
+        <span className="participation-symbol" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="24" cy="14" r="5"/><path d="M14 36v-4a10 10 0 0 1 20 0v4"/>
+            <path d="M10 22a4 4 0 1 1 4-7M38 22a4 4 0 1 0-4-7M5 35v-3a7 7 0 0 1 5-7M43 35v-3a7 7 0 0 0-5-7"/>
+          </svg>
+        </span>
+        <p className="legacy-eyebrow">सभासद होण्याचे फायदे</p>
+        <h2 id="participation-heading">समूह सहभाग</h2>
+        <p className="participation-description">एकत्र येऊया, शेतीची प्रगती साधूया.</p>
+        <Link href="/register" className="legacy-btn gold">नोंदणी करा · ₹500 <span aria-hidden="true">→</span></Link>
+      </ScrollReveal>
+      <ScrollReveal className="participation-panel">
+        <ul className="participation-benefits">
+          {participationBenefits.map((benefit) => <li key={benefit}><span className="participation-check" aria-hidden="true">✓</span><span>{benefit}</span></li>)}
+        </ul>
+      </ScrollReveal>
+    </div>
+  </section>
   <section className="legacy-section final-register"><div className="legacy-container"><ScrollReveal><p className="legacy-eyebrow">सुरक्षित डिजिटल नोंदणी</p><h2>फॉर्म भरा आणि लगेच सभासद व्हा.</h2><p>शेतकरी स्वतः नोंदणी करू शकतो किंवा अधिकृत कर्मचाऱ्याची मदत घेऊ शकतो.</p><Link href="/register" className="legacy-btn primary">नोंदणी सुरू करा</Link></ScrollReveal></div></section>
   </main><footer className="legacy-footer" id="contact"><div className="legacy-container footer-grid"><div><Image src="/brand/logo-icon.png" width={72} height={72} alt=""/><h3>गणपती ॲग्रो प्रोड्युसर कंपनी लि.</h3></div><div><h4>पत्ता</h4><p>बार्शी नाका, बार्शी रोड,<br/>धाराशिव (MH) — ४१३५०१</p></div><div><h4>संपर्क</h4><a href="tel:+917030039005">+91 70300 39005</a><a href="tel:+918390335722">+91 83903 35722</a><a href="mailto:sganpatiagropcl@gmail.com">sganpatiagropcl@gmail.com</a></div></div><div className="legacy-container copyright">© २०१६–{new Date().getFullYear()} गणपती ॲग्रो प्रोड्युसर कंपनी लि. · CIN: U01403MH2016PTC272505</div></footer><BackToTop/></>}

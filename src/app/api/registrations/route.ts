@@ -16,6 +16,8 @@ export async function POST(request:Request) {
     const mode=defaultPaymentMode();
     if(!isPaymentDemo())checkoutKey(mode);
     const data=registrationSchema.parse(raw);
+    // Retries authenticate existing members, so share login's account budget across IPs.
+    await enforceLimit('login-account:'+data.mobile,5);
     const identity=await getIdentity();
     const assisted=identity?.mobile!==data.mobile&&identity?.roles.some(role=>['employee','manager','super_admin'].includes(role));
     const protectedId=protectAadhaar(data.aadhar_no);
