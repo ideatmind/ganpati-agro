@@ -20,7 +20,7 @@ try{
   env.SUPABASE_URL='http://127.0.0.1:'+bridge[1];
   console.log('Using isolated RPC bridge at '+env.SUPABASE_URL);
   await start(['--import','./tests/support/provider-stub.mjs','node_modules/next/dist/bin/next','start','-H','127.0.0.1','-p','3101'],'Ready');
-  await new Promise((resolve,reject)=>{const test=spawn(process.execPath,[process.env.PERF_LABEL?'tests/performance-http.mjs':'tests/e2e-http.mjs'],{env,stdio:'inherit',windowsHide:true});test.on('error',reject);test.on('exit',code=>code?reject(Error('HTTP regression failed')):resolve());});
+  for(const script of process.env.PERF_LABEL?['tests/performance-http.mjs']:process.env.MEMBERSHIP_BROWSER_ONLY?['tests/focused-membership-http.mjs','tests/focused-membership-browser.mjs']:['tests/e2e-http.mjs','tests/focused-membership-http.mjs'])await new Promise((resolve,reject)=>{const test=spawn(process.execPath,[script],{env,stdio:'inherit',windowsHide:true});test.on('error',reject);test.on('exit',code=>code?reject(Error('HTTP regression failed')):resolve());});
 }finally{for(const child of children.reverse()){
   if(!child.pid||child.exitCode!==null||child.signalCode!==null)continue;
   const exited=once(child,'exit');child.kill();

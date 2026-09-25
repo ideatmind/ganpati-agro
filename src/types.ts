@@ -12,4 +12,4 @@ export interface DashboardData {
   recentPayouts: { amountPaise: number; method: string; reference: string | null; paidAt: string }[];
 }
 
-export interface ReceiptData { receiptNumber: string; registrationReference: string; membershipNumber: string; memberName: string; memberMobile: string; amountPaise: number; currency: string; paymentId: string; issuedAt: string }
+export interface ReceiptData { membershipType:"standard"|"focused_value_chain"; receiptNumber: string; registrationReference: string; membershipNumber: string; memberName: string; memberMobile: string; amountPaise: number; currency: string; paymentId: string; issuedAt: string }

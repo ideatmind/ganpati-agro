@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { PasswordToggle } from "./PasswordToggle";
 import { requestJson } from "@/shared/request";
 
-export function LoginForm() {
+export function LoginForm({next="/dashboard"}:{next?:string}) {
   const router = useRouter();const running=useRef(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -20,7 +20,7 @@ export function LoginForm() {
     const form = new FormData(event.currentTarget);
     try {
       await requestJson("/api/auth/login", Object.fromEntries(form));
-      router.push("/dashboard");
+      router.push(next);
       router.refresh();
     } catch (error) { setError(error instanceof Error ? error.message : "Login failed"); }
     finally { running.current=false;setBusy(false); }

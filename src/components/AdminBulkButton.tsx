@@ -2,7 +2,7 @@
 import {useId,useRef,useState,type FormEvent} from 'react';
 import {useRouter} from 'next/navigation';
 import {requestJson} from '@/shared/request';
-export interface AllMatchingSelection {count:number;filters:{q:string;status:string;from:string;to:string}}
+export interface AllMatchingSelection {count:number;filters:{membershipType?:string;q:string;status:string;from:string;to:string}}
 export function AdminBulkButton({ids,action,label,onDone,allMatching,entityName}:{ids:string[];action:'trash'|'restore'|'purge'|'activate'|'deactivate'|'revoke';label:string;onDone?:(message:string)=>void;allMatching?:AllMatchingSelection;entityName?:string}){
  const titleId=useId();const dialog=useRef<HTMLDialogElement>(null);const running=useRef(false);const router=useRouter();const [busy,setBusy]=useState(false);const [error,setError]=useState('');const [notice,setNotice]=useState('');
  const count=allMatching?.count??ids.length;const needsPassword=action==='purge'||action==='trash'&&(Boolean(allMatching)||count>25);

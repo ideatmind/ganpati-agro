@@ -22,6 +22,7 @@ export async function clearSession({revoke=true}:{revoke?:boolean}={}) {
   if(id&&revoke) await callRpc('revoke_account_session',{p_session_id:id});
   jar.delete(COOKIE);
   jar.delete('ga_checkout');
+  jar.delete('ga_focused_checkout');
 }
 export const getIdentity = cache(async (): Promise<Identity|null> => {
   const id=readToken((await cookies()).get(COOKIE)?.value,'session');
